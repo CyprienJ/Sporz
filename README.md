@@ -67,6 +67,7 @@ The project starts **from a clean sheet**: no code exists yet, only this README,
 
 | # | Topic | Decision |
 |---|-------|----------|
+| DEC-25 | **Themes** | Two themes, following the system setting. **Light** = `design.html` as is (light screens, navy secret areas). **Dark** = everything dark, secret areas (role card, night action) darker still so they keep standing out. |
 | DEC-14 | **UI toolkit** | **Jetpack Compose** + Navigation Compose, single activity, from the first line of code. Hilt for dependency injection, Ktor client for networking. |
 | DEC-15 | **Backend** | **Out of scope for this repository.** The owner builds it later from `docs/openapi.yaml`. The rules engine `:engine` is pure Kotlin with no Android dependency, so the backend can reuse it if it runs on the JVM. |
 | DEC-16 | **Real-time transport** | REST for commands (see OpenAPI) + **one WebSocket per client** for push events. SSE as a fallback. No push notifications (FCM) in v1: the app is in the foreground during a game. |
@@ -288,10 +289,12 @@ sporz/
 ├── gradle/libs.versions.toml # single version catalog
 ├── engine/                   # pure Kotlin: rules, state machine, win detection (JUnit 5)
 ├── app/                      # Android app (Compose, Room, Ktor client)
+│   └── …/ui/theme, ui/components  # design system (A4); debug builds show it in « Catalogue du design »
 ├── web/                      # v2: web player app (stack: OPEN-1)
 ├── docs/
 │   ├── openapi.yaml          # API contract
-│   └── rules.md              # final rules (ticket A1)
+│   ├── rules.md              # final rules (ticket A1)
+│   └── licenses/             # third-party licences (Barlow fonts: SIL OFL 1.1)
 └── design.html               # UI reference
 ```
 
@@ -312,7 +315,7 @@ Tickets are grouped in epics, in a suggested order. **Size**: S ≈ ½ day, M �
 | A1 | ✅ Write the final rules in [`docs/rules.md`](docs/rules.md) from the decisions DEC-1 to DEC-7, including the role suggestion table per player count (7 to 20). | S | — |
 | A2 | ✅ Create the project from scratch: `git` repository, Gradle multi-module build (`:app`, `:engine`), version catalog, package `io.github.cyprienj.sporz` (DEC-21), backend URL per build type (DEC-18), min SDK, `.gitignore`, CI (GitHub Actions: build + unit tests + lint). | M | — |
 | A3 | ✅ Set up the Android app skeleton: **Jetpack Compose**, Navigation Compose, single activity, dependency injection (Hilt), empty screens for every route of the design. | M | A2 |
-| A4 | **Design system**: colors, typography (Barlow / Barlow Condensed bundled), components (primary/secondary card buttons, stepper −/+, toggle, chips, player row with avatar initial, state badge, bottom tab bar *Phase / Joueurs / Journal*, dark "secret" surfaces). | M | A3 |
+| A4 | ✅ **Design system**: colors, typography (Barlow / Barlow Condensed bundled), components (primary/secondary card buttons, stepper −/+, toggle, chips, player row with avatar initial, state badge, bottom tab bar *Phase / Joueurs / Journal*, "secret" surfaces), light and dark themes (DEC-25). | M | A3 |
 | A5 | Set up the `:engine` module (pure Kotlin, kotlinx.serialization, JUnit 5). | S | A2 |
 
 #### EPIC B — Rules engine (`:engine`)

@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Dark theme: SporzPalette.NightBackground -->
+    <color name="window_background">#0D151C</color>
+</resources>

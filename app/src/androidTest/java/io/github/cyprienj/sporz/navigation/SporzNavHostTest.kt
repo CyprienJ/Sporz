@@ -26,7 +26,8 @@ class SporzNavHostTest {
     }
 
     private fun assertOn(@StringRes title: Int) {
-        rule.onNodeWithText(text(title)).assertIsDisplayed()
+        // Screen titles are uppercase in the design.
+        rule.onNodeWithText(text(title), ignoreCase = true).assertIsDisplayed()
     }
 
     private fun pressBack() {
@@ -81,6 +82,14 @@ class SporzNavHostTest {
         assertOn(R.string.screen_vote)
         click(R.string.action_confirm)
         assertOn(R.string.screen_my_role)
+    }
+
+    @Test
+    fun designCatalogOpensInDebugBuilds() {
+        click(R.string.screen_design_catalog)
+        assertOn(R.string.screen_design_catalog)
+        pressBack()
+        assertOn(R.string.screen_home)
     }
 
     @Test

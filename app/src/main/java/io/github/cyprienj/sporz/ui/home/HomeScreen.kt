@@ -12,6 +12,7 @@ fun HomeScreen(
     onJoinGame: () -> Unit,
     onOpenRoleGuide: () -> Unit,
     onOpenRecentGames: () -> Unit,
+    onOpenDesignCatalog: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     PlaceholderScreen(
@@ -23,6 +24,6 @@ fun HomeScreen(
             PlaceholderAction(R.string.action_join_game, onJoinGame),
             PlaceholderAction(R.string.action_rules_and_roles, onOpenRoleGuide),
             PlaceholderAction(R.string.screen_recent_games, onOpenRecentGames),
-        ),
+        ) + listOfNotNull(onOpenDesignCatalog?.let { PlaceholderAction(R.string.screen_design_catalog, it) }),
     )
 }

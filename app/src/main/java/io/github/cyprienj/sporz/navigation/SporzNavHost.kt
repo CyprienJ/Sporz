@@ -6,6 +6,8 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import io.github.cyprienj.sporz.BuildConfig
+import io.github.cyprienj.sporz.ui.catalog.DesignCatalogScreen
 import io.github.cyprienj.sporz.ui.end.GameEndScreen
 import io.github.cyprienj.sporz.ui.gm.game.DayScreen
 import io.github.cyprienj.sporz.ui.gm.game.JournalScreen
@@ -38,9 +40,13 @@ fun SporzNavHost(
                 onJoinGame = { navController.navigate(Join) },
                 onOpenRoleGuide = { navController.navigate(RoleGuide) },
                 onOpenRecentGames = { navController.navigate(RecentGames) },
+                onOpenDesignCatalog = if (BuildConfig.DEBUG) {
+                    { navController.navigate(DesignCatalog) }
+                } else null,
             )
         }
         composable<RoleGuide> { RoleGuideScreen() }
+        composable<DesignCatalog> { DesignCatalogScreen(onBack = { navController.popBackStack() }) }
         composable<RecentGames> { RecentGamesScreen() }
         composable<GameEnd> {
             GameEndScreen(

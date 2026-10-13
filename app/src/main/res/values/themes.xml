@@ -2,6 +2,6 @@
 <resources>
     <!-- Window theme only; the UI theme is in Compose (ticket A4). -->
     <style name="Theme.Sporz" parent="android:Theme.Material.Light.NoActionBar">
-        <item name="android:windowBackground">@color/navy</item>
+        <item name="android:windowBackground">@color/window_background</item>
     </style>
 </resources>

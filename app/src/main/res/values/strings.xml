@@ -3,6 +3,7 @@
 
     <!-- Placeholder screens (removed once each screen is built) -->
     <string name="placeholder_design_board">Écran à venir · design.html : %1$s</string>
+    <string name="screen_design_catalog">Catalogue du design</string>
 
     <!-- Screen titles -->
     <string name="screen_home">Accueil</string>
@@ -24,7 +25,13 @@
     <string name="screen_night_action">Action de nuit</string>
     <string name="screen_vote">Vote</string>
 
+    <!-- Common -->
+    <string name="action_back">Retour</string>
+    <string name="tag_offline">Hors ligne</string>
+    <string name="state_unavailable">indisponible</string>
+
     <!-- Tabs -->
+    <string name="tab_phase">Phase</string>
     <string name="tab_players">Joueurs</string>
     <string name="tab_journal">Journal</string>
 

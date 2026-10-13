@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
 @Serializable data object RoleGuide
 @Serializable data object RecentGames
 @Serializable data object GameEnd
+@Serializable data object DesignCatalog // debug builds only
 
 // Game Master: setup
 @Serializable data object GameMode
