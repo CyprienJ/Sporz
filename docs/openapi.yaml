@@ -783,15 +783,33 @@ components:
         variants: { $ref: '#/components/schemas/Variants' }
     CompositionValidation:
       type: object
-      required: [valid, total, playerCount]
+      required: [valid, playerCount, astronauts, problems]
       properties:
-        valid: { type: boolean }
-        total: { type: integer }
+        valid: { type: boolean, description: True when there is no error (warnings allowed). }
         playerCount: { type: integer }
-        astronauts: { type: integer }
+        astronauts: { type: integer, description: Negative when too many roles are chosen (R-SET-3). }
         problems:
           type: array
-          items: { type: string }
+          items: { $ref: '#/components/schemas/CompositionProblem' }
+    CompositionProblem:
+      type: object
+      description: |
+        One problem of a composition (rules §2). Only `hackerWithoutTarget`
+        is a warning; every other type is an error that prevents the deal.
+        Clients write their own sentence for each type.
+      required: [type]
+      properties:
+        type:
+          type: string
+          enum: [playerCount, roleCount, tooManyRoles, negativeGenomeCount, tooManyGenomes, hackerWithoutTarget]
+        playerCount: { type: integer, description: "playerCount" }
+        role: { $ref: '#/components/schemas/Role' }
+        count: { type: integer, description: "roleCount" }
+        min: { type: integer, description: "playerCount, roleCount" }
+        max: { type: integer, description: "playerCount, roleCount" }
+        missingSeats: { type: integer, description: "tooManyRoles: chosen roles − players" }
+        requested: { type: integer, description: "tooManyGenomes: extra hosts + resistants" }
+        available: { type: integer, description: "tooManyGenomes: players neither base mutant nor doctor" }
 
     # ---------- Players ----------
     PublicPlayer:
