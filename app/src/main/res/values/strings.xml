@@ -350,6 +350,19 @@
     <string name="journal_end_none">Aucun survivant</string>
     <string name="journal_end_aborted">Partie interrompue</string>
 
+    <!-- End of game -->
+    <string name="end_overline">Fin de partie · %1$s</string>
+    <string name="end_reason_healthy">Tous les mutants ont été éliminés ou guéris.</string>
+    <string name="end_reason_mutants">Tous les sains ont été mutés ou éliminés.</string>
+    <string name="end_reason_none">Plus personne n’est en vie à bord.</string>
+    <string name="end_reason_aborted">La partie a été arrêtée par le MJ.</string>
+    <string name="end_revelations">Révélations</string>
+    <string name="end_role_genome">%1$s · %2$s</string>
+    <string name="fate_alive">En vie</string>
+    <string name="fate_ejected">Éjecté J%1$d</string>
+    <string name="fate_dead">Mort N%1$d</string>
+    <string name="fate_healed">Guéri N%1$d</string>
+
     <!-- Actions (labels from design.html) -->
     <string name="action_create_game">Créer une partie</string>
     <string name="action_join_game">Rejoindre une partie</string>

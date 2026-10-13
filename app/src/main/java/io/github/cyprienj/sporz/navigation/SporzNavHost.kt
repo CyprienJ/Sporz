@@ -8,7 +8,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import io.github.cyprienj.sporz.BuildConfig
 import io.github.cyprienj.sporz.ui.catalog.DesignCatalogScreen
-import io.github.cyprienj.sporz.ui.end.GameEndScreen
+import io.github.cyprienj.sporz.ui.end.GameEndRoute
 import io.github.cyprienj.sporz.ui.gm.game.DayRoute
 import io.github.cyprienj.sporz.ui.gm.game.JournalRoute
 import io.github.cyprienj.sporz.ui.gm.game.NightRoute
@@ -49,8 +49,8 @@ fun SporzNavHost(
         composable<DesignCatalog> { DesignCatalogScreen(onBack = { navController.popBackStack() }) }
         composable<RecentGames> { RecentGamesScreen() }
         composable<GameEnd> {
-            GameEndScreen(
-                onReplaySameCrew = { navController.startFresh(Lobby) },
+            GameEndRoute(
+                onReplaySameCrew = { navController.navigate(Composition) { popUpTo(Home) } },
                 onOpenJournal = { navController.navigate(Journal) },
                 onBackHome = { navController.backToHome() },
             )

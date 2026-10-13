@@ -99,6 +99,18 @@ class GameSession @Inject constructor() {
         _announced.value = game.players.map { it.id }.toSet()
     }
 
+    /**
+     * "Rejouer avec le même équipage": a new setup with the same players (ids
+     * kept), composition, settings and mode; the finished game is forgotten.
+     */
+    fun replaySameCrew() {
+        val game = checkNotNull(_game.value) { "No game to replay" }
+        val mode = _draft.value?.mode ?: GameMode.Offline
+        _draft.value = SetupDraft(mode, game.players.map { Seat(it.id, it.name) }, game.composition, game.settings)
+        _game.value = null
+        _announced.value = emptySet()
+    }
+
     /** Applies a command of the running game (night steps, votes…) and keeps the result. */
     fun updateGame(command: (GameState) -> GameState): GameState {
         val game = checkNotNull(_game.value) { "No game in progress" }
