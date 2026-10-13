@@ -316,7 +316,7 @@ Tickets are grouped in epics, in a suggested order. **Size**: S ≈ ½ day, M �
 | A2 | ✅ Create the project from scratch: `git` repository, Gradle multi-module build (`:app`, `:engine`), version catalog, package `io.github.cyprienj.sporz` (DEC-21), backend URL per build type (DEC-18), min SDK, `.gitignore`, CI (GitHub Actions: build + unit tests + lint). | M | — |
 | A3 | ✅ Set up the Android app skeleton: **Jetpack Compose**, Navigation Compose, single activity, dependency injection (Hilt), empty screens for every route of the design. | M | A2 |
 | A4 | ✅ **Design system**: colors, typography (Barlow / Barlow Condensed bundled), components (primary/secondary card buttons, stepper −/+, toggle, chips, player row with avatar initial, state badge, bottom tab bar *Phase / Joueurs / Journal*, "secret" surfaces), light and dark themes (DEC-25). | M | A3 |
-| A5 | Set up the `:engine` module (pure Kotlin, kotlinx.serialization, JUnit 5). | S | A2 |
+| A5 | ✅ Set up the `:engine` module (pure Kotlin, kotlinx.serialization, JUnit 5). | S | A2 |
 
 #### EPIC B — Rules engine (`:engine`)
 
