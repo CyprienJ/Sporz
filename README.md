@@ -283,6 +283,7 @@ Nothing exists yet; the project is created in EPIC A with this layout:
 
 ```
 sporz/
+├── .github/workflows/ci.yml  # build + unit tests + lint
 ├── settings.gradle.kts       # includes :app, :engine
 ├── gradle/libs.versions.toml # single version catalog
 ├── engine/                   # pure Kotlin: rules, state machine, win detection (JUnit 5)
@@ -309,7 +310,7 @@ Tickets are grouped in epics, in a suggested order. **Size**: S ≈ ½ day, M �
 | ID | Ticket | Size | Depends |
 |---|---|---|---|
 | A1 | ✅ Write the final rules in [`docs/rules.md`](docs/rules.md) from the decisions DEC-1 to DEC-7, including the role suggestion table per player count (7 to 20). | S | — |
-| A2 | Create the project from scratch: `git` repository, Gradle multi-module build (`:app`, `:engine`), version catalog, package `io.github.cyprienj.sporz` (DEC-21), backend URL per build type (DEC-18), min SDK, `.gitignore`, CI (GitHub Actions: build + unit tests + lint). | M | — |
+| A2 | ✅ Create the project from scratch: `git` repository, Gradle multi-module build (`:app`, `:engine`), version catalog, package `io.github.cyprienj.sporz` (DEC-21), backend URL per build type (DEC-18), min SDK, `.gitignore`, CI (GitHub Actions: build + unit tests + lint). | M | — |
 | A3 | Set up the Android app skeleton: **Jetpack Compose**, Navigation Compose, single activity, dependency injection (Hilt), empty screens for every route of the design. | M | A2 |
 | A4 | **Design system**: colors, typography (Barlow / Barlow Condensed bundled), components (primary/secondary card buttons, stepper −/+, toggle, chips, player row with avatar initial, state badge, bottom tab bar *Phase / Joueurs / Journal*, dark "secret" surfaces). | M | A3 |
 | A5 | Set up the `:engine` module (pure Kotlin, kotlinx.serialization, JUnit 5). | S | A2 |
@@ -398,12 +399,26 @@ The backend is built outside this project. These tickets let the app be develope
 
 ## 9. Building
 
-Once EPIC A is done. Requirements: Android Studio (AGP 9.x), JDK 17+, Android SDK 36, a device on API 34+.
+Requirements: Android Studio (or just the Android SDK with platform 36). Gradle runs on **JDK 21**, pinned in `gradle/gradle-daemon-jvm.properties`. If no JDK 21 is installed, Gradle downloads one. The app runs on **Android 8.0 (API 26)** and above.
+
+If you build outside Android Studio, create `local.properties` with `sdk.dir=/path/to/Android/Sdk`.
 
 ```bash
 ./gradlew assembleDebug        # build the app
 ./gradlew test                 # unit tests
+./gradlew lintDebug            # lint (report in app/build/reports/)
 ```
+
+CI (`.github/workflows/ci.yml`) runs the same three commands on every push to `master` and on every pull request.
+
+**Backend URL** (DEC-18): the app reads `BuildConfig.BACKEND_URL`, set from `gradle.properties`:
+
+| Build type | Property | Default |
+|---|---|---|
+| debug (`io.github.cyprienj.sporz.debug`) | `sporz.backendUrl.debug` | `http://10.0.2.2:4010`, the Prism mock on the host machine as seen from the emulator |
+| release | `sporz.backendUrl.release` | placeholder `https://api.sporz.example/v1` |
+
+Put your real server address in `~/.gradle/gradle.properties` (or pass `-Psporz.backendUrl.release=…`) so it does not end up in the repository.
 
 Mock backend for manual testing (ticket D2):
 
