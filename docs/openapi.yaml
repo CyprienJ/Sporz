@@ -475,6 +475,18 @@ paths:
     post:
       tags: [Day]
       summary: Close the vote and apply its result (MJ only)
+      description: |
+        With the captain variant, a tie for first place answers
+        `captainMustChoose` and leaves the vote open; call again with the
+        captain's choice among `tiedOptions` (R-DAY-10).
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                captainChoice: { $ref: '#/components/schemas/Ballot' }
       responses:
         '200':
           description: Vote result
@@ -1094,10 +1106,16 @@ components:
         round: { type: integer }
         outcome:
           type: string
-          enum: [ejected, blankWins, tie, noVotes]
+          enum: [ejected, blankWins, tie, noVotes, captainMustChoose]
           description: Relative majority, no threshold (rules R-DAY-9, R-DAY-10).
         ejected: { $ref: '#/components/schemas/PublicPlayer' }
+        votes: { type: integer, description: "ejected: weighted votes of the ejected player (captain counts double)." }
+        revealedRole: { $ref: '#/components/schemas/Role' }
         revealedState: { $ref: '#/components/schemas/PlayerState' }
+        tiedOptions:
+          type: array
+          description: "tie, captainMustChoose: options tied for first place."
+          items: { $ref: '#/components/schemas/Ballot' }
         gameOver: { type: boolean }
 
     # ---------- Journal & end ----------

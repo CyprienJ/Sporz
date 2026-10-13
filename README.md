@@ -328,7 +328,7 @@ Tickets are grouped in epics, in a suggested order. **Size**: S ≈ ½ day, M �
 | B4 | ✅ **Night state machine**: ordered steps, skip dead/absent roles and mutated power holders (DEC-4), configurable call order. | M | B1 |
 | B5 | ✅ Night **action resolution**: mutation (host/resistant rules, a mutated player loses their power, a healed one gets it back — DEC-4), doctors heal/kill (DEC-2), kill, order of resolution, deaths. | M | B4 |
 | B6 | ✅ **Reports**: psychologist, geneticist, IT, hacker (incl. hack-spy variant), spy (what happened to the target). | M | B5 |
-| B7 | **Day & vote**: eligible voters/targets, blank votes, relative majority (DEC-22), ties, captain variant (DEC-5), reveal-on-elimination variant. | M | B1 |
+| B7 | ✅ **Day & vote**: eligible voters/targets, blank votes, relative majority (DEC-22), ties, captain variant (DEC-5), reveal-on-elimination variant. | M | B1 |
 | B8 | **Win detection** (incl. traitor, DEC-7) after each night and each vote. | S | B5, B7 |
 | B9 | **Journal**: every action/result/vote recorded as typed events; serialisable (JSON) game state for save/restore. | S | B5, B7 |
 | B10 | Exhaustive unit tests: full scripted games (e.g. the scenario of the design: Hugo ejected J1, Chloé mutated then healed N2…). | M | B8 |
