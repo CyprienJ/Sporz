@@ -1,0 +1,1156 @@
+openapi: 3.1.0
+info:
+  title: Sporz game server API
+  version: 0.1.0
+  description: |
+    Server hosting the multiplayer (online and semi-online) games of the Sporz
+    Game Master assistant. The server is authoritative: it holds the hidden
+    state of each game and only sends each client what it is allowed to see.
+
+    **Authentication.** There are no accounts. Creating a game returns a
+    Game Master (MJ) token; joining a game returns a player token. Send it as
+    `Authorization: Bearer <token>`. Tokens expire with the game.
+
+    **Real time.** Commands go through this REST API. State changes are pushed
+    on a WebSocket (`GET /games/{gameId}/events`); see the README for the
+    event catalogue.
+
+    **Errors.** Every error uses the `Error` schema with a stable `code`.
+servers:
+  - url: https://api.sporz.example/v1
+    description: Production (to be decided)
+  - url: http://localhost:8080/v1
+    description: Local development
+
+tags:
+  - name: Game
+  - name: Lobby
+  - name: Setup
+  - name: Player
+  - name: Night
+  - name: Day
+  - name: Game Master views
+  - name: End
+  - name: Reference
+  - name: Realtime
+
+security:
+  - bearerAuth: []
+
+paths:
+  /games:
+    post:
+      tags: [Game]
+      summary: Create a game (becomes its Game Master)
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateGameRequest' }
+      responses:
+        '201':
+          description: Game created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GameCreated' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+
+  /games/{code}/preview:
+    get:
+      tags: [Game]
+      summary: Check a game code before joining
+      description: Public endpoint used by the *Rejoindre* screen. Never returns hidden information.
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Code'
+      responses:
+        '200':
+          description: Game found
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GamePreview' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+
+  /games/{code}/join:
+    post:
+      tags: [Lobby]
+      summary: Join a game with a nickname
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/Code'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/JoinRequest' }
+      responses:
+        '201':
+          description: Joined
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/JoinResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+        '409':
+          description: Name already taken, lobby closed (roles already dealt) or game full
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+        '429': { $ref: '#/components/responses/TooManyRequests' }
+
+  /games/{gameId}:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    get:
+      tags: [Game]
+      summary: Current game state, as seen by the caller
+      description: |
+        Returns a `GameMasterView` for the MJ token and a `PlayerView` for a
+        player token. Clients call this after (re)connecting to resynchronise.
+      responses:
+        '200':
+          description: Game state
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: '#/components/schemas/GameMasterView'
+                  - $ref: '#/components/schemas/PlayerView'
+                discriminator:
+                  propertyName: viewer
+                  mapping:
+                    gameMaster: '#/components/schemas/GameMasterView'
+                    player: '#/components/schemas/PlayerView'
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [Game]
+      summary: Abort and delete the game (MJ only)
+      responses:
+        '204': { description: 'Deleted; `game.ended` is pushed with reason `aborted`' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /games/{gameId}/players/offline:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    post:
+      tags: [Lobby]
+      summary: Add a player without a phone (MJ only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/JoinRequest' }
+      responses:
+        '201':
+          description: Offline player added
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/PublicPlayer' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /games/{gameId}/players/{playerId}:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+      - $ref: '#/components/parameters/PlayerId'
+    delete:
+      tags: [Lobby]
+      summary: Remove a player (MJ) or leave the game (the player themself)
+      description: Only allowed in the lobby phase.
+      responses:
+        '204': { description: Removed }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /games/{gameId}/settings:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    put:
+      tags: [Setup]
+      summary: Replace the automation settings (MJ only)
+      description: Can be changed at any time; takes effect from the next step.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/GameSettings' }
+      responses:
+        '200':
+          description: Settings saved
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GameSettings' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /games/{gameId}/composition:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    put:
+      tags: [Setup]
+      summary: Set roles, genomes and variants (MJ only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Composition' }
+      responses:
+        '200':
+          description: Composition saved, with validation result
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/CompositionValidation' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /games/{gameId}/composition/suggestion:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    get:
+      tags: [Setup]
+      summary: Suggested composition for the current number of players (MJ only)
+      responses:
+        '200':
+          description: Suggested composition
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Composition' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /games/{gameId}/deal:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    post:
+      tags: [Setup]
+      summary: Randomly draw and distribute roles and genomes (MJ only)
+      description: |
+        Closes the lobby. Each connected player receives `role.assigned`.
+        Returns the full secret board to the MJ so offline roles can be
+        announced in private.
+      responses:
+        '200':
+          description: Roles dealt
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/SecretPlayer' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409':
+          description: Composition invalid or roles already dealt
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /games/{gameId}/players/{playerId}/announced:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+      - $ref: '#/components/parameters/PlayerId'
+    post:
+      tags: [Setup]
+      summary: Mark an offline player's role as announced (MJ only)
+      responses:
+        '204': { description: Marked as announced }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /games/{gameId}/me:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    get:
+      tags: [Player]
+      summary: The caller's own role card and notebook (player only)
+      responses:
+        '200':
+          description: Role card
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/RoleCard' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409':
+          description: Roles not dealt yet
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /games/{gameId}/me/role-seen:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    post:
+      tags: [Player]
+      summary: Acknowledge that the role has been read (player only)
+      description: Turns the MJ's distribution status from `sent` to `seen`.
+      responses:
+        '204': { description: Acknowledged }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /games/{gameId}/night/start:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    post:
+      tags: [Night]
+      summary: Start the next night (MJ only)
+      description: Allowed after the distribution (night 1) or after a closed vote.
+      responses:
+        '200':
+          description: Night started
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/NightState' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /games/{gameId}/night:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    get:
+      tags: [Night]
+      summary: Current night state
+      description: |
+        The MJ receives every step with choices made so far. A player only
+        receives the step they are concerned by (if it is their turn).
+      responses:
+        '200':
+          description: Night state
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/NightState' }
+        '409':
+          description: Not currently night
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /games/{gameId}/night/actions:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    post:
+      tags: [Night]
+      summary: Submit a night action
+      description: |
+        A player submits their own action for the current step (when *night
+        actions on phone* is enabled). The MJ can submit on behalf of any
+        actor, typically offline players, by setting `actorId`.
+        For collective steps (mutants, doctors) each actor submits; the step
+        choice is the agreed one or is settled by the MJ on validation.
+        An action cannot be changed once confirmed.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/NightActionRequest' }
+      responses:
+        '200':
+          description: Action recorded
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/NightAction' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409':
+          description: Not this actor's turn, action already confirmed, or invalid target
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /games/{gameId}/night/steps/{stepId}/validate:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+      - name: stepId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Night]
+      summary: Validate a step and move to the next one (MJ only)
+      description: |
+        Resolves the step with the given decision (or with the actors'
+        choices if omitted). Validating the last step resolves the night and
+        moves the game to the day phase.
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/StepDecision' }
+      responses:
+        '200':
+          description: Updated night state (or day state when the night is over)
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/NightState' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /games/{gameId}/night/reports/{reportId}/send:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+      - name: reportId
+        in: path
+        required: true
+        schema: { type: string }
+    post:
+      tags: [Night]
+      summary: Send a pending report to its player (MJ only)
+      description: Only needed when `autoReports` is off (*Assisté* preset).
+      responses:
+        '204': { description: 'Report sent (`night.report` pushed to the player)' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '404': { $ref: '#/components/responses/NotFound' }
+
+  /games/{gameId}/day/vote/open:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    post:
+      tags: [Day]
+      summary: Open the vote of the current day (MJ only)
+      responses:
+        '200':
+          description: Vote opened
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VoteState' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /games/{gameId}/day/vote:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    get:
+      tags: [Day]
+      summary: Current vote state
+      description: |
+        The MJ sees each ballot. Players see the eligible targets, their own
+        ballot and, if `liveTally` is on, anonymous counts.
+      responses:
+        '200':
+          description: Vote state
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VoteState' }
+
+  /games/{gameId}/day/votes/me:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    put:
+      tags: [Day]
+      summary: Cast or change one's own vote (living player only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Ballot' }
+      responses:
+        '204': { description: Vote recorded }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409':
+          description: Vote closed, voter dead, or blank vote not allowed
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /games/{gameId}/day/votes/{playerId}:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+      - $ref: '#/components/parameters/PlayerId'
+    put:
+      tags: [Day]
+      summary: Enter a vote on behalf of a player (MJ only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/Ballot' }
+      responses:
+        '204': { description: Vote recorded }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /games/{gameId}/day/vote/close:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    post:
+      tags: [Day]
+      summary: Close the vote and apply its result (MJ only)
+      responses:
+        '200':
+          description: Vote result
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/VoteResult' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /games/{gameId}/day/vote/cancel:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    post:
+      tags: [Day]
+      summary: Cancel the open vote and discard ballots (MJ only)
+      responses:
+        '204': { description: Vote cancelled }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /games/{gameId}/players:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    get:
+      tags: [Game Master views]
+      summary: Full secret board of the crew (MJ only)
+      parameters:
+        - name: filter
+          in: query
+          schema:
+            type: string
+            enum: [all, alive, mutated, offline, dead]
+            default: all
+      responses:
+        '200':
+          description: Players
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/SecretPlayer' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+
+  /games/{gameId}/journal:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    get:
+      tags: [Game Master views]
+      summary: Chronological journal of the game
+      description: Full journal for the MJ (and for everyone once the game is over); public events only for players during the game.
+      responses:
+        '200':
+          description: Journal, most recent phase first
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/JournalPhase' }
+
+  /games/{gameId}/result:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    get:
+      tags: [End]
+      summary: Final result and revelations
+      responses:
+        '200':
+          description: Result
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GameResult' }
+        '409':
+          description: Game not over
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/Error' }
+
+  /games/{gameId}/rematch:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    post:
+      tags: [End]
+      summary: Restart a lobby with the same crew (MJ only)
+      description: Keeps the code, the players and their tokens; resets roles, journal and phase.
+      responses:
+        '200':
+          description: New lobby
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/GameMasterView' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '409': { $ref: '#/components/responses/Conflict' }
+
+  /roles:
+    get:
+      tags: [Reference]
+      summary: Role and genome catalogue (for the role guide)
+      security: []
+      responses:
+        '200':
+          description: Catalogue
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/RoleInfo' }
+
+  /games/{gameId}/events:
+    parameters:
+      - $ref: '#/components/parameters/GameId'
+    get:
+      tags: [Realtime]
+      summary: WebSocket stream of game events
+      description: |
+        Upgrade to WebSocket (`Connection: Upgrade`, `Upgrade: websocket`).
+        The token can be passed as `?token=` because browsers cannot set
+        headers on WebSocket requests. Each message is an `Event`. The server
+        sends a ping every 20 s; clients that miss 3 pings are marked
+        disconnected (`connection.changed` sent to the MJ).
+      parameters:
+        - name: token
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        '101': { description: Switching protocols }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      description: Opaque per-game token (MJ or player).
+
+  parameters:
+    GameId:
+      name: gameId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    PlayerId:
+      name: playerId
+      in: path
+      required: true
+      schema: { type: string, format: uuid }
+    Code:
+      name: code
+      in: path
+      required: true
+      description: 4-character game code, case-insensitive (e.g. `KX7Q`).
+      schema: { type: string, pattern: '^[A-Za-z0-9]{4}$' }
+
+  responses:
+    BadRequest:
+      description: Invalid request body
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Unauthorized:
+      description: Missing or invalid token
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Forbidden:
+      description: Token valid but not allowed (e.g. player calling an MJ endpoint)
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    NotFound:
+      description: Game or resource not found
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Conflict:
+      description: Not allowed in the current phase
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    TooManyRequests:
+      description: Rate limit exceeded
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+
+  schemas:
+    # ---------- Enums ----------
+    Role:
+      type: string
+      enum: [baseMutant, doctor, psychologist, geneticist, computerScientist, hacker, spy, traitor, astronaut]
+      description: |
+        baseMutant = Mutant de base, doctor = Médecin, psychologist = Psychologue,
+        geneticist = Généticien, computerScientist = Informaticien, hacker = Hacker,
+        spy = Espion, traitor = Traître, astronaut = Astronaute.
+    Genome:
+      type: string
+      enum: [host, normal, resistant]
+    Camp:
+      type: string
+      enum: [healthy, mutant]
+    PlayerState:
+      type: string
+      enum: [healthy, mutated, dead]
+    GameMode:
+      type: string
+      enum: [offline, semiOnline, online]
+    Phase:
+      type: string
+      enum: [lobby, distribution, night, day, ended]
+    AutomationPreset:
+      type: string
+      enum: [manual, assisted, automatic, custom]
+
+    Error:
+      type: object
+      required: [code, message]
+      properties:
+        code:
+          type: string
+          examples: [GAME_NOT_FOUND, NAME_TAKEN, WRONG_PHASE, NOT_YOUR_TURN, INVALID_TARGET, COMPOSITION_INVALID]
+        message: { type: string }
+
+    # ---------- Game creation & lobby ----------
+    CreateGameRequest:
+      type: object
+      required: [gameMasterName, mode]
+      properties:
+        gameMasterName: { type: string, minLength: 1, maxLength: 24, examples: [Thomas] }
+        mode: { $ref: '#/components/schemas/GameMode' }
+        settings: { $ref: '#/components/schemas/GameSettings' }
+    GameCreated:
+      type: object
+      required: [gameId, code, joinUrl, gameMasterToken]
+      properties:
+        gameId: { type: string, format: uuid }
+        code: { type: string, examples: [KX7Q] }
+        joinUrl: { type: string, format: uri, description: Encoded in the lobby QR code. }
+        gameMasterToken: { type: string }
+    GamePreview:
+      type: object
+      required: [code, gameMasterName, phase, playerCount, joinable]
+      properties:
+        code: { type: string }
+        gameMasterName: { type: string }
+        phase: { $ref: '#/components/schemas/Phase' }
+        playerCount: { type: integer }
+        joinable: { type: boolean }
+    JoinRequest:
+      type: object
+      required: [name]
+      properties:
+        name: { type: string, minLength: 1, maxLength: 24, examples: [Jules] }
+    JoinResponse:
+      type: object
+      required: [gameId, playerId, playerToken]
+      properties:
+        gameId: { type: string, format: uuid }
+        playerId: { type: string, format: uuid }
+        playerToken: { type: string }
+
+    # ---------- Settings & composition ----------
+    GameSettings:
+      type: object
+      description: Automation settings (screen *Paramètres*). Unspecified fields take the preset's value.
+      properties:
+        preset: { $ref: '#/components/schemas/AutomationPreset' }
+        nightActionsOnPhone: { type: boolean, description: Players pick their night target themselves. }
+        guidedCall: { type: boolean, description: MJ sees the text to read to wake each role. }
+        vibrate: { type: boolean, description: "Phone vibrates when it is the player's turn." }
+        autoReports: { type: boolean, description: Reports are sent without MJ validation. }
+        notifyMutation: { type: boolean, description: The mutated player is notified on their phone. }
+        notebook: { type: boolean, description: Each player keeps a history of their actions and results. }
+        turnReminder: { type: boolean, description: Shows what the role must do this night. }
+        voteOnPhone: { type: boolean }
+        autoCloseVote: { type: boolean, description: Close the vote once all living players voted. }
+        liveTally: { type: boolean, description: Players see anonymous counts in real time. }
+        autoHideRole: { type: boolean, description: Role screen hides after 10 seconds. }
+        debateTimerMinutes: { type: integer, minimum: 0, maximum: 20, description: 0 = off. }
+        nightOrder:
+          type: array
+          items: { $ref: '#/components/schemas/Role' }
+          examples: [[baseMutant, doctor, computerScientist, psychologist, geneticist, hacker, spy]]
+    Variants:
+      type: object
+      properties:
+        hackerCanHackSpy: { type: boolean, default: false }
+        revealOnElimination: { type: boolean, default: true }
+        blankVoteAllowed: { type: boolean, default: true }
+        captain: { type: boolean, default: false, description: Elect a captain with a double vote. }
+    Composition:
+      type: object
+      required: [roles, genomes, variants]
+      properties:
+        roles:
+          type: object
+          description: Number of players per role. `baseMutant` is always 1; `astronaut` is computed by the server to fill the crew.
+          additionalProperties: { type: integer, minimum: 0 }
+          examples:
+            - { baseMutant: 1, doctor: 2, psychologist: 1, geneticist: 1, computerScientist: 1, hacker: 1, spy: 1, traitor: 0 }
+        genomes:
+          type: object
+          description: Number of extra hosts (besides the base mutant) and of resistants. Others are normal.
+          properties:
+            hosts: { type: integer, minimum: 0 }
+            resistants: { type: integer, minimum: 0 }
+        variants: { $ref: '#/components/schemas/Variants' }
+    CompositionValidation:
+      type: object
+      required: [valid, total, playerCount]
+      properties:
+        valid: { type: boolean }
+        total: { type: integer }
+        playerCount: { type: integer }
+        astronauts: { type: integer }
+        problems:
+          type: array
+          items: { type: string }
+
+    # ---------- Players ----------
+    PublicPlayer:
+      type: object
+      required: [id, name, offline, alive]
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        offline: { type: boolean, description: Added by the MJ, no phone. }
+        connected: { type: boolean }
+        alive: { type: boolean }
+        captain: { type: boolean }
+        revealedRole:
+          description: Set once the player is eliminated and the reveal variant is on.
+          oneOf:
+            - $ref: '#/components/schemas/Role'
+            - type: 'null'
+    SecretPlayer:
+      allOf:
+        - $ref: '#/components/schemas/PublicPlayer'
+        - type: object
+          required: [role, genome, state]
+          properties:
+            role: { $ref: '#/components/schemas/Role' }
+            genome: { $ref: '#/components/schemas/Genome' }
+            state: { $ref: '#/components/schemas/PlayerState' }
+            camp: { $ref: '#/components/schemas/Camp' }
+            distribution:
+              type: string
+              enum: [pending, sent, seen, announced]
+              description: sent/seen for phones, pending/announced for offline players.
+
+    # ---------- Views ----------
+    GameMasterView:
+      type: object
+      required: [viewer, gameId, code, mode, phase, players, settings]
+      properties:
+        viewer: { type: string, const: gameMaster }
+        gameId: { type: string, format: uuid }
+        code: { type: string }
+        mode: { $ref: '#/components/schemas/GameMode' }
+        phase: { $ref: '#/components/schemas/Phase' }
+        round: { type: integer, description: Night/day number. }
+        players:
+          type: array
+          items: { $ref: '#/components/schemas/SecretPlayer' }
+        settings: { $ref: '#/components/schemas/GameSettings' }
+        composition: { $ref: '#/components/schemas/Composition' }
+        night: { $ref: '#/components/schemas/NightState' }
+        vote: { $ref: '#/components/schemas/VoteState' }
+    PlayerView:
+      type: object
+      required: [viewer, gameId, code, gameMasterName, phase, players, me]
+      properties:
+        viewer: { type: string, const: player }
+        gameId: { type: string, format: uuid }
+        code: { type: string }
+        gameMasterName: { type: string }
+        phase: { $ref: '#/components/schemas/Phase' }
+        round: { type: integer }
+        players:
+          type: array
+          items: { $ref: '#/components/schemas/PublicPlayer' }
+        me:
+          description: Own role card, null before the deal.
+          oneOf:
+            - $ref: '#/components/schemas/RoleCard'
+            - type: 'null'
+        yourTurn:
+          description: Present when the player must act this night.
+          oneOf:
+            - $ref: '#/components/schemas/NightStep'
+            - type: 'null'
+        vote: { $ref: '#/components/schemas/VoteState' }
+    RoleCard:
+      type: object
+      required: [playerId, role, camp, genome, state]
+      properties:
+        playerId: { type: string, format: uuid }
+        role: { $ref: '#/components/schemas/Role' }
+        camp: { $ref: '#/components/schemas/Camp' }
+        genome: { $ref: '#/components/schemas/Genome' }
+        state: { $ref: '#/components/schemas/PlayerState' }
+        description: { type: string }
+        teammates:
+          type: array
+          description: Fellow mutants (for mutants) or fellow doctors (for doctors).
+          items: { $ref: '#/components/schemas/PublicPlayer' }
+        reports:
+          type: array
+          description: Notebook of received reports (if `notebook` is on).
+          items: { $ref: '#/components/schemas/Report' }
+
+    # ---------- Night ----------
+    NightActionType:
+      type: string
+      enum: [mutate, kill, heal, inspectState, inspectGenome, countMutants, hack, spy, none]
+    NightStep:
+      type: object
+      required: [id, order, role, actors, allowedActions, status]
+      properties:
+        id: { type: string }
+        order: { type: integer }
+        role: { $ref: '#/components/schemas/Role' }
+        actors:
+          type: array
+          description: Players woken at this step.
+          items: { $ref: '#/components/schemas/PublicPlayer' }
+        allowedActions:
+          type: array
+          items: { $ref: '#/components/schemas/NightActionType' }
+        targets:
+          type: array
+          description: Eligible target player ids.
+          items: { type: string, format: uuid }
+        hackableRoles:
+          type: array
+          description: Hacker step only.
+          items: { $ref: '#/components/schemas/Role' }
+        status:
+          type: string
+          enum: [upcoming, waiting, ready, done, skipped]
+        guidedCallText: { type: string, description: 'Text the MJ reads (if `guidedCall`).' }
+        deadline: { type: string, format: date-time }
+        actions:
+          type: array
+          description: Visible to the MJ only.
+          items: { $ref: '#/components/schemas/NightAction' }
+    NightState:
+      type: object
+      required: [round, steps]
+      properties:
+        round: { type: integer }
+        currentStepId: { type: string }
+        steps:
+          type: array
+          items: { $ref: '#/components/schemas/NightStep' }
+        pendingReports:
+          type: array
+          description: Reports awaiting MJ validation (MJ only).
+          items: { $ref: '#/components/schemas/Report' }
+    NightActionRequest:
+      type: object
+      required: [stepId, action]
+      properties:
+        stepId: { type: string }
+        actorId:
+          type: string
+          format: uuid
+          description: MJ only, to act for another (offline) player. Ignored for player tokens.
+        action: { $ref: '#/components/schemas/NightActionType' }
+        targetIds:
+          type: array
+          items: { type: string, format: uuid }
+          maxItems: 2
+        hackedRole:
+          $ref: '#/components/schemas/Role'
+    NightAction:
+      type: object
+      required: [stepId, actorId, action, enteredBy]
+      properties:
+        stepId: { type: string }
+        actorId: { type: string, format: uuid }
+        action: { $ref: '#/components/schemas/NightActionType' }
+        targetIds:
+          type: array
+          items: { type: string, format: uuid }
+        hackedRole: { $ref: '#/components/schemas/Role' }
+        enteredBy:
+          type: string
+          enum: [player, gameMaster]
+        at: { type: string, format: date-time }
+    StepDecision:
+      type: object
+      description: Final choice for the step, overriding the actors' choices.
+      properties:
+        action: { $ref: '#/components/schemas/NightActionType' }
+        targetIds:
+          type: array
+          items: { type: string, format: uuid }
+        hackedRole: { $ref: '#/components/schemas/Role' }
+    Report:
+      type: object
+      required: [id, round, recipientId, kind]
+      properties:
+        id: { type: string }
+        round: { type: integer }
+        recipientId: { type: string, format: uuid }
+        kind:
+          type: string
+          enum: [state, genome, mutantCount, spy, hacked, mutatedNotice]
+        targetId: { type: string, format: uuid }
+        state: { $ref: '#/components/schemas/PlayerState' }
+        genome: { $ref: '#/components/schemas/Genome' }
+        mutantCount: { type: integer }
+        spyEvents:
+          type: array
+          description: What happened to the target (e.g. mutated, healed, inspected).
+          items: { type: string }
+        hackedFrom: { $ref: '#/components/schemas/Role' }
+        sent: { type: boolean }
+
+    # ---------- Day ----------
+    Ballot:
+      type: object
+      required: [targetId]
+      properties:
+        targetId:
+          description: Player to eject, or null for a blank vote.
+          oneOf:
+            - type: string
+              format: uuid
+            - type: 'null'
+    VoteState:
+      type: object
+      required: [round, status]
+      properties:
+        round: { type: integer }
+        status:
+          type: string
+          enum: [notOpened, open, closed, cancelled]
+        eligibleVoters: { type: integer }
+        received: { type: integer }
+        targets:
+          type: array
+          items: { type: string, format: uuid }
+        myBallot: { $ref: '#/components/schemas/Ballot' }
+        tally:
+          type: array
+          description: MJ always; players only if `liveTally`.
+          items:
+            type: object
+            properties:
+              targetId:
+                oneOf:
+                  - type: string
+                    format: uuid
+                  - type: 'null'
+              count: { type: integer }
+        ballots:
+          type: array
+          description: MJ only.
+          items:
+            type: object
+            properties:
+              voterId: { type: string, format: uuid }
+              targetId:
+                oneOf:
+                  - type: string
+                    format: uuid
+                  - type: 'null'
+              enteredBy:
+                type: string
+                enum: [player, gameMaster]
+        announcement:
+          type: object
+          description: What the MJ announces at dawn.
+          properties:
+            deaths:
+              type: array
+              items: { $ref: '#/components/schemas/PublicPlayer' }
+            gameMasterNotes:
+              type: string
+              description: MJ only (e.g. "Chloé a été mutée puis soignée").
+    VoteResult:
+      type: object
+      required: [round, outcome]
+      properties:
+        round: { type: integer }
+        outcome:
+          type: string
+          enum: [ejected, blankWins, tie, noVotes]
+          description: Relative majority, no threshold (rules R-DAY-9, R-DAY-10).
+        ejected: { $ref: '#/components/schemas/PublicPlayer' }
+        revealedState: { $ref: '#/components/schemas/PlayerState' }
+        gameOver: { type: boolean }
+
+    # ---------- Journal & end ----------
+    JournalPhase:
+      type: object
+      required: [title, phase, round, events]
+      properties:
+        title: { type: string, examples: [Nuit 2] }
+        phase:
+          type: string
+          enum: [night, day]
+        round: { type: integer }
+        current: { type: boolean }
+        events:
+          type: array
+          items:
+            type: object
+            required: [who, what]
+            properties:
+              who: { type: string, examples: [Mutants] }
+              what: { type: string, examples: [Mutent Chloé] }
+              at: { type: string, format: date-time }
+    GameResult:
+      type: object
+      required: [winner, reason, players]
+      properties:
+        winner:
+          oneOf:
+            - $ref: '#/components/schemas/Camp'
+            - type: 'null'
+        reason:
+          type: string
+          enum: [allMutantsGone, allHealthyGone, aborted]
+        endedAt:
+          type: object
+          properties:
+            phase: { type: string, enum: [night, day] }
+            round: { type: integer }
+        players:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/SecretPlayer'
+              - type: object
+                properties:
+                  fate: { type: string, examples: [Éjectée J2, Guérie N2, Vivant] }
+
+    # ---------- Reference ----------
+    RoleInfo:
+      type: object
+      required: [role, name, camp, description]
+      properties:
+        role: { $ref: '#/components/schemas/Role' }
+        name: { type: string, examples: [Généticien] }
+        camp: { $ref: '#/components/schemas/Camp' }
+        tag: { type: string, examples: ['Camp sain · chaque nuit'] }
+        description: { type: string }
+
+    # ---------- Realtime ----------
+    Event:
+      type: object
+      required: [type, payload]
+      properties:
+        type:
+          type: string
+          enum:
+            - lobby.updated
+            - game.settingsUpdated
+            - role.assigned
+            - role.seen
+            - phase.changed
+            - night.yourTurn
+            - night.actionSubmitted
+            - night.report
+            - night.mutated
+            - day.announcement
+            - vote.opened
+            - vote.tally
+            - vote.closed
+            - player.eliminated
+            - game.ended
+            - connection.changed
+        payload:
+          type: object
+          description: Depends on `type`, see the README event table.
+        seq:
+          type: integer
+          description: Monotonic sequence number per game, to detect missed events.
