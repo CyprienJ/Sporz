@@ -14,7 +14,7 @@ import io.github.cyprienj.sporz.ui.gm.game.JournalScreen
 import io.github.cyprienj.sporz.ui.gm.game.NightScreen
 import io.github.cyprienj.sporz.ui.gm.game.PlayerBoardScreen
 import io.github.cyprienj.sporz.ui.gm.settings.SettingsScreen
-import io.github.cyprienj.sporz.ui.gm.setup.CompositionScreen
+import io.github.cyprienj.sporz.ui.gm.setup.CompositionRoute
 import io.github.cyprienj.sporz.ui.gm.setup.DistributionScreen
 import io.github.cyprienj.sporz.ui.gm.setup.GameModeRoute
 import io.github.cyprienj.sporz.ui.gm.setup.LobbyRoute
@@ -71,7 +71,10 @@ fun SporzNavHost(
             )
         }
         composable<Composition> {
-            CompositionScreen(onDeal = { navController.navigate(Distribution) })
+            CompositionRoute(
+                onBack = { navController.popBackStack() },
+                onDealt = { navController.navigate(Distribution) },
+            )
         }
         composable<Distribution> {
             // Once the night starts, Back must not return to the setup screens.

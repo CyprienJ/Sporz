@@ -62,7 +62,7 @@ class SporzNavHostTest {
         assertOn(R.string.screen_lobby)
         addSevenPlayers()
         click(R.string.action_choose_roles)
-        assertOn(R.string.screen_composition)
+        assertOn(R.string.composition_title)
         click(R.string.action_deal)
         assertOn(R.string.screen_distribution)
         click(R.string.action_start_first_night)

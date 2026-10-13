@@ -10,7 +10,6 @@
     <string name="screen_recent_games">Parties récentes</string>
     <string name="screen_game_end">Fin de partie</string>
     <string name="screen_lobby">Lobby</string>
-    <string name="screen_composition">Composition des rôles</string>
     <string name="screen_distribution">Distribution des rôles</string>
     <string name="screen_settings">Paramètres</string>
     <string name="screen_night">Nuit</string>
@@ -68,6 +67,55 @@
         <item quantity="other">Encore %1$d joueurs pour commencer (7 minimum)</item>
     </plurals>
 
+    <!-- Roles (design.html, composition screen) -->
+    <string name="role_base_mutant">Mutant de base</string>
+    <string name="role_base_mutant_hint">Hôte · mute ou tue chaque nuit</string>
+    <string name="role_doctor">Médecin</string>
+    <string name="role_doctor_hint">Soigne ou tue</string>
+    <string name="role_psychologist">Psychologue</string>
+    <string name="role_psychologist_hint">Voit si un joueur est muté</string>
+    <string name="role_geneticist">Généticien</string>
+    <string name="role_geneticist_hint">Voit le génome d\'un joueur</string>
+    <string name="role_computer_scientist">Informaticien</string>
+    <string name="role_computer_scientist_hint">Connaît le nombre de mutants</string>
+    <string name="role_hacker">Hacker</string>
+    <string name="role_hacker_hint">Pirate un rapport</string>
+    <string name="role_spy">Espion</string>
+    <string name="role_spy_hint">Voit ce qu\'a subi un joueur</string>
+    <string name="role_traitor">Traître</string>
+    <string name="role_traitor_hint">Sain, joue pour les mutants</string>
+    <string name="role_astronaut">Astronaute</string>
+    <string name="role_astronaut_hint">Complète automatiquement</string>
+
+    <!-- Composition -->
+    <string name="composition_step">Étape 3 sur 3</string>
+    <string name="composition_title">Rôles</string>
+    <plurals name="composition_total">
+        <item quantity="one">%1$d / %2$d joueur</item>
+        <item quantity="other">%1$d / %2$d joueurs</item>
+    </plurals>
+    <string name="composition_genomes">Génomes</string>
+    <string name="composition_hosts">Hôtes</string>
+    <string name="composition_hosts_extra">+ mutant de base</string>
+    <string name="composition_resistants">Résistants</string>
+    <string name="composition_genomes_note">Les autres joueurs ont un génome normal. Tirage aléatoire, indépendant du rôle.</string>
+    <string name="composition_variants">Variantes</string>
+    <string name="variant_hacker_can_hack_spy">Le hacker peut pirater l\'espion</string>
+    <string name="variant_reveal_on_elimination">Révéler rôle et état à l\'élimination</string>
+    <string name="variant_blank_vote">Vote blanc autorisé</string>
+    <string name="variant_captain">Élire un capitaine (voix double)</string>
+    <string name="composition_less">Retirer : %1$s</string>
+    <string name="composition_more">Ajouter : %1$s</string>
+    <string name="composition_error_player_count">Nombre de joueurs : entre %1$d et %2$d.</string>
+    <string name="composition_error_role_count">%1$s : entre %2$d et %3$d.</string>
+    <plurals name="composition_error_too_many_roles">
+        <item quantity="one">%1$d rôle de trop pour le nombre de joueurs.</item>
+        <item quantity="other">%1$d rôles de trop pour le nombre de joueurs.</item>
+    </plurals>
+    <string name="composition_error_negative_genomes">Les nombres de génomes ne peuvent pas être négatifs.</string>
+    <string name="composition_error_too_many_genomes">Trop d\'hôtes et de résistants : %1$d au maximum.</string>
+    <string name="composition_warning_hacker">Le hacker n\'aura aucun rapport à pirater.</string>
+
     <!-- Actions (labels from design.html) -->
     <string name="action_create_game">Créer une partie</string>
     <string name="action_join_game">Rejoindre une partie</string>
@@ -89,6 +137,7 @@
     <string name="action_replay_same_crew">Rejouer avec le même équipage</string>
     <string name="action_open_full_journal">Revoir le journal complet</string>
     <string name="action_add">Ajouter</string>
+    <string name="action_suggest">Suggérer</string>
     <string name="action_save">Enregistrer</string>
     <string name="action_cancel">Annuler</string>
     <string name="action_back_home">Retour à l\'accueil</string>

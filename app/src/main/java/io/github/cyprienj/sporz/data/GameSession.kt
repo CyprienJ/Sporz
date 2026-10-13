@@ -1,5 +1,6 @@
 package io.github.cyprienj.sporz.data
 
+import io.github.cyprienj.sporz.engine.game.GameState
 import io.github.cyprienj.sporz.engine.model.Composition
 import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.engine.model.GameSettings
@@ -12,6 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import java.util.UUID
+import kotlin.random.Random
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -57,6 +59,27 @@ class GameSession @Inject constructor() {
 
     fun removeSeat(id: PlayerId) {
         _draft.update { draft -> draft?.copy(seats = draft.seats.filterNot { it.id == id }) }
+    }
+
+    fun setComposition(composition: Composition) {
+        _draft.value = current().copy(composition = composition)
+    }
+
+    private val _game = MutableStateFlow<GameState?>(null)
+
+    /** The game once the roles are dealt (offline mode: the whole game runs on this phone). */
+    val game: StateFlow<GameState?> = _game.asStateFlow()
+
+    /**
+     * Deals the roles of the current setup and starts the game (rules §2.4).
+     * Dealing again (back from the distribution) replaces the previous deal.
+     *
+     * @throws io.github.cyprienj.sporz.engine.setup.InvalidCompositionException if the composition is not valid.
+     */
+    fun deal(random: Random = Random.Default): GameState {
+        val draft = current()
+        val composition = checkNotNull(draft.composition) { "No composition chosen" }
+        return GameState.start(draft.seats, composition, draft.settings, random).also { _game.value = it }
     }
 
     private fun current(): SetupDraft = _draft.value ?: SetupDraft().also { _draft.value = it }
