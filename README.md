@@ -337,7 +337,7 @@ Tickets are grouped in epics, in a suggested order. **Size**: S ≈ ½ day, M �
 
 | ID | Ticket | Size | Depends |
 |---|---|---|---|
-| C1 | Screen **Accueil**. | S | A4 |
+| C1 | ✅ Screen **Accueil**. | S | A4 |
 | C2 | Screen **Mode de partie** (only *Hors ligne* enabled until Milestone 2). | S | A4 |
 | C3 | Screen **Lobby (offline)**: add / rename / remove players. | S | C2 |
 | C4 | Screen **Composition des rôles** (+ genomes, variants, *Suggérer*, total check). | M | B2, C3 |

@@ -35,6 +35,11 @@
     <string name="tab_players">Joueurs</string>
     <string name="tab_journal">Journal</string>
 
+    <!-- Home -->
+    <string name="home_tagline">L\'assistant du maître du jeu. Distribue les rôles, suis chaque nuit, compte les votes.</string>
+    <string name="home_create_subtitle">Je suis le MJ</string>
+    <string name="home_join_subtitle">Avec un code ou un QR</string>
+
     <!-- Actions (labels from design.html) -->
     <string name="action_create_game">Créer une partie</string>
     <string name="action_join_game">Rejoindre une partie</string>

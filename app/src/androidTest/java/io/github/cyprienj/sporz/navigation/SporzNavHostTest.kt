@@ -22,12 +22,19 @@ class SporzNavHostTest {
     private fun text(@StringRes id: Int) = rule.activity.getString(id)
 
     private fun click(@StringRes label: Int) {
-        rule.onNodeWithText(text(label)).performScrollTo().performClick()
+        val node = rule.onNodeWithText(text(label), ignoreCase = true)
+        // Only screens with a scrollable list need scrolling (the home screen has none).
+        runCatching { node.performScrollTo() }
+        node.performClick()
     }
 
     private fun assertOn(@StringRes title: Int) {
         // Screen titles are uppercase in the design.
         rule.onNodeWithText(text(title), ignoreCase = true).assertIsDisplayed()
+    }
+
+    private fun assertOnHome() {
+        rule.onNodeWithText(text(R.string.action_create_game), ignoreCase = true).assertIsDisplayed()
     }
 
     private fun pressBack() {
@@ -37,7 +44,7 @@ class SporzNavHostTest {
 
     @Test
     fun gameMasterFlow_reachesNightThenBackLeavesTheGame() {
-        assertOn(R.string.screen_home)
+        assertOnHome()
         click(R.string.action_create_game)
         assertOn(R.string.screen_game_mode)
         click(R.string.action_open_lobby)
@@ -51,7 +58,7 @@ class SporzNavHostTest {
 
         // Setup screens are no longer in the back stack.
         pressBack()
-        assertOn(R.string.screen_home)
+        assertOnHome()
     }
 
     @Test
@@ -67,7 +74,7 @@ class SporzNavHostTest {
         assertOn(R.string.screen_night)
 
         pressBack()
-        assertOn(R.string.screen_home)
+        assertOnHome()
     }
 
     @Test
@@ -89,7 +96,7 @@ class SporzNavHostTest {
         click(R.string.screen_design_catalog)
         assertOn(R.string.screen_design_catalog)
         pressBack()
-        assertOn(R.string.screen_home)
+        assertOnHome()
     }
 
     @Test
@@ -97,6 +104,6 @@ class SporzNavHostTest {
         click(R.string.action_join_game)
         click(R.string.action_join_this_game)
         click(R.string.action_leave_game)
-        assertOn(R.string.screen_home)
+        assertOnHome()
     }
 }

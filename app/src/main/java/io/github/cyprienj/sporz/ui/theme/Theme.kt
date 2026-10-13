@@ -91,6 +91,19 @@ fun SecretSurface(
     }
 }
 
+/** Standard area placed inside a secret one (bottom sheet of the home screen). */
+@Composable
+fun StandardSurface(
+    modifier: Modifier = Modifier,
+    shape: Shape = RectangleShape,
+    content: @Composable () -> Unit,
+) {
+    val colors = LocalSporzColorScheme.current.standard
+    ProvideSporzColors(colors) {
+        Box(modifier.background(colors.background, shape)) { content() }
+    }
+}
+
 /** Card that stands out inside a secret area (night action result). */
 @Composable
 fun InsetSurface(
