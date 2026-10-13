@@ -12,7 +12,7 @@ import io.github.cyprienj.sporz.ui.end.GameEndScreen
 import io.github.cyprienj.sporz.ui.gm.game.DayRoute
 import io.github.cyprienj.sporz.ui.gm.game.JournalScreen
 import io.github.cyprienj.sporz.ui.gm.game.NightRoute
-import io.github.cyprienj.sporz.ui.gm.game.PlayerBoardScreen
+import io.github.cyprienj.sporz.ui.gm.game.PlayerBoardRoute
 import io.github.cyprienj.sporz.ui.gm.settings.SettingsRoute
 import io.github.cyprienj.sporz.ui.gm.setup.CompositionRoute
 import io.github.cyprienj.sporz.ui.gm.setup.DistributionRoute
@@ -98,7 +98,12 @@ fun SporzNavHost(
                 onOpenJournal = { navController.navigate(Journal) },
             )
         }
-        composable<PlayerBoard> { PlayerBoardScreen() }
+        composable<PlayerBoard> {
+            PlayerBoardRoute(
+                onBackToPhase = { navController.popBackStack() },
+                onOpenJournal = { navController.navigate(Journal) { popUpTo<PlayerBoard> { inclusive = true } } },
+            )
+        }
         composable<Journal> { JournalScreen() }
 
         // Player

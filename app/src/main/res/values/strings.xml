@@ -11,7 +11,6 @@
     <string name="screen_game_end">Fin de partie</string>
     <string name="screen_lobby">Lobby</string>
     <string name="screen_settings">Paramètres</string>
-    <string name="screen_player_board">Tableau des joueurs</string>
     <string name="screen_journal">Journal</string>
     <string name="screen_join">Rejoindre</string>
     <string name="screen_waiting_room">Salle d\'attente</string>
@@ -302,6 +301,29 @@
     <string name="day_next_night">Lancer la nuit %1$d</string>
     <string name="state_healthy">sain</string>
     <string name="state_mutated">muté</string>
+
+    <!-- Player board -->
+    <string name="board_title">Équipage</string>
+    <plurals name="board_stat_healthy">
+        <item quantity="one">sain</item>
+        <item quantity="other">sains</item>
+    </plurals>
+    <string name="board_stat_mutant">camp mutant</string>
+    <plurals name="board_stat_eliminated">
+        <item quantity="one">éliminé</item>
+        <item quantity="other">éliminés</item>
+    </plurals>
+    <string name="board_filter_all">Tous</string>
+    <string name="board_filter_alive">Vivants</string>
+    <string name="board_filter_mutated">Mutés</string>
+    <string name="board_filter_offline">Hors ligne</string>
+    <string name="board_filter_eliminated">Éliminés</string>
+    <string name="board_role_genome">%1$s · génome %2$s</string>
+    <string name="board_empty">Aucun joueur dans ce filtre.</string>
+    <string name="badge_healthy">Sain</string>
+    <string name="badge_mutated">Muté</string>
+    <string name="badge_ejected">Éjecté</string>
+    <string name="badge_dead">Mort</string>
 
     <!-- Actions (labels from design.html) -->
     <string name="action_create_game">Créer une partie</string>
