@@ -18,20 +18,26 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.clearAndSetSemantics
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -41,10 +47,11 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import io.github.cyprienj.sporz.R
-import io.github.cyprienj.sporz.ui.theme.SurfaceKind
+import io.github.cyprienj.sporz.ui.theme.SporzIcons
 import io.github.cyprienj.sporz.ui.theme.SporzShapes
 import io.github.cyprienj.sporz.ui.theme.SporzTheme
 import io.github.cyprienj.sporz.ui.theme.SporzTypography
+import io.github.cyprienj.sporz.ui.theme.SurfaceKind
 
 /** − value + counter (role counts, debate timer). */
 @Composable
@@ -311,6 +318,54 @@ fun TargetChip(
                 style = SporzTypography.label,
                 textDecoration = if (eliminated) TextDecoration.LineThrough else null,
             )
+        }
+    }
+}
+
+/**
+ * Select box of the design ("Votes hors ligne"): shows the chosen option or a
+ * placeholder, and opens a menu of [options].
+ */
+@Composable
+fun <T> SporzDropdown(
+    options: List<T>,
+    selected: T?,
+    label: (T) -> String,
+    placeholder: String,
+    onSelect: (T?) -> Unit,
+    modifier: Modifier = Modifier,
+    contentDescription: String? = null,
+) {
+    val colors = SporzTheme.colors
+    var open by remember { mutableStateOf(false) }
+    Box(modifier) {
+        Surface(
+            onClick = { open = true },
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(44.dp)
+                .semantics { if (contentDescription != null) this.contentDescription = contentDescription },
+            shape = SporzShapes.small,
+            color = colors.card,
+            contentColor = colors.text,
+            border = BorderStroke(1.dp, colors.outline),
+        ) {
+            Row(Modifier.padding(horizontal = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    selected?.let(label) ?: placeholder,
+                    style = SporzTypography.body,
+                    color = if (selected == null) colors.textMuted else colors.text,
+                    modifier = Modifier.weight(1f),
+                    maxLines = 1,
+                )
+                Icon(SporzIcons.ChevronDown, contentDescription = null, modifier = Modifier.size(18.dp))
+            }
+        }
+        DropdownMenu(expanded = open, onDismissRequest = { open = false }, containerColor = colors.card) {
+            DropdownMenuItem(text = { Text(placeholder, color = colors.textMuted) }, onClick = { open = false; onSelect(null) })
+            options.forEach { option ->
+                DropdownMenuItem(text = { Text(label(option), color = colors.text) }, onClick = { open = false; onSelect(option) })
+            }
         }
     }
 }

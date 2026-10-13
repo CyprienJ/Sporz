@@ -11,7 +11,6 @@
     <string name="screen_game_end">Fin de partie</string>
     <string name="screen_lobby">Lobby</string>
     <string name="screen_settings">Paramètres</string>
-    <string name="screen_day">Jour et vote</string>
     <string name="screen_player_board">Tableau des joueurs</string>
     <string name="screen_journal">Journal</string>
     <string name="screen_join">Rejoindre</string>
@@ -256,6 +255,54 @@
     <string name="spy_analysed_by_psychologist">analysé par le psychologue</string>
     <string name="spy_analysed_by_geneticist">analysé par le généticien</string>
 
+    <!-- Day (MJ) -->
+    <string name="day_title">Jour %1$d</string>
+    <plurals name="day_alive">
+        <item quantity="one">%1$d vivant</item>
+        <item quantity="other">%1$d vivants</item>
+    </plurals>
+    <string name="day_vote_open">Vote ouvert</string>
+    <string name="day_vote_closed">Vote clos</string>
+    <string name="day_announce">À annoncer au réveil</string>
+    <string name="day_nobody_died">Personne n’est mort cette nuit.</string>
+    <string name="day_deaths">Mort cette nuit : %1$s</string>
+    <string name="day_death_revealed">%1$s (%2$s, %3$s)</string>
+    <string name="day_gm_only">MJ seulement : %1$s</string>
+    <string name="day_nothing_else">rien d’autre cette nuit.</string>
+    <string name="day_tally">Décompte</string>
+    <plurals name="day_votes_received">
+        <item quantity="one">%1$d / %2$d vote</item>
+        <item quantity="other">%1$d / %2$d votes</item>
+    </plurals>
+    <string name="day_blank">Blanc</string>
+    <string name="day_offline_votes">Votes hors ligne</string>
+    <string name="day_choose">Choisir…</string>
+    <string name="day_close_vote">Clore le vote</string>
+    <string name="day_cancel_vote">Annuler</string>
+    <string name="day_timer">Débat</string>
+    <string name="day_timer_start">Lancer</string>
+    <string name="day_timer_pause">Pause</string>
+    <string name="day_timer_over">Temps écoulé : passez au vote.</string>
+    <string name="day_captain_election">Élection du capitaine</string>
+    <string name="day_captain_hint">Chaque joueur vivant vote pour un capitaine (voix double au vote).</string>
+    <string name="day_elect">Élire le capitaine</string>
+    <string name="day_captain">Capitaine : %1$s</string>
+    <string name="day_captain_dead">Le capitaine %1$s est mort : il désigne son successeur.</string>
+    <string name="day_name_successor">Nommer %1$s</string>
+    <string name="day_tie_captain">Égalité : le capitaine %1$s choisit.</string>
+    <string name="day_confirm_choice">Valider le choix</string>
+    <plurals name="day_result_ejected">
+        <item quantity="one">Éjection de %1$s (%2$d voix)</item>
+        <item quantity="other">Éjection de %1$s (%2$d voix)</item>
+    </plurals>
+    <string name="day_result_revealed">%1$s, %2$s</string>
+    <string name="day_result_blank">Le vote blanc l’emporte : personne n’est éjecté.</string>
+    <string name="day_result_tie">Égalité : personne n’est éjecté.</string>
+    <string name="day_result_no_votes">Aucun vote : personne n’est éjecté.</string>
+    <string name="day_next_night">Lancer la nuit %1$d</string>
+    <string name="state_healthy">sain</string>
+    <string name="state_mutated">muté</string>
+
     <!-- Actions (labels from design.html) -->
     <string name="action_create_game">Créer une partie</string>
     <string name="action_join_game">Rejoindre une partie</string>
@@ -264,7 +311,6 @@
     <string name="action_choose_roles">Choisir les rôles</string>
     <string name="action_deal">Tirer au sort et distribuer</string>
     <string name="action_start_first_night">Lancer la nuit 1</string>
-    <string name="action_start_night">Lancer la nuit</string>
     <string name="action_game_over">Fin de partie</string>
     <string name="action_join_this_game">Rejoindre la partie</string>
     <string name="action_role_dealt">Rôle reçu</string>

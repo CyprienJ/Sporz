@@ -177,6 +177,12 @@ public data class GameState(
         return copy(day = day.copy(vote = day.vote.cast(players, voter, option, variants)))
     }
 
+    /** Throws away every ballot of the open vote ("Annuler" of the MJ day screen). */
+    public fun resetVote(): GameState {
+        val day = requireOpenVote()
+        return copy(day = day.copy(vote = Vote(round)))
+    }
+
     /** R-DAY-8 */
     public fun withdrawVote(voter: PlayerId): GameState {
         val day = requireOpenVote()

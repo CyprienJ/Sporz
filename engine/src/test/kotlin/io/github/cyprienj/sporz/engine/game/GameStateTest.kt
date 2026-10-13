@@ -249,4 +249,15 @@ class GameStateTest {
         assertEquals(Phase.Day, game.phase, "doctors' step skipped, night over")
         assertEquals(listOf(id("B")), game.day!!.deaths)
     }
+
+    @Test
+    fun `reset throws away every ballot and keeps the vote open`() {
+        val day = game().designNight()
+            .castVote(id("Alice"), VoteOption.For(id("Hugo")))
+            .castVote(id("Bastien"), VoteOption.Blank)
+            .resetVote()
+        assertTrue(day.day!!.vote.ballots.isEmpty())
+        assertNull(day.day!!.result)
+        assertEquals(VoteResult.NoVotes, day.closeVote().day!!.result)
+    }
 }

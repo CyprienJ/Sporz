@@ -9,7 +9,7 @@ import androidx.navigation.compose.rememberNavController
 import io.github.cyprienj.sporz.BuildConfig
 import io.github.cyprienj.sporz.ui.catalog.DesignCatalogScreen
 import io.github.cyprienj.sporz.ui.end.GameEndScreen
-import io.github.cyprienj.sporz.ui.gm.game.DayScreen
+import io.github.cyprienj.sporz.ui.gm.game.DayRoute
 import io.github.cyprienj.sporz.ui.gm.game.JournalScreen
 import io.github.cyprienj.sporz.ui.gm.game.NightRoute
 import io.github.cyprienj.sporz.ui.gm.game.PlayerBoardScreen
@@ -91,7 +91,7 @@ fun SporzNavHost(
             )
         }
         composable<Day> {
-            DayScreen(
+            DayRoute(
                 onStartNight = { navController.replaceCurrent(Night) },
                 onGameOver = { navController.startFresh(GameEnd) },
                 onOpenPlayerBoard = { navController.navigate(PlayerBoard) },
