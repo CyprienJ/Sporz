@@ -676,7 +676,8 @@ components:
       enum: [healthy, mutant]
     PlayerState:
       type: string
-      enum: [healthy, mutated, dead]
+      enum: [healthy, mutated]
+      description: Death is the separate `alive` flag; a dead player keeps the state they had when they died (rules §1).
     GameMode:
       type: string
       enum: [offline, semiOnline, online]
@@ -754,8 +755,12 @@ components:
         debateTimerMinutes: { type: integer, minimum: 0, maximum: 20, description: 0 = off. }
         nightOrder:
           type: array
-          items: { $ref: '#/components/schemas/Role' }
-          examples: [[baseMutant, doctor, computerScientist, psychologist, geneticist, hacker, spy]]
+          description: Every step exactly once (R-NIGHT-1).
+          items: { $ref: '#/components/schemas/NightStepKind' }
+          examples: [[mutants, doctors, computerScientist, psychologist, geneticist, hacker, spy]]
+    NightStepKind:
+      type: string
+      enum: [mutants, doctors, computerScientist, psychologist, geneticist, hacker, spy]
     Variants:
       type: object
       properties:
@@ -765,7 +770,7 @@ components:
         captain: { type: boolean, default: false, description: Elect a captain with a double vote. }
     Composition:
       type: object
-      required: [roles, genomes, variants]
+      required: [roles, variants]
       properties:
         roles:
           type: object
@@ -773,12 +778,8 @@ components:
           additionalProperties: { type: integer, minimum: 0 }
           examples:
             - { baseMutant: 1, doctor: 2, psychologist: 1, geneticist: 1, computerScientist: 1, hacker: 1, spy: 1, traitor: 0 }
-        genomes:
-          type: object
-          description: Number of extra hosts (besides the base mutant) and of resistants. Others are normal.
-          properties:
-            hosts: { type: integer, minimum: 0 }
-            resistants: { type: integer, minimum: 0 }
+        extraHosts: { type: integer, minimum: 0, default: 0, description: Hosts on top of the base mutant (R-SET-7). }
+        resistants: { type: integer, minimum: 0, default: 0, description: Others are normal (R-SET-7). }
         variants: { $ref: '#/components/schemas/Variants' }
     CompositionValidation:
       type: object
