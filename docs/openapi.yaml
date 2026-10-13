@@ -963,8 +963,10 @@ components:
         action: { $ref: '#/components/schemas/NightActionType' }
         targetIds:
           type: array
+          description: Doctors healing propose one distinct player per acting doctor (R-NIGHT-11).
           items: { type: string, format: uuid }
-          maxItems: 2
+          maxItems: 3
+          uniqueItems: true
         hackedRole:
           $ref: '#/components/schemas/Role'
     NightAction:
@@ -989,7 +991,9 @@ components:
         action: { $ref: '#/components/schemas/NightActionType' }
         targetIds:
           type: array
+          description: For a heal, one distinct player per acting doctor (R-NIGHT-11).
           items: { type: string, format: uuid }
+          uniqueItems: true
         hackedRole: { $ref: '#/components/schemas/Role' }
     Report:
       type: object

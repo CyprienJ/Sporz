@@ -42,7 +42,7 @@ The project starts **from a clean sheet**: no code exists yet, only this README,
 | # | Topic | Decision |
 |---|-------|----------|
 | DEC-1 | **Paralysis** | Not in v1. The rules engine keeps a variant flag so it can be added later (ticket F3). |
-| DEC-2 | **Doctors** | Each living, non-mutated doctor heals one target, **or** all of them agree on one kill. If they disagree, the MJ decides. |
+| DEC-2 | **Doctors** | The doctors are awake together and decide together. They heal one player per living, non-mutated doctor, all different (nobody is healed twice in a night), **or** they agree on one kill. If they disagree, the MJ decides. |
 | DEC-3 | **Genomes of special roles** | The base mutant is always *host*, doctors are always *normal*. The other genomes are drawn at random among the remaining players, whatever their role. |
 | DEC-4 | **Mutated players with a power** | A mutated player **wakes up with the mutants** and **loses their role power** (they are no longer called at their role's step). If the doctors heal them, they leave the mutants and **get their power back**. |
 | DEC-5 | **Vote ties & captain** | A tie ejects nobody. With the captain variant, the captain breaks ties. The captain is elected on Day 1 and passes the role on when they die. |
@@ -326,7 +326,7 @@ Tickets are grouped in epics, in a suggested order. **Size**: S ≈ ½ day, M �
 | B2 | ✅ Composition validation + **suggestion table** per player count (DEC-6). Astronauts auto-fill. | S | B1 |
 | B3 | ✅ Random **deal** of roles and genomes (base mutant = host, constraints from DEC-3), seedable RNG for tests. | S | B1 |
 | B4 | ✅ **Night state machine**: ordered steps, skip dead/absent roles and mutated power holders (DEC-4), configurable call order. | M | B1 |
-| B5 | Night **action resolution**: mutation (host/resistant rules, a mutated player loses their power, a healed one gets it back — DEC-4), doctors heal/kill (DEC-2), kill, order of resolution, deaths. | M | B4 |
+| B5 | ✅ Night **action resolution**: mutation (host/resistant rules, a mutated player loses their power, a healed one gets it back — DEC-4), doctors heal/kill (DEC-2), kill, order of resolution, deaths. | M | B4 |
 | B6 | **Reports**: psychologist, geneticist, IT, hacker (incl. hack-spy variant), spy (what happened to the target). | M | B5 |
 | B7 | **Day & vote**: eligible voters/targets, blank votes, relative majority (DEC-22), ties, captain variant (DEC-5), reveal-on-elimination variant. | M | B1 |
 | B8 | **Win detection** (incl. traitor, DEC-7) after each night and each vote. | S | B5, B7 |
