@@ -3,11 +3,15 @@ package io.github.cyprienj.sporz.data
 import io.github.cyprienj.sporz.engine.model.Composition
 import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.engine.model.GameSettings
+import io.github.cyprienj.sporz.engine.model.PlayerId
+import io.github.cyprienj.sporz.engine.setup.Lobby
+import io.github.cyprienj.sporz.engine.setup.SeatProblem
 import io.github.cyprienj.sporz.engine.setup.Seat
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import java.util.UUID
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -34,6 +38,28 @@ class GameSession @Inject constructor() {
     fun chooseMode(mode: GameMode) {
         _draft.update { (it ?: SetupDraft()).copy(mode = mode) }
     }
+
+    /** Adds an offline player; returns why it was refused, or null. */
+    fun addSeat(name: String): SeatProblem? {
+        val draft = current()
+        Lobby.checkNewSeat(name, draft.seats)?.let { return it }
+        _draft.value = draft.copy(seats = draft.seats + Seat(PlayerId(UUID.randomUUID().toString()), name.trim()))
+        return null
+    }
+
+    /** Renames a player; returns why it was refused, or null. */
+    fun renameSeat(id: PlayerId, name: String): SeatProblem? {
+        val draft = current()
+        Lobby.checkRename(id, name, draft.seats)?.let { return it }
+        _draft.value = draft.copy(seats = draft.seats.map { if (it.id == id) it.copy(name = name.trim()) else it })
+        return null
+    }
+
+    fun removeSeat(id: PlayerId) {
+        _draft.update { draft -> draft?.copy(seats = draft.seats.filterNot { it.id == id }) }
+    }
+
+    private fun current(): SetupDraft = _draft.value ?: SetupDraft().also { _draft.value = it }
 
     fun discardSetup() {
         _draft.value = null

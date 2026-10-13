@@ -50,6 +50,24 @@
     <string name="mode_gm_note">Le MJ ne joue pas. Vous pourrez ajouter des joueurs hors ligne à tout moment avant la distribution.</string>
     <string name="mode_coming_soon">Bientôt</string>
 
+    <!-- Lobby -->
+    <string name="lobby_step">Lobby · %1$s · étape 2 sur 3</string>
+    <string name="lobby_add_label">Nom du joueur hors ligne</string>
+    <string name="lobby_add_placeholder">Ajouter un joueur hors ligne</string>
+    <string name="lobby_crew">Équipage · %1$d</string>
+    <string name="lobby_empty">Ajoutez les joueurs présents autour de la table.</string>
+    <string name="lobby_remove">Retirer %1$s</string>
+    <string name="lobby_rename_title">Renommer</string>
+    <string name="lobby_rename_hint">Touchez un joueur pour le renommer.</string>
+    <string name="lobby_error_blank">Saisissez un prénom.</string>
+    <string name="lobby_error_too_long">24 caractères maximum.</string>
+    <string name="lobby_error_taken">Ce prénom est déjà pris.</string>
+    <string name="lobby_error_full">20 joueurs maximum.</string>
+    <plurals name="lobby_missing_players">
+        <item quantity="one">Encore %1$d joueur pour commencer (7 minimum)</item>
+        <item quantity="other">Encore %1$d joueurs pour commencer (7 minimum)</item>
+    </plurals>
+
     <!-- Actions (labels from design.html) -->
     <string name="action_create_game">Créer une partie</string>
     <string name="action_join_game">Rejoindre une partie</string>
@@ -70,5 +88,8 @@
     <string name="action_confirm">Valider</string>
     <string name="action_replay_same_crew">Rejouer avec le même équipage</string>
     <string name="action_open_full_journal">Revoir le journal complet</string>
+    <string name="action_add">Ajouter</string>
+    <string name="action_save">Enregistrer</string>
+    <string name="action_cancel">Annuler</string>
     <string name="action_back_home">Retour à l\'accueil</string>
 </resources>

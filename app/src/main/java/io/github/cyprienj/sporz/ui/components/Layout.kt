@@ -22,6 +22,7 @@ import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -292,6 +293,8 @@ fun SporzTextField(
     placeholder: String? = null,
     supportingText: String? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions(capitalization = KeyboardCapitalization.Words),
+    keyboardActions: KeyboardActions = KeyboardActions.Default,
+    isError: Boolean = false,
 ) {
     val colors = SporzTheme.colors
     var focused by remember { mutableStateOf(false) }
@@ -302,6 +305,7 @@ fun SporzTextField(
             onValueChange = onValueChange,
             singleLine = true,
             keyboardOptions = keyboardOptions,
+            keyboardActions = keyboardActions,
             textStyle = SporzTypography.bodyLarge.copy(fontSize = 17.sp, color = colors.text),
             cursorBrush = SolidColor(colors.accent),
             modifier = Modifier
@@ -313,7 +317,11 @@ fun SporzTextField(
                     Modifier
                         .background(colors.card, SporzShapes.medium)
                         .border(
-                            if (focused) BorderStroke(2.dp, colors.text) else BorderStroke(1.dp, colors.outline),
+                            when {
+                                isError -> BorderStroke(2.dp, colors.mutant.strong)
+                                focused -> BorderStroke(2.dp, colors.text)
+                                else -> BorderStroke(1.dp, colors.outline)
+                            },
                             SporzShapes.medium,
                         )
                         .padding(horizontal = 14.dp),
@@ -326,7 +334,9 @@ fun SporzTextField(
                 }
             },
         )
-        if (supportingText != null) Text(supportingText, style = SporzTypography.small, color = colors.textMuted)
+        if (supportingText != null) {
+            Text(supportingText, style = SporzTypography.small, color = if (isError) colors.mutant.content else colors.textMuted)
+        }
     }
 }
 

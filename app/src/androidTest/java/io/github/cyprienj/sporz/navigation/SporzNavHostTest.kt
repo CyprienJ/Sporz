@@ -2,10 +2,13 @@ package io.github.cyprienj.sporz.navigation
 
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
+import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.cyprienj.sporz.MainActivity
 import io.github.cyprienj.sporz.R
@@ -37,6 +40,14 @@ class SporzNavHostTest {
         rule.onNodeWithText(text(R.string.action_create_game), ignoreCase = true).assertIsDisplayed()
     }
 
+    /** Fills the lobby with the 7 players needed to choose the roles. */
+    private fun addSevenPlayers() {
+        listOf("Alice", "Bastien", "Chloé", "Dorian", "Emma", "Farid", "Gaëlle").forEach { name ->
+            rule.onNode(hasSetTextAction()).performTextInput(name)
+            rule.onNodeWithContentDescription(text(R.string.action_add)).performClick()
+        }
+    }
+
     private fun pressBack() {
         rule.runOnUiThread { rule.activity.onBackPressedDispatcher.onBackPressed() }
         rule.waitForIdle()
@@ -49,6 +60,7 @@ class SporzNavHostTest {
         assertOn(R.string.mode_title)
         click(R.string.action_open_lobby)
         assertOn(R.string.screen_lobby)
+        addSevenPlayers()
         click(R.string.action_choose_roles)
         assertOn(R.string.screen_composition)
         click(R.string.action_deal)
@@ -65,6 +77,7 @@ class SporzNavHostTest {
     fun nightAndDayReplaceEachOther() {
         click(R.string.action_create_game)
         click(R.string.action_open_lobby)
+        addSevenPlayers()
         click(R.string.action_choose_roles)
         click(R.string.action_deal)
         click(R.string.action_start_first_night)

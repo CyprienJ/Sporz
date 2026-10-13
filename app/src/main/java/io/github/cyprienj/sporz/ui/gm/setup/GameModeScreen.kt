@@ -82,7 +82,7 @@ fun GameModeScreen(
                 GameMode.entries.forEach { mode ->
                     val enabled = mode in availableModes
                     RadioCard(
-                        title = stringResource(mode.title),
+                        title = stringResource(mode.titleRes),
                         description = stringResource(mode.description),
                         selected = mode == selected,
                         onClick = { onSelect(mode) },
@@ -103,13 +103,6 @@ fun GameModeScreen(
         )
     }
 }
-
-private val GameMode.title: Int
-    get() = when (this) {
-        GameMode.Offline -> R.string.mode_offline_title
-        GameMode.SemiOnline -> R.string.mode_semi_online_title
-        GameMode.Online -> R.string.mode_online_title
-    }
 
 private val GameMode.description: Int
     get() = when (this) {
