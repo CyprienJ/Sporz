@@ -6,7 +6,6 @@
     <string name="screen_design_catalog">Catalogue du design</string>
 
     <!-- Screen titles -->
-    <string name="screen_role_guide">Guide des rôles</string>
     <string name="screen_recent_games">Parties récentes</string>
     <string name="screen_game_end">Fin de partie</string>
     <string name="screen_lobby">Lobby</string>
@@ -21,6 +20,8 @@
     <string name="action_back">Retour</string>
     <string name="tag_offline">Hors ligne</string>
     <string name="state_unavailable">indisponible</string>
+    <string name="state_expanded">ouvert</string>
+    <string name="state_collapsed">fermé</string>
 
     <!-- Tabs -->
     <string name="tab_phase">Phase</string>
@@ -362,6 +363,46 @@
     <string name="fate_ejected">Éjecté J%1$d</string>
     <string name="fate_dead">Mort N%1$d</string>
     <string name="fate_healed">Guéri N%1$d</string>
+
+    <!-- Role guide (design.html texts, adjusted to the decisions DEC-2, DEC-4, DEC-7, DEC-22, DEC-23, DEC-24) -->
+    <string name="guide_title">Guide</string>
+    <string name="guide_tab_roles">Rôles</string>
+    <string name="guide_tab_genomes">Génomes</string>
+    <string name="guide_tab_game">Partie</string>
+    <string name="guide_tag_mutant">Camp mutant · génome hôte</string>
+    <string name="guide_tag_every_night">Camp sain · chaque nuit</string>
+    <string name="guide_tag_traitor">Sain, joue pour les mutants</string>
+    <string name="guide_tag_astronaut">Camp sain · aucun pouvoir</string>
+    <string name="guide_base_mutant">Le premier mutant. Chaque nuit, les mutants se réveillent ensemble et choisissent de muter un joueur ou de le tuer. Un joueur muté perd son pouvoir et se réveille désormais avec les mutants ; s’il est guéri, il le retrouve.</string>
+    <string name="guide_doctor">Les médecins se réveillent ensemble et décident ensemble : chacun soigne un joueur différent (un hôte muté ne guérit pas), ou bien ils tuent un joueur.</string>
+    <string name="guide_psychologist">Désigne un joueur et apprend s’il est muté ou sain.</string>
+    <string name="guide_geneticist">Désigne un joueur et apprend son génome : hôte, normal ou résistant.</string>
+    <string name="guide_computer_scientist">Apprend le nombre de mutants présents à bord.</string>
+    <string name="guide_hacker">Pirate le rapport du généticien, du psychologue ou de l’informaticien (et de l’espion en variante). Le joueur piraté reçoit quand même son rapport.</string>
+    <string name="guide_spy">Désigne un joueur et apprend ce qui lui est arrivé pendant la nuit : muté, soigné, analysé…</string>
+    <string name="guide_traitor">N’est pas muté, mais gagne avec les mutants et les aide en journée. Il ne se réveille pas avec eux et ne sait pas qui ils sont.</string>
+    <string name="guide_astronaut">Débat, observe et vote. Peut être muté et rejoindre l’autre camp.</string>
+    <string name="guide_host">Hôte</string>
+    <string name="guide_host_tag">Ne peut pas être guéri</string>
+    <string name="guide_host_body">Un hôte muté reste mutant jusqu’à la fin. Le mutant de base est toujours hôte.</string>
+    <string name="guide_normal">Normal</string>
+    <string name="guide_normal_tag">La majorité de l’équipage</string>
+    <string name="guide_normal_body">Peut être muté, guéri, puis muté à nouveau.</string>
+    <string name="guide_resistant">Résistant</string>
+    <string name="guide_resistant_tag">Ne peut pas être muté</string>
+    <string name="guide_resistant_body">Une tentative de mutation échoue, mais elle consomme quand même l’action des mutants.</string>
+    <string name="guide_night">Nuit</string>
+    <string name="guide_night_tag">Le MJ appelle chaque rôle</string>
+    <string name="guide_night_body">Tout le monde ferme les yeux. Les rôles se réveillent un par un pour agir, sur appel du MJ ou sur leur téléphone.</string>
+    <string name="guide_day">Jour</string>
+    <string name="guide_day_tag">Débat libre</string>
+    <string name="guide_day_body">Le MJ annonce les morts de la nuit. Les joueurs débattent, sans former de groupe de plus de 4.</string>
+    <string name="guide_vote">Vote</string>
+    <string name="guide_vote_tag">Secret, blanc autorisé</string>
+    <string name="guide_vote_body">Le joueur qui reçoit le plus de voix est éliminé ; son rôle et son état sont révélés. Si le vote blanc arrive en tête, ou en cas d’égalité, personne n’est éliminé.</string>
+    <string name="guide_victory">Victoire</string>
+    <string name="guide_victory_tag">Un seul camp à bord</string>
+    <string name="guide_victory_body">Les sains gagnent quand tous les mutés sont tués ou guéris et que le traître est éliminé. Les mutants gagnent quand tous les joueurs encore en vie sont dans leur camp.</string>
 
     <!-- Actions (labels from design.html) -->
     <string name="action_create_game">Créer une partie</string>

@@ -45,7 +45,7 @@ fun SporzNavHost(
                 } else null,
             )
         }
-        composable<RoleGuide> { RoleGuideScreen() }
+        composable<RoleGuide> { RoleGuideScreen(onBack = { navController.popBackStack() }) }
         composable<DesignCatalog> { DesignCatalogScreen(onBack = { navController.popBackStack() }) }
         composable<RecentGames> { RecentGamesScreen() }
         composable<GameEnd> {
