@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import io.github.cyprienj.sporz.R
+import io.github.cyprienj.sporz.engine.game.GameState
 import io.github.cyprienj.sporz.engine.model.NightStep
 import io.github.cyprienj.sporz.engine.model.PlayerId
 import io.github.cyprienj.sporz.engine.model.PlayerState
@@ -12,6 +13,7 @@ import io.github.cyprienj.sporz.engine.night.Killer
 import io.github.cyprienj.sporz.engine.night.NightEvent
 import io.github.cyprienj.sporz.engine.night.Report
 import io.github.cyprienj.sporz.engine.night.SpyFinding
+import io.github.cyprienj.sporz.engine.night.role
 
 /** Sentences for what happened at night, shared by the night screen, the journal and notebooks. */
 
@@ -80,3 +82,13 @@ val NightStep.callRes: Int
         NightStep.Hacker -> R.string.call_hacker
         NightStep.Spy -> R.string.call_spy
     }
+
+/**
+ * Whether a skipped step is worth showing: yes when its role is in the game
+ * (dead or mutated holder: the MJ may pretend to call it, R-NIGHT-3), no when
+ * the role is not in the composition at all (everybody knows it is absent).
+ */
+fun GameState.showsSkipped(step: NightStep): Boolean {
+    val role = step.role ?: return true
+    return composition.count(role) > 0
+}

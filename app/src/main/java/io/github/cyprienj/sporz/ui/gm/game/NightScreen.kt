@@ -45,6 +45,7 @@ import io.github.cyprienj.sporz.ui.common.hackPendingText
 import io.github.cyprienj.sporz.ui.common.nameRes
 import io.github.cyprienj.sporz.ui.common.nightEventText
 import io.github.cyprienj.sporz.ui.common.reportText
+import io.github.cyprienj.sporz.ui.common.showsSkipped
 import io.github.cyprienj.sporz.ui.components.InfoNote
 import io.github.cyprienj.sporz.ui.components.Pill
 import io.github.cyprienj.sporz.ui.components.SegmentedControl
@@ -202,7 +203,8 @@ private fun PlayedSteps(game: GameState, name: (PlayerId) -> String) {
                     )
                 PlayedRow(event.step, event.actors.joinToString(" · ") { name(it) }, parts.joinToString(" · "), done = true)
             }
-            is JournalEvent.StepSkipped -> PlayedRow(event.step, "", stringResource(R.string.night_nobody), done = false)
+            is JournalEvent.StepSkipped ->
+                if (game.showsSkipped(event.step)) PlayedRow(event.step, "", stringResource(R.string.night_nobody), done = false)
             else -> Unit
         }
     }

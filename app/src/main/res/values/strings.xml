@@ -11,7 +11,6 @@
     <string name="screen_game_end">Fin de partie</string>
     <string name="screen_lobby">Lobby</string>
     <string name="screen_settings">Paramètres</string>
-    <string name="screen_journal">Journal</string>
     <string name="screen_join">Rejoindre</string>
     <string name="screen_waiting_room">Salle d\'attente</string>
     <string name="screen_my_role">Mon rôle</string>
@@ -324,6 +323,32 @@
     <string name="badge_mutated">Muté</string>
     <string name="badge_ejected">Éjecté</string>
     <string name="badge_dead">Mort</string>
+
+    <!-- Journal -->
+    <string name="journal_title">Journal</string>
+    <string name="journal_export">Exporter le journal</string>
+    <string name="journal_current">en cours</string>
+    <string name="journal_empty">Le journal est vide.</string>
+    <string name="journal_who_start">Début</string>
+    <string name="journal_who_dawn">Réveil</string>
+    <string name="journal_who_vote">Vote</string>
+    <string name="journal_who_reveal">Révélation</string>
+    <string name="journal_who_captain">Capitaine</string>
+    <string name="journal_who_end">Fin</string>
+    <plurals name="journal_game_started">
+        <item quantity="one">Partie lancée avec %1$d joueur</item>
+        <item quantity="other">Partie lancée avec %1$d joueurs</item>
+    </plurals>
+    <plurals name="journal_captain_elected">
+        <item quantity="one">%1$s élu (%2$d voix)</item>
+        <item quantity="other">%1$s élu (%2$d voix)</item>
+    </plurals>
+    <string name="journal_captain_drawn">%1$s élu au tirage au sort</string>
+    <string name="journal_captain_named">%1$s désigne %2$s</string>
+    <string name="journal_end_healthy">Les sains reprennent le vaisseau</string>
+    <string name="journal_end_mutants">Les mutants prennent le vaisseau</string>
+    <string name="journal_end_none">Aucun survivant</string>
+    <string name="journal_end_aborted">Partie interrompue</string>
 
     <!-- Actions (labels from design.html) -->
     <string name="action_create_game">Créer une partie</string>

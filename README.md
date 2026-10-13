@@ -346,7 +346,7 @@ Tickets are grouped in epics, in a suggested order. **Size**: S ≈ ½ day, M �
 | C7 | ✅ Screen **MJ · Nuit**: current step, guided call text, target picker, heal/kill choice, upcoming roles. | L | B4–B6 |
 | C8 | ✅ Screen **MJ · Jour et vote**: announcement, MJ-only details, manual vote entry, tally, close/cancel, debate timer. Show "9 vivants" without the "majorité : 5 voix" of the design (no threshold, DEC-22). | M | B7 |
 | C9 | ✅ Screen **Tableau des joueurs** with filters. | S | B1 |
-| C10 | Screen **Journal**. | S | B9 |
+| C10 | ✅ Screen **Journal**. | S | B9 |
 | C11 | Screen **Fin de partie** + *Rejouer avec le même équipage*. Note: the sample data of `design.html` ends on day 4 with Dorian killed night 3, which the rules cannot produce (the last mutant is ejected day 2, R-WIN-1); use data from a real `GameState`. | S | B8 |
 | C12 | **Guide des rôles** (3 tabs, expandable cards). | S | A4 |
 | C13 | Persist the running game (process death / phone call must not lose the game) + **Parties récentes** history (Room database). | M | B9 |
