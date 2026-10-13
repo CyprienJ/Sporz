@@ -6,11 +6,9 @@
     <string name="screen_design_catalog">Catalogue du design</string>
 
     <!-- Screen titles -->
-    <string name="screen_home">Accueil</string>
     <string name="screen_role_guide">Guide des rôles</string>
     <string name="screen_recent_games">Parties récentes</string>
     <string name="screen_game_end">Fin de partie</string>
-    <string name="screen_game_mode">Mode de partie</string>
     <string name="screen_lobby">Lobby</string>
     <string name="screen_composition">Composition des rôles</string>
     <string name="screen_distribution">Distribution des rôles</string>
@@ -39,6 +37,18 @@
     <string name="home_tagline">L\'assistant du maître du jeu. Distribue les rôles, suis chaque nuit, compte les votes.</string>
     <string name="home_create_subtitle">Je suis le MJ</string>
     <string name="home_join_subtitle">Avec un code ou un QR</string>
+
+    <!-- Game mode -->
+    <string name="mode_step">Nouvelle partie · étape 1 sur 3</string>
+    <string name="mode_title">Comment jouez-vous ?</string>
+    <string name="mode_offline_title">Hors ligne</string>
+    <string name="mode_offline_description">Un seul téléphone. Vous saisissez les noms et annoncez chaque rôle en privé.</string>
+    <string name="mode_semi_online_title">Semi-online</string>
+    <string name="mode_semi_online_description">Certains rejoignent avec leur téléphone, les autres sont ajoutés à la main.</string>
+    <string name="mode_online_title">En ligne</string>
+    <string name="mode_online_description">Chacun rejoint le lobby et reçoit son rôle et sa définition sur son écran.</string>
+    <string name="mode_gm_note">Le MJ ne joue pas. Vous pourrez ajouter des joueurs hors ligne à tout moment avant la distribution.</string>
+    <string name="mode_coming_soon">Bientôt</string>
 
     <!-- Actions (labels from design.html) -->
     <string name="action_create_game">Créer une partie</string>

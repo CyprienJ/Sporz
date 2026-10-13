@@ -46,7 +46,7 @@ class SporzNavHostTest {
     fun gameMasterFlow_reachesNightThenBackLeavesTheGame() {
         assertOnHome()
         click(R.string.action_create_game)
-        assertOn(R.string.screen_game_mode)
+        assertOn(R.string.mode_title)
         click(R.string.action_open_lobby)
         assertOn(R.string.screen_lobby)
         click(R.string.action_choose_roles)

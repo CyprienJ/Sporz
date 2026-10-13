@@ -16,7 +16,7 @@ import io.github.cyprienj.sporz.ui.gm.game.PlayerBoardScreen
 import io.github.cyprienj.sporz.ui.gm.settings.SettingsScreen
 import io.github.cyprienj.sporz.ui.gm.setup.CompositionScreen
 import io.github.cyprienj.sporz.ui.gm.setup.DistributionScreen
-import io.github.cyprienj.sporz.ui.gm.setup.GameModeScreen
+import io.github.cyprienj.sporz.ui.gm.setup.GameModeRoute
 import io.github.cyprienj.sporz.ui.gm.setup.LobbyScreen
 import io.github.cyprienj.sporz.ui.guide.RoleGuideScreen
 import io.github.cyprienj.sporz.ui.history.RecentGamesScreen
@@ -58,7 +58,10 @@ fun SporzNavHost(
 
         // Game Master: setup
         composable<GameMode> {
-            GameModeScreen(onOpenLobby = { navController.navigate(Lobby) })
+            GameModeRoute(
+                onBack = { navController.popBackStack() },
+                onOpenLobby = { navController.navigate(Lobby) },
+            )
         }
         composable<Lobby> {
             LobbyScreen(

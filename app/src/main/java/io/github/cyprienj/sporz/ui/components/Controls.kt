@@ -24,6 +24,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
@@ -144,7 +145,10 @@ fun ToggleRow(
     }
 }
 
-/** Single choice card with a radio ring (game mode). */
+/**
+ * Single choice card with a radio ring (game mode). A disabled card is dimmed
+ * and cannot be chosen; [tag] explains why (e.g. "Bientôt").
+ */
 @Composable
 fun RadioCard(
     title: String,
@@ -152,18 +156,21 @@ fun RadioCard(
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    tag: String? = null,
 ) {
     val colors = SporzTheme.colors
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .alpha(if (enabled) 1f else 0.55f)
             .clip(SporzShapes.large)
             .background(if (selected) colors.selected else colors.card)
             .border(
                 if (selected) BorderStroke(2.dp, colors.selectedBorder) else BorderStroke(1.dp, colors.cardBorder),
                 SporzShapes.large,
             )
-            .selectable(selected = selected, role = Role.RadioButton, onClick = onClick)
+            .selectable(selected = selected, enabled = enabled, role = Role.RadioButton, onClick = onClick)
             .padding(16.dp),
         horizontalArrangement = Arrangement.spacedBy(14.dp),
     ) {
@@ -177,7 +184,10 @@ fun RadioCard(
             if (selected) Box(Modifier.size(10.dp).background(colors.selectedBorder, SporzShapes.pill))
         }
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
-            Text(title.uppercase(), style = SporzTypography.heading)
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
+                Text(title.uppercase(), style = SporzTypography.heading)
+                if (tag != null) Tag(tag)
+            }
             Text(
                 description,
                 style = SporzTypography.body,
