@@ -79,12 +79,29 @@ class GameSession @Inject constructor() {
     fun deal(random: Random = Random.Default): GameState {
         val draft = current()
         val composition = checkNotNull(draft.composition) { "No composition chosen" }
+        _announced.value = emptySet()
         return GameState.start(draft.seats, composition, draft.settings, random).also { _game.value = it }
+    }
+
+    private val _announced = MutableStateFlow<Set<PlayerId>>(emptySet())
+
+    /** Offline players whose role the MJ has announced in private (distribution screen). */
+    val announced: StateFlow<Set<PlayerId>> = _announced.asStateFlow()
+
+    fun markAnnounced(id: PlayerId) {
+        _announced.update { it + id }
     }
 
     private fun current(): SetupDraft = _draft.value ?: SetupDraft().also { _draft.value = it }
 
     fun discardSetup() {
         _draft.value = null
+    }
+
+    /** "Créer une partie": forgets the previous setup, deal and announcements. */
+    fun startNewGame() {
+        _draft.value = null
+        _game.value = null
+        _announced.value = emptySet()
     }
 }

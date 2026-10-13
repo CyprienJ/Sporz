@@ -52,6 +52,7 @@ import androidx.compose.ui.unit.sp
 import io.github.cyprienj.sporz.R
 import io.github.cyprienj.sporz.ui.theme.SporzIcons
 import io.github.cyprienj.sporz.ui.theme.SurfaceKind
+import io.github.cyprienj.sporz.ui.theme.Tone
 import io.github.cyprienj.sporz.ui.theme.SporzShapes
 import io.github.cyprienj.sporz.ui.theme.SporzTheme
 import io.github.cyprienj.sporz.ui.theme.SporzTypography
@@ -377,4 +378,49 @@ fun GameCodeField(
             },
         )
     }
+}
+
+/** Thin progress bar (distribution header). [fraction] is clamped to 0..1. */
+@Composable
+fun ProgressBar(fraction: Float, modifier: Modifier = Modifier) {
+    val colors = SporzTheme.colors
+    Box(
+        modifier
+            .fillMaxWidth()
+            .height(6.dp)
+            .background(colors.subtleFill, SporzShapes.pill),
+    ) {
+        Box(
+            Modifier
+                .fillMaxWidth(fraction.coerceIn(0f, 1f))
+                .height(6.dp)
+                .background(colors.accent, SporzShapes.pill),
+        )
+    }
+}
+
+enum class PillStyle { Filled, Outlined }
+
+/**
+ * Rounded label (role, genome, camp on the distribution screen): filled with
+ * the text color, outlined, or tinted with a [tone].
+ */
+@Composable
+fun Pill(text: String, modifier: Modifier = Modifier, style: PillStyle = PillStyle.Filled, tone: Tone? = null) {
+    val colors = SporzTheme.colors
+    val toneColors = tone?.let { colors.tone(it) }
+    Text(
+        text = text,
+        color = toneColors?.content ?: if (style == PillStyle.Filled) colors.onInverse else colors.text,
+        style = SporzTypography.label.copy(fontWeight = if (style == PillStyle.Outlined && tone == null) FontWeight.Normal else FontWeight.SemiBold),
+        modifier = modifier
+            .then(
+                when {
+                    toneColors != null -> Modifier.background(toneColors.background, SporzShapes.pill)
+                    style == PillStyle.Filled -> Modifier.background(colors.inverse, SporzShapes.pill)
+                    else -> Modifier.border(1.dp, colors.outline, SporzShapes.pill)
+                },
+            )
+            .padding(horizontal = 12.dp, vertical = 6.dp),
+    )
 }

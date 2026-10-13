@@ -2,9 +2,11 @@ package io.github.cyprienj.sporz.data
 
 import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.engine.setup.SeatProblem
+import io.github.cyprienj.sporz.engine.setup.SuggestedCompositions
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Test
+import kotlin.random.Random
 
 class GameSessionTest {
 
@@ -68,5 +70,20 @@ class GameSessionTest {
         assertEquals(GameMode.Offline, session.draft.value!!.mode)
         session.chooseMode(GameMode.SemiOnline)
         assertEquals(1, session.draft.value!!.seats.size)
+    }
+
+    @Test
+    fun `a new game forgets the previous setup and deal`() {
+        val session = GameSession()
+        session.chooseMode(GameMode.Offline)
+        repeat(7) { session.addSeat("P$it") }
+        session.setComposition(SuggestedCompositions.forPlayers(7))
+        val game = session.deal(Random(1))
+        session.markAnnounced(game.players.first().id)
+
+        session.startNewGame()
+        assertNull(session.draft.value)
+        assertNull(session.game.value)
+        assertEquals(emptySet<Any>(), session.announced.value)
     }
 }

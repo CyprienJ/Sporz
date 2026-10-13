@@ -40,6 +40,9 @@ enum class SporzButtonStyle {
 
     /** Filled with the text color: navy on light, off-white on dark ("Soigner" when chosen). */
     Inverse,
+
+    /** Teal confirmation ("C'est annoncé"). */
+    Positive,
 }
 
 @Composable
@@ -58,6 +61,7 @@ fun SporzButton(
         !enabled -> Color.Transparent to colors.onDisabled
         style == SporzButtonStyle.Primary -> colors.accent to colors.onAccent
         style == SporzButtonStyle.Secondary -> Color.Transparent to colors.text
+        style == SporzButtonStyle.Positive -> colors.healthy.strong to colors.onAccent
         else -> colors.inverse to colors.onInverse
     }
     val border = if (style == SporzButtonStyle.Secondary) {

@@ -25,6 +25,7 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import io.github.cyprienj.sporz.R
 import io.github.cyprienj.sporz.ui.components.ActionCard
 import io.github.cyprienj.sporz.ui.components.TextLink
@@ -37,6 +38,27 @@ import io.github.cyprienj.sporz.ui.theme.SporzTypography
 import io.github.cyprienj.sporz.ui.theme.StandardSurface
 
 /** design.html, board "Accueil". */
+@Composable
+fun HomeRoute(
+    onCreateGame: () -> Unit,
+    onJoinGame: () -> Unit,
+    onOpenRoleGuide: () -> Unit,
+    onOpenRecentGames: () -> Unit,
+    onOpenDesignCatalog: (() -> Unit)?,
+    viewModel: HomeViewModel = hiltViewModel(),
+) {
+    HomeScreen(
+        onCreateGame = {
+            viewModel.createGame()
+            onCreateGame()
+        },
+        onJoinGame = onJoinGame,
+        onOpenRoleGuide = onOpenRoleGuide,
+        onOpenRecentGames = onOpenRecentGames,
+        onOpenDesignCatalog = onOpenDesignCatalog,
+    )
+}
+
 @Composable
 fun HomeScreen(
     onCreateGame: () -> Unit,

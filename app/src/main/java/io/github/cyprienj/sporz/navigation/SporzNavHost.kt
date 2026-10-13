@@ -15,12 +15,12 @@ import io.github.cyprienj.sporz.ui.gm.game.NightScreen
 import io.github.cyprienj.sporz.ui.gm.game.PlayerBoardScreen
 import io.github.cyprienj.sporz.ui.gm.settings.SettingsScreen
 import io.github.cyprienj.sporz.ui.gm.setup.CompositionRoute
-import io.github.cyprienj.sporz.ui.gm.setup.DistributionScreen
+import io.github.cyprienj.sporz.ui.gm.setup.DistributionRoute
 import io.github.cyprienj.sporz.ui.gm.setup.GameModeRoute
 import io.github.cyprienj.sporz.ui.gm.setup.LobbyRoute
 import io.github.cyprienj.sporz.ui.guide.RoleGuideScreen
 import io.github.cyprienj.sporz.ui.history.RecentGamesScreen
-import io.github.cyprienj.sporz.ui.home.HomeScreen
+import io.github.cyprienj.sporz.ui.home.HomeRoute
 import io.github.cyprienj.sporz.ui.player.JoinScreen
 import io.github.cyprienj.sporz.ui.player.MyRoleScreen
 import io.github.cyprienj.sporz.ui.player.NightActionScreen
@@ -35,7 +35,7 @@ fun SporzNavHost(
     NavHost(navController = navController, startDestination = Home, modifier = modifier) {
         // Common
         composable<Home> {
-            HomeScreen(
+            HomeRoute(
                 onCreateGame = { navController.navigate(GameMode) },
                 onJoinGame = { navController.navigate(Join) },
                 onOpenRoleGuide = { navController.navigate(RoleGuide) },
@@ -78,7 +78,7 @@ fun SporzNavHost(
         }
         composable<Distribution> {
             // Once the night starts, Back must not return to the setup screens.
-            DistributionScreen(onStartFirstNight = { navController.startFresh(Night) })
+            DistributionRoute(onStartFirstNight = { navController.startFresh(Night) })
         }
         composable<Settings> { SettingsScreen() }
 

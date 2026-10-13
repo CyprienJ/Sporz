@@ -4,6 +4,7 @@ import androidx.annotation.StringRes
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -48,6 +49,14 @@ class SporzNavHostTest {
         }
     }
 
+    /** Reveals and confirms every role on the distribution screen. */
+    private fun announceAllRoles() {
+        repeat(7) {
+            rule.onAllNodesWithText(text(R.string.action_reveal))[0].performScrollTo().performClick()
+            rule.onNodeWithText(text(R.string.action_confirm_announced)).performScrollTo().performClick()
+        }
+    }
+
     private fun pressBack() {
         rule.runOnUiThread { rule.activity.onBackPressedDispatcher.onBackPressed() }
         rule.waitForIdle()
@@ -64,7 +73,8 @@ class SporzNavHostTest {
         click(R.string.action_choose_roles)
         assertOn(R.string.composition_title)
         click(R.string.action_deal)
-        assertOn(R.string.screen_distribution)
+        assertOn(R.string.distribution_title)
+        announceAllRoles()
         click(R.string.action_start_first_night)
         assertOn(R.string.screen_night)
 
@@ -80,6 +90,7 @@ class SporzNavHostTest {
         addSevenPlayers()
         click(R.string.action_choose_roles)
         click(R.string.action_deal)
+        announceAllRoles()
         click(R.string.action_start_first_night)
         click(R.string.action_end_night)
         assertOn(R.string.screen_day)

@@ -2,6 +2,7 @@ package io.github.cyprienj.sporz.ui.common
 
 import androidx.annotation.StringRes
 import io.github.cyprienj.sporz.R
+import io.github.cyprienj.sporz.engine.model.Genome
 import io.github.cyprienj.sporz.engine.model.Role
 import io.github.cyprienj.sporz.ui.theme.Tone
 
@@ -38,3 +39,12 @@ val Role.hintRes: Int
 /** Camp color of the role at the start of the game (red for the mutant camp). */
 val Role.startTone: Tone
     get() = if (this == Role.BaseMutant || this == Role.Traitor) Tone.Mutant else Tone.Healthy
+
+/** Genome name, lowercase as in "Génome hôte". */
+@get:StringRes
+val Genome.nameRes: Int
+    get() = when (this) {
+        Genome.Host -> R.string.genome_host
+        Genome.Normal -> R.string.genome_normal
+        Genome.Resistant -> R.string.genome_resistant
+    }

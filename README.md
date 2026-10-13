@@ -341,7 +341,7 @@ Tickets are grouped in epics, in a suggested order. **Size**: S ≈ ½ day, M �
 | C2 | ✅ Screen **Mode de partie** (only *Hors ligne* enabled until Milestone 2). | S | A4 |
 | C3 | ✅ Screen **Lobby (offline)**: add / rename / remove players. | S | C2 |
 | C4 | ✅ Screen **Composition des rôles** (+ genomes, variants, *Suggérer*, total check). | M | B2, C3 |
-| C5 | Screen **Distribution** offline flow *Révéler → Masquer → C'est annoncé*, progress bar, *Lancer la nuit 1*. | M | B3, C4 |
+| C5 | ✅ Screen **Distribution** offline flow *Révéler → Masquer → C'est annoncé*, progress bar, *Lancer la nuit 1*. | M | B3, C4 |
 | C6 | Screen **Paramètres** (presets + toggles + debate timer + call order); only *Manuel* meaningful offline. | M | A4 |
 | C7 | Screen **MJ · Nuit**: current step, guided call text, target picker, heal/kill choice, upcoming roles. | L | B4–B6 |
 | C8 | Screen **MJ · Jour et vote**: announcement, MJ-only details, manual vote entry, tally, close/cancel, debate timer. Show "9 vivants" without the "majorité : 5 voix" of the design (no threshold, DEC-22). | M | B7 |

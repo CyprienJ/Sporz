@@ -10,7 +10,6 @@
     <string name="screen_recent_games">Parties récentes</string>
     <string name="screen_game_end">Fin de partie</string>
     <string name="screen_lobby">Lobby</string>
-    <string name="screen_distribution">Distribution des rôles</string>
     <string name="screen_settings">Paramètres</string>
     <string name="screen_night">Nuit</string>
     <string name="screen_day">Jour et vote</string>
@@ -116,6 +115,27 @@
     <string name="composition_error_too_many_genomes">Trop d\'hôtes et de résistants : %1$d au maximum.</string>
     <string name="composition_warning_hacker">Le hacker n\'aura aucun rapport à pirater.</string>
 
+    <!-- Genomes, camps -->
+    <string name="genome_host">hôte</string>
+    <string name="genome_normal">normal</string>
+    <string name="genome_resistant">résistant</string>
+    <string name="camp_healthy">Sain</string>
+    <string name="camp_mutant">Mutant</string>
+
+    <!-- Distribution -->
+    <string name="distribution_title">Distribution</string>
+    <plurals name="distribution_progress">
+        <item quantity="one">%1$d / %2$d joueur informé</item>
+        <item quantity="other">%1$d / %2$d joueurs informés</item>
+    </plurals>
+    <string name="distribution_dealt">Rôles tirés au sort</string>
+    <string name="distribution_offline">Hors ligne · à annoncer en privé</string>
+    <string name="distribution_offline_hint">Prenez chaque joueur à part, révélez, puis confirmez.</string>
+    <string name="distribution_genome">Génome %1$s</string>
+    <string name="distribution_announced">Annoncé</string>
+    <string name="distribution_all_needed">Annoncez tous les rôles avant de lancer la nuit.</string>
+    <string name="distribution_no_game">Aucune partie distribuée. Revenez à la composition des rôles.</string>
+
     <!-- Actions (labels from design.html) -->
     <string name="action_create_game">Créer une partie</string>
     <string name="action_join_game">Rejoindre une partie</string>
@@ -137,6 +157,9 @@
     <string name="action_replay_same_crew">Rejouer avec le même équipage</string>
     <string name="action_open_full_journal">Revoir le journal complet</string>
     <string name="action_add">Ajouter</string>
+    <string name="action_reveal">Révéler</string>
+    <string name="action_hide">Masquer</string>
+    <string name="action_confirm_announced">C\'est annoncé</string>
     <string name="action_suggest">Suggérer</string>
     <string name="action_save">Enregistrer</string>
     <string name="action_cancel">Annuler</string>
