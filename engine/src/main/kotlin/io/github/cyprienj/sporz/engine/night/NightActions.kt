@@ -50,6 +50,9 @@ public enum class ActionProblem {
 
     /** R-NIGHT-11: a player cannot be healed twice in the same night. */
     @SerialName("duplicateTarget") DuplicateTarget,
+
+    /** R-NIGHT-18: the hacker can only copy the psychologist, geneticist, computer scientist (and spy with the variant). */
+    @SerialName("notHackable") NotHackable,
 }
 
 public class IllegalActionException(public val problem: ActionProblem, public val player: PlayerId?) :
@@ -122,7 +125,7 @@ public fun resolveDoctors(players: List<Player>, actors: List<PlayerId>, decisio
         }
     }
 
-private fun List<Player>.find(id: PlayerId): Player =
+internal fun List<Player>.find(id: PlayerId): Player =
     firstOrNull { it.id == id } ?: throw IllegalActionException(ActionProblem.UnknownPlayer, id)
 
 private fun List<Player>.replace(player: Player): List<Player> = map { if (it.id == player.id) player else it }

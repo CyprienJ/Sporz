@@ -23,6 +23,16 @@ public sealed interface NightEvent {
     /** R-NIGHT-13: one event per healed player (the doctors heal together). */
     @Serializable @SerialName("heal")
     public data class Heal(override val target: PlayerId, val outcome: HealOutcome) : NightEvent
+
+    /** R-NIGHT-16, R-NIGHT-17: seen by the spy (R-NIGHT-19). */
+    @Serializable @SerialName("analysis")
+    public data class Analysis(override val target: PlayerId, val by: Analyst) : NightEvent
+}
+
+@Serializable
+public enum class Analyst {
+    @SerialName("psychologist") Psychologist,
+    @SerialName("geneticist") Geneticist,
 }
 
 @Serializable

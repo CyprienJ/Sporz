@@ -1009,11 +1009,20 @@ components:
         state: { $ref: '#/components/schemas/PlayerState' }
         genome: { $ref: '#/components/schemas/Genome' }
         mutantCount: { type: integer }
-        spyEvents:
+        spyFindings:
           type: array
-          description: What happened to the target (e.g. mutated, healed, inspected).
-          items: { type: string }
-        hackedFrom: { $ref: '#/components/schemas/Role' }
+          description: "spy: actions that targeted the player this night, in order (R-NIGHT-19)."
+          items:
+            type: string
+            enum: [mutated, mutationFailed, killedByMutants, healed, healFailed, killedByDoctors, analysedByPsychologist, analysedByGeneticist]
+        hackedFrom:
+          $ref: '#/components/schemas/NightStepKind'
+          description: "hacked: the step whose report was copied (R-NIGHT-18)."
+        copy:
+          description: "hacked: the copied report, or null when that role produced none (\"nothing\")."
+          oneOf:
+            - $ref: '#/components/schemas/Report'
+            - type: 'null'
         sent: { type: boolean }
 
     # ---------- Day ----------

@@ -51,6 +51,9 @@ public data class NightProgress(
 ) {
     val isOver: Boolean get() = current == null
 
+    /** True once [step] has been played or skipped this night. */
+    public fun isFinished(step: NightStep): Boolean = isOver || order.indexOf(step) < position
+
     /** Moves to the next step somebody can play, skipping the others (R-NIGHT-3). */
     public fun advance(players: List<Player>): NightProgress {
         check(!isOver) { "Night $round is already over" }
