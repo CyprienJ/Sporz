@@ -92,6 +92,19 @@ class GameSession @Inject constructor() {
         return GameState.start(draft.seats, composition, draft.settings, random).also { _game.value = it }
     }
 
+    /** Continues an existing game (a saved one, ticket C13). Every role counts as announced. */
+    fun resumeGame(game: GameState, mode: GameMode = GameMode.Offline) {
+        _draft.value = SetupDraft(mode, game.players.map { Seat(it.id, it.name) }, game.composition, game.settings)
+        _game.value = game
+        _announced.value = game.players.map { it.id }.toSet()
+    }
+
+    /** Applies a command of the running game (night steps, votes…) and keeps the result. */
+    fun updateGame(command: (GameState) -> GameState): GameState {
+        val game = checkNotNull(_game.value) { "No game in progress" }
+        return command(game).also { _game.value = it }
+    }
+
     private val _announced = MutableStateFlow<Set<PlayerId>>(emptySet())
 
     /** Offline players whose role the MJ has announced in private (distribution screen). */

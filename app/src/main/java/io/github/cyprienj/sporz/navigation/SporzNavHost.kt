@@ -11,7 +11,7 @@ import io.github.cyprienj.sporz.ui.catalog.DesignCatalogScreen
 import io.github.cyprienj.sporz.ui.end.GameEndScreen
 import io.github.cyprienj.sporz.ui.gm.game.DayScreen
 import io.github.cyprienj.sporz.ui.gm.game.JournalScreen
-import io.github.cyprienj.sporz.ui.gm.game.NightScreen
+import io.github.cyprienj.sporz.ui.gm.game.NightRoute
 import io.github.cyprienj.sporz.ui.gm.game.PlayerBoardScreen
 import io.github.cyprienj.sporz.ui.gm.settings.SettingsRoute
 import io.github.cyprienj.sporz.ui.gm.setup.CompositionRoute
@@ -84,11 +84,10 @@ fun SporzNavHost(
 
         // Game Master: running game
         composable<Night> {
-            NightScreen(
+            NightRoute(
                 onEndNight = { navController.replaceCurrent(Day) },
                 onOpenPlayerBoard = { navController.navigate(PlayerBoard) },
                 onOpenJournal = { navController.navigate(Journal) },
-                onOpenSettings = { navController.navigate(Settings) },
             )
         }
         composable<Day> {

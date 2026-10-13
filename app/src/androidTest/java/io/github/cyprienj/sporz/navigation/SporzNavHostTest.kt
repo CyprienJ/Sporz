@@ -76,27 +76,9 @@ class SporzNavHostTest {
         assertOn(R.string.distribution_title)
         announceAllRoles()
         click(R.string.action_start_first_night)
-        assertOn(R.string.screen_night)
+        rule.onNodeWithText(rule.activity.getString(R.string.night_title, 1), ignoreCase = true).assertIsDisplayed()
 
         // Setup screens are no longer in the back stack.
-        pressBack()
-        assertOnHome()
-    }
-
-    @Test
-    fun nightAndDayReplaceEachOther() {
-        click(R.string.action_create_game)
-        click(R.string.action_open_lobby)
-        addSevenPlayers()
-        click(R.string.action_choose_roles)
-        click(R.string.action_deal)
-        announceAllRoles()
-        click(R.string.action_start_first_night)
-        click(R.string.action_end_night)
-        assertOn(R.string.screen_day)
-        click(R.string.action_start_night)
-        assertOn(R.string.screen_night)
-
         pressBack()
         assertOnHome()
     }

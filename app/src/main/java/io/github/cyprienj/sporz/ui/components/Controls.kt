@@ -280,8 +280,9 @@ fun FilterChip(
 }
 
 /**
- * Player pill used to pick a target (MJ night screen). A player who cannot
- * be targeted (dead) is struck through and disabled.
+ * Player pill used to pick a target (MJ night screen). A player who cannot be
+ * targeted at this step is dimmed; a dead player ([eliminated]) is also struck
+ * through, so the two are never confused.
  */
 @Composable
 fun TargetChip(
@@ -290,6 +291,7 @@ fun TargetChip(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
+    eliminated: Boolean = false,
 ) {
     val colors = SporzTheme.colors
     val unavailable = stringResource(R.string.state_unavailable)
@@ -307,7 +309,7 @@ fun TargetChip(
             Text(
                 label,
                 style = SporzTypography.label,
-                textDecoration = if (enabled) null else TextDecoration.LineThrough,
+                textDecoration = if (eliminated) TextDecoration.LineThrough else null,
             )
         }
     }

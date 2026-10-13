@@ -11,7 +11,6 @@
     <string name="screen_game_end">Fin de partie</string>
     <string name="screen_lobby">Lobby</string>
     <string name="screen_settings">Paramètres</string>
-    <string name="screen_night">Nuit</string>
     <string name="screen_day">Jour et vote</string>
     <string name="screen_player_board">Tableau des joueurs</string>
     <string name="screen_journal">Journal</string>
@@ -186,6 +185,77 @@
     <string name="night_step_mutants">Mutants</string>
     <string name="night_step_doctors">Médecins</string>
 
+    <!-- Night (MJ) -->
+    <string name="night_title">Nuit %1$d</string>
+    <plurals name="night_players">
+        <item quantity="one">%1$d joueur</item>
+        <item quantity="other">%1$d joueurs</item>
+    </plurals>
+    <plurals name="night_mutated">
+        <item quantity="one">%1$d muté</item>
+        <item quantity="other">%1$d mutés</item>
+    </plurals>
+    <plurals name="night_dead">
+        <item quantity="one">%1$d mort</item>
+        <item quantity="other">%1$d morts</item>
+    </plurals>
+    <string name="night_mutate">Muter</string>
+    <string name="night_kill">Tuer</string>
+    <string name="night_heal">Soigner</string>
+    <string name="night_target">Cible</string>
+    <plurals name="night_heal_targets">
+        <item quantity="one">Choisissez %1$d joueur à soigner</item>
+        <item quantity="other">Choisissez %1$d joueurs différents à soigner</item>
+    </plurals>
+    <string name="night_hack_choice">Rapport à pirater</string>
+    <string name="night_nobody">personne à réveiller</string>
+    <string name="night_choose_target">Choisissez une cible</string>
+    <string name="night_confirm_mutate">Valider : muter %1$s</string>
+    <string name="night_confirm_kill">Valider : tuer %1$s</string>
+    <string name="night_confirm_heal">Valider : soigner %1$s</string>
+    <string name="night_confirm_analyse">Valider : analyser %1$s</string>
+    <string name="night_confirm_spy">Valider : espionner %1$s</string>
+    <string name="night_confirm_hack">Valider : pirater %1$s</string>
+    <string name="night_confirm_info">Valider</string>
+    <string name="night_over">La nuit est terminée.</string>
+    <string name="night_go_to_day">Passer au jour</string>
+    <string name="night_error">Action impossible : %1$s</string>
+    <string name="call_mutants">« Mutants, réveillez-vous. Choisissez un joueur à muter, ou à tuer. »</string>
+    <string name="call_doctors">« Médecins, réveillez-vous. Choisissez qui soigner, ou un joueur à tuer. »</string>
+    <string name="call_computer_scientist">« Informaticien, réveille-toi. Voici le nombre de mutants à bord. »</string>
+    <string name="call_psychologist">« Psychologue, réveille-toi. Désigne un joueur : je te dirai s’il est muté. »</string>
+    <string name="call_geneticist">« Généticien, réveille-toi. Désigne un joueur : je te dirai son génome. »</string>
+    <string name="call_hacker">« Hacker, réveille-toi. Quel rapport veux-tu pirater ? »</string>
+    <string name="call_spy">« Espion, réveille-toi. Désigne un joueur : je te dirai ce qu’il a subi cette nuit. »</string>
+
+    <!-- What happened at night (night screen, journal, notebooks) -->
+    <string name="event_mutated">ont muté %1$s</string>
+    <string name="event_mutation_failed">ont tenté de muter %1$s (résistant)</string>
+    <string name="event_killed">ont tué %1$s</string>
+    <string name="event_healed">%1$s guéri</string>
+    <string name="event_heal_host">%1$s : hôte, pas guéri</string>
+    <string name="event_heal_not_mutated">%1$s : rien à soigner</string>
+    <plurals name="report_mutant_count">
+        <item quantity="one">%1$d mutant à bord</item>
+        <item quantity="other">%1$d mutants à bord</item>
+    </plurals>
+    <string name="report_state_mutated">%1$s : muté</string>
+    <string name="report_state_healthy">%1$s : sain</string>
+    <string name="report_genome">%1$s : %2$s</string>
+    <string name="report_spy">%1$s : %2$s</string>
+    <string name="report_spy_nothing">%1$s : rien</string>
+    <string name="report_hacked">pirate %1$s → %2$s</string>
+    <string name="report_hacked_nothing">pirate %1$s → rien</string>
+    <string name="report_hacked_pending">pirate %1$s → en fin de nuit</string>
+    <string name="spy_mutated">muté</string>
+    <string name="spy_mutation_failed">mutation ratée</string>
+    <string name="spy_killed_by_mutants">tué par les mutants</string>
+    <string name="spy_healed">soigné</string>
+    <string name="spy_heal_failed">soin sans effet</string>
+    <string name="spy_killed_by_doctors">tué par les médecins</string>
+    <string name="spy_analysed_by_psychologist">analysé par le psychologue</string>
+    <string name="spy_analysed_by_geneticist">analysé par le généticien</string>
+
     <!-- Actions (labels from design.html) -->
     <string name="action_create_game">Créer une partie</string>
     <string name="action_join_game">Rejoindre une partie</string>
@@ -194,7 +264,6 @@
     <string name="action_choose_roles">Choisir les rôles</string>
     <string name="action_deal">Tirer au sort et distribuer</string>
     <string name="action_start_first_night">Lancer la nuit 1</string>
-    <string name="action_end_night">Terminer la nuit</string>
     <string name="action_start_night">Lancer la nuit</string>
     <string name="action_game_over">Fin de partie</string>
     <string name="action_join_this_game">Rejoindre la partie</string>

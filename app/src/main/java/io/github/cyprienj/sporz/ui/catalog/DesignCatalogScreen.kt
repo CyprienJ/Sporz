@@ -227,7 +227,7 @@ private fun StandardSamples() {
             var target by remember { mutableStateOf("Chloé") }
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 listOf("Alice", "Bastien", "Chloé", "Dorian", "Hugo").forEach { name ->
-                    TargetChip(name, target == name, { target = name }, enabled = name != "Hugo")
+                    TargetChip(name, target == name, { target = name }, enabled = name != "Hugo", eliminated = name == "Hugo")
                 }
             }
         }
