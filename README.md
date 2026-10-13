@@ -330,7 +330,7 @@ Tickets are grouped in epics, in a suggested order. **Size**: S ≈ ½ day, M �
 | B6 | ✅ **Reports**: psychologist, geneticist, IT, hacker (incl. hack-spy variant), spy (what happened to the target). | M | B5 |
 | B7 | ✅ **Day & vote**: eligible voters/targets, blank votes, relative majority (DEC-22), ties, captain variant (DEC-5), reveal-on-elimination variant. | M | B1 |
 | B8 | ✅ **Win detection** (incl. traitor, DEC-7) after each night and each vote. | S | B5, B7 |
-| B9 | **Journal**: every action/result/vote recorded as typed events; serialisable (JSON) game state for save/restore. | S | B5, B7 |
+| B9 | ✅ **Game state & journal**: `GameState` drives a whole game with commands (night steps, captain, vote, abort), delivers reports to notebooks, records every action/result/vote as typed journal events (public / MJ-only) and saves/restores as JSON. | M | B5, B7, B8 |
 | B10 | Exhaustive unit tests: full scripted games (e.g. the scenario of the design: Hugo ejected J1, Chloé mutated then healed N2…). | M | B8 |
 
 #### EPIC C — Offline MJ app
