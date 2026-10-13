@@ -3,7 +3,9 @@ package io.github.cyprienj.sporz.ui.common
 import androidx.annotation.StringRes
 import io.github.cyprienj.sporz.R
 import io.github.cyprienj.sporz.engine.model.Genome
+import io.github.cyprienj.sporz.engine.model.NightStep
 import io.github.cyprienj.sporz.engine.model.Role
+import io.github.cyprienj.sporz.engine.night.role
 import io.github.cyprienj.sporz.ui.theme.Tone
 
 /** French name of the role (design.html). */
@@ -47,4 +49,13 @@ val Genome.nameRes: Int
         Genome.Host -> R.string.genome_host
         Genome.Normal -> R.string.genome_normal
         Genome.Resistant -> R.string.genome_resistant
+    }
+
+/** Name of a night step: the group for mutants and doctors, the role otherwise. */
+@get:StringRes
+val NightStep.nameRes: Int
+    get() = when (this) {
+        NightStep.Mutants -> R.string.night_step_mutants
+        NightStep.Doctors -> R.string.night_step_doctors
+        else -> checkNotNull(role).nameRes
     }

@@ -61,6 +61,15 @@ class GameSession @Inject constructor() {
         _draft.update { draft -> draft?.copy(seats = draft.seats.filterNot { it.id == id }) }
     }
 
+    /** Settings of the running game, or of the setup before the deal. */
+    fun currentSettings(): GameSettings = _game.value?.settings ?: current().settings
+
+    /** Saves the settings in the setup and, once dealt, in the running game (night order: next night). */
+    fun updateSettings(settings: GameSettings) {
+        _draft.value = current().copy(settings = settings)
+        _game.update { it?.copy(settings = settings) }
+    }
+
     fun setComposition(composition: Composition) {
         _draft.value = current().copy(composition = composition)
     }

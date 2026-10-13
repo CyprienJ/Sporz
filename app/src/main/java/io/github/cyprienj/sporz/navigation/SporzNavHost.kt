@@ -13,7 +13,7 @@ import io.github.cyprienj.sporz.ui.gm.game.DayScreen
 import io.github.cyprienj.sporz.ui.gm.game.JournalScreen
 import io.github.cyprienj.sporz.ui.gm.game.NightScreen
 import io.github.cyprienj.sporz.ui.gm.game.PlayerBoardScreen
-import io.github.cyprienj.sporz.ui.gm.settings.SettingsScreen
+import io.github.cyprienj.sporz.ui.gm.settings.SettingsRoute
 import io.github.cyprienj.sporz.ui.gm.setup.CompositionRoute
 import io.github.cyprienj.sporz.ui.gm.setup.DistributionRoute
 import io.github.cyprienj.sporz.ui.gm.setup.GameModeRoute
@@ -80,7 +80,7 @@ fun SporzNavHost(
             // Once the night starts, Back must not return to the setup screens.
             DistributionRoute(onStartFirstNight = { navController.startFresh(Night) })
         }
-        composable<Settings> { SettingsScreen() }
+        composable<Settings> { SettingsRoute(onBack = { navController.popBackStack() }) }
 
         // Game Master: running game
         composable<Night> {

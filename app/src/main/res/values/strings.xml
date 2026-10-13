@@ -136,6 +136,56 @@
     <string name="distribution_all_needed">Annoncez tous les rôles avant de lancer la nuit.</string>
     <string name="distribution_no_game">Aucune partie distribuée. Revenez à la composition des rôles.</string>
 
+    <!-- Settings (design.html) -->
+    <string name="settings_automation">Degré d’automatisation</string>
+    <string name="preset_manual">Manuel</string>
+    <string name="preset_assisted">Assisté</string>
+    <string name="preset_automatic">Automatique</string>
+    <string name="preset_manual_description">Le téléphone sert de carnet au MJ. Les joueurs ne reçoivent que leur rôle ; tout le reste se dit à voix haute.</string>
+    <string name="preset_assisted_description">Les joueurs agissent sur leur téléphone, mais le MJ valide chaque résultat avant envoi.</string>
+    <string name="preset_automatic_description">L’app enchaîne seule : actions, rapports et votes. Le MJ anime et arbitre.</string>
+    <string name="preset_custom_description">Réglages personnalisés.</string>
+    <string name="settings_section_night">Nuit</string>
+    <string name="settings_section_information">Informations aux joueurs</string>
+    <string name="settings_section_votes">Votes</string>
+    <string name="settings_section_privacy">Confidentialité</string>
+    <string name="settings_section_flow">Déroulé</string>
+    <string name="setting_night_actions_on_phone">Actions de nuit sur téléphone</string>
+    <string name="setting_night_actions_on_phone_hint">Les joueurs connectés désignent leur cible (espionner, soigner, muter…) eux-mêmes. Sinon, ils la montrent au MJ.</string>
+    <string name="setting_guided_call">Appel guidé</string>
+    <string name="setting_guided_call_hint">Le MJ voit le texte à lire pour réveiller chaque rôle.</string>
+    <string name="setting_vibrate">Vibration discrète</string>
+    <string name="setting_vibrate_hint">Le téléphone vibre quand c’est au joueur d’agir.</string>
+    <string name="setting_auto_reports">Envoi automatique des rapports</string>
+    <string name="setting_auto_reports_hint">Le résultat (génome, état, nombre de mutants…) arrive sur le téléphone sans validation du MJ.</string>
+    <string name="setting_notify_mutation">Prévenir le joueur muté</string>
+    <string name="setting_notify_mutation_hint">Sinon le MJ l’annonce lui-même en le touchant à l’épaule.</string>
+    <string name="setting_notebook">Carnet des découvertes</string>
+    <string name="setting_notebook_hint">Chaque joueur garde l’historique de ses actions et résultats.</string>
+    <string name="setting_turn_reminder">Rappel de l’action à faire</string>
+    <string name="setting_turn_reminder_hint">Affiche ce que le rôle doit faire cette nuit.</string>
+    <string name="setting_vote_on_phone">Vote sur téléphone</string>
+    <string name="setting_vote_on_phone_hint">Sinon le MJ saisit tous les votes à la main.</string>
+    <string name="setting_auto_close_vote">Clôture automatique</string>
+    <string name="setting_auto_close_vote_hint">Le vote se ferme dès que tous les vivants ont voté.</string>
+    <string name="setting_live_tally">Décompte visible par les joueurs</string>
+    <string name="setting_live_tally_hint">Montre le nombre de voix en direct, sans dire qui a voté quoi.</string>
+    <string name="setting_auto_hide_role">Masquer le rôle automatiquement</string>
+    <string name="setting_auto_hide_role_hint">L’écran du rôle se cache après 10 secondes.</string>
+    <string name="setting_debate_timer">Minuteur de débat</string>
+    <string name="setting_debate_timer_hint">Alerte quand le temps du jour est écoulé</string>
+    <string name="setting_timer_off">Off</string>
+    <string name="setting_timer_minutes">%1$d min</string>
+    <string name="setting_timer_less">Moins de temps</string>
+    <string name="setting_timer_more">Plus de temps</string>
+    <string name="setting_night_order">Ordre d’appel de la nuit</string>
+    <string name="settings_offline_note">Hors ligne, les joueurs n’ont pas de téléphone : les réglages des actions, rapports et votes sur téléphone arriveront avec le mode en ligne.</string>
+    <string name="night_order_title">Ordre d’appel</string>
+    <string name="night_order_up">Monter : %1$s</string>
+    <string name="night_order_down">Descendre : %1$s</string>
+    <string name="night_step_mutants">Mutants</string>
+    <string name="night_step_doctors">Médecins</string>
+
     <!-- Actions (labels from design.html) -->
     <string name="action_create_game">Créer une partie</string>
     <string name="action_join_game">Rejoindre une partie</string>
