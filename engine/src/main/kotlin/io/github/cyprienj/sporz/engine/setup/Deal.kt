@@ -6,9 +6,11 @@ import io.github.cyprienj.sporz.engine.model.Player
 import io.github.cyprienj.sporz.engine.model.PlayerId
 import io.github.cyprienj.sporz.engine.model.PlayerState
 import io.github.cyprienj.sporz.engine.model.Role
+import kotlinx.serialization.Serializable
 import kotlin.random.Random
 
 /** A player in the lobby, before the deal. */
+@Serializable
 public data class Seat(val id: PlayerId, val name: String)
 
 /** The deal was asked with an invalid composition; [check] says why. */

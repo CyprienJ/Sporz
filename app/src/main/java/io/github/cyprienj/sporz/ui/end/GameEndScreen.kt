@@ -79,6 +79,9 @@ fun GameEndScreen(
     onOpenJournal: () -> Unit,
     onBackHome: () -> Unit,
     modifier: Modifier = Modifier,
+    backLabel: String = stringResource(R.string.action_back_home),
+    /** A recent game (ticket C13) can be deleted; the game just finished cannot. */
+    onDelete: (() -> Unit)? = null,
 ) {
     LightStatusBarIcons()
     val fates = GameEndViewModel.fates(game)
@@ -115,8 +118,9 @@ fun GameEndScreen(
                 SporzButton(stringResource(R.string.action_replay_same_crew), onReplaySameCrew, modifier = Modifier.fillMaxWidth())
                 Row {
                     TextLink(stringResource(R.string.action_open_full_journal), onOpenJournal)
-                    TextLink(stringResource(R.string.action_back_home), onBackHome, Modifier.padding(start = 16.dp))
+                    TextLink(backLabel, onBackHome, Modifier.padding(start = 16.dp))
                 }
+                if (onDelete != null) TextLink(stringResource(R.string.action_delete_game), onDelete)
             }
         }
     }
@@ -187,7 +191,7 @@ private fun Fate.text(): String = when (this) {
     is Fate.Healed -> stringResource(R.string.fate_healed, night)
 }
 
-private val GameEnd.titleRes: Int
+internal val GameEnd.titleRes: Int
     get() = when (this) {
         GameEnd.HealthyWin -> R.string.journal_end_healthy
         GameEnd.MutantsWin -> R.string.journal_end_mutants

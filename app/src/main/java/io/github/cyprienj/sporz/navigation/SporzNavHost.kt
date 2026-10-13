@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.toRoute
 import io.github.cyprienj.sporz.BuildConfig
 import io.github.cyprienj.sporz.ui.catalog.DesignCatalogScreen
 import io.github.cyprienj.sporz.ui.end.GameEndRoute
@@ -19,8 +20,11 @@ import io.github.cyprienj.sporz.ui.gm.setup.DistributionRoute
 import io.github.cyprienj.sporz.ui.gm.setup.GameModeRoute
 import io.github.cyprienj.sporz.ui.gm.setup.LobbyRoute
 import io.github.cyprienj.sporz.ui.guide.RoleGuideScreen
-import io.github.cyprienj.sporz.ui.history.RecentGamesScreen
+import io.github.cyprienj.sporz.ui.history.PastGameRoute
+import io.github.cyprienj.sporz.ui.history.PastJournalRoute
+import io.github.cyprienj.sporz.ui.history.RecentGamesRoute
 import io.github.cyprienj.sporz.ui.home.HomeRoute
+import io.github.cyprienj.sporz.ui.home.ResumeTarget
 import io.github.cyprienj.sporz.ui.player.JoinScreen
 import io.github.cyprienj.sporz.ui.player.MyRoleScreen
 import io.github.cyprienj.sporz.ui.player.NightActionScreen
@@ -43,11 +47,34 @@ fun SporzNavHost(
                 onOpenDesignCatalog = if (BuildConfig.DEBUG) {
                     { navController.navigate(DesignCatalog) }
                 } else null,
+                onResume = { target ->
+                    navController.startFresh(
+                        when (target) {
+                            ResumeTarget.Distribution -> Distribution
+                            ResumeTarget.Night -> Night
+                            ResumeTarget.Day -> Day
+                        },
+                    )
+                },
             )
         }
         composable<RoleGuide> { RoleGuideScreen(onBack = { navController.popBackStack() }) }
         composable<DesignCatalog> { DesignCatalogScreen(onBack = { navController.popBackStack() }) }
-        composable<RecentGames> { RecentGamesScreen() }
+        composable<RecentGames> {
+            RecentGamesRoute(
+                onBack = { navController.popBackStack() },
+                onOpenGame = { id -> navController.navigate(PastGame(id)) },
+            )
+        }
+        composable<PastGame> { entry ->
+            val id = entry.toRoute<PastGame>().id
+            PastGameRoute(
+                onBack = { navController.popBackStack() },
+                onReplay = { navController.navigate(Composition) { popUpTo(Home) } },
+                onOpenJournal = { navController.navigate(PastJournal(id)) },
+            )
+        }
+        composable<PastJournal> { PastJournalRoute(onBack = { navController.popBackStack() }) }
         composable<GameEnd> {
             GameEndRoute(
                 onReplaySameCrew = { navController.navigate(Composition) { popUpTo(Home) } },

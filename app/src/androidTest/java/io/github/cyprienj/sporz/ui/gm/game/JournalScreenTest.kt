@@ -1,7 +1,9 @@
 package io.github.cyprienj.sporz.ui.gm.game
 
+import androidx.compose.ui.test.assertCountEquals
 import androidx.compose.ui.test.getUnclippedBoundsInRoot
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
@@ -51,5 +53,21 @@ class JournalScreenTest {
         val day = rule.onNodeWithText(text(R.string.day_title, 1), ignoreCase = true).getUnclippedBoundsInRoot().top
         val night = rule.onNodeWithText(text(R.string.night_title, 1), ignoreCase = true).getUnclippedBoundsInRoot().top
         assertTrue(day < night)
+    }
+
+    @Test
+    fun aFinishedGameEndsInItsLastDayWithNothingInProgress() {
+        // Ended during day 1: the end entry joins the "Jour 1" section.
+        val game = DesignCrew.game()
+            .playMutants(MutantsDecision.Kill(id("Hugo")))
+            .playDoctors(DoctorsDecision.Heal(listOf(id("Alice"), id("Jules"))))
+            .playComputerScientist().playPsychologist(id("Chloé")).playGeneticist(id("Farid"))
+            .playHacker(NightStep.Psychologist).playSpy(id("Chloé"))
+            .castVote(id("Alice"), VoteOption.For(id("Gaëlle"))).closeVote()
+        rule.setContent { SporzTheme(darkTheme = false) { JournalScreen(game, onBackToPhase = {}, onOpenPlayerBoard = null) } }
+
+        rule.onNodeWithText(text(R.string.journal_end_healthy)).assertExists()
+        rule.onAllNodesWithText(text(R.string.day_title, 1), ignoreCase = true).assertCountEquals(1)
+        rule.onNodeWithText(text(R.string.journal_current)).assertDoesNotExist()
     }
 }

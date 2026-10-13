@@ -9,6 +9,8 @@ import kotlinx.serialization.Serializable
 @Serializable data object Home
 @Serializable data object RoleGuide
 @Serializable data object RecentGames
+@Serializable data class PastGame(val id: Long) // a finished game of RecentGames
+@Serializable data class PastJournal(val id: Long)
 @Serializable data object GameEnd
 @Serializable data object DesignCatalog // debug builds only
 

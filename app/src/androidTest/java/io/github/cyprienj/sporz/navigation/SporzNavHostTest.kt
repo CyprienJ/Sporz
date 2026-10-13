@@ -81,6 +81,30 @@ class SporzNavHostTest {
         // Setup screens are no longer in the back stack.
         pressBack()
         assertOnHome()
+
+        // The game is still there (ticket C13).
+        click(R.string.action_resume_game)
+        rule.onNodeWithText(rule.activity.getString(R.string.night_title, 1), ignoreCase = true).assertIsDisplayed()
+
+        // Creating a game asks before stopping this one; cancelling keeps it.
+        pressBack()
+        click(R.string.action_create_game)
+        assertOn(R.string.confirm_new_game_title)
+        click(R.string.action_cancel)
+        rule.onNodeWithText(text(R.string.action_resume_game), ignoreCase = true).assertIsDisplayed()
+        click(R.string.action_create_game)
+        click(R.string.action_stop_and_create)
+        assertOn(R.string.mode_title)
+        pressBack()
+        rule.onNodeWithText(text(R.string.action_resume_game), ignoreCase = true).assertDoesNotExist()
+    }
+
+    @Test
+    fun recentGamesOpensFromHome() {
+        click(R.string.screen_recent_games)
+        assertOn(R.string.screen_recent_games)
+        pressBack()
+        assertOnHome()
     }
 
     @Test

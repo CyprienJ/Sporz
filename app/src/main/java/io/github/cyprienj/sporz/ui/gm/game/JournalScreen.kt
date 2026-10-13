@@ -7,10 +7,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
@@ -56,6 +58,7 @@ import io.github.cyprienj.sporz.ui.common.showsSkipped
 import io.github.cyprienj.sporz.ui.components.SporzIconButton
 import io.github.cyprienj.sporz.ui.components.SporzTabBar
 import io.github.cyprienj.sporz.ui.components.TabItem
+import io.github.cyprienj.sporz.ui.end.GameEndViewModel
 import io.github.cyprienj.sporz.ui.theme.LightStatusBarIcons
 import io.github.cyprienj.sporz.ui.theme.SecretSurface
 import io.github.cyprienj.sporz.ui.theme.SporzIcons
@@ -86,7 +89,14 @@ fun JournalRoute(
 }
 
 @Composable
-fun JournalScreen(game: GameState, onBackToPhase: () -> Unit, onOpenPlayerBoard: () -> Unit, modifier: Modifier = Modifier) {
+fun JournalScreen(
+    game: GameState,
+    onBackToPhase: () -> Unit,
+    onOpenPlayerBoard: (() -> Unit)?,
+    modifier: Modifier = Modifier,
+) {
+    // Without the player board (a past game): a back arrow instead of the tab bar.
+    val standalone = onOpenPlayerBoard == null
     LightStatusBarIcons()
     val context = LocalContext.current
     val sections = journalSections(game)
@@ -104,6 +114,9 @@ fun JournalScreen(game: GameState, onBackToPhase: () -> Unit, onOpenPlayerBoard:
                     .padding(horizontal = 20.dp, vertical = 18.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
+                if (standalone) {
+                    SporzIconButton(SporzIcons.Back, stringResource(R.string.action_back), onClick = onBackToPhase, size = 44.dp)
+                }
                 Text(title.uppercase(), style = SporzTypography.titleMedium, modifier = Modifier.weight(1f).semantics { heading() })
                 Box(Modifier.border(1.dp, SporzTheme.colors.outline, SporzShapes.medium)) {
                     SporzIconButton(SporzIcons.Download, exportLabel, size = 44.dp, onClick = {
@@ -124,20 +137,24 @@ fun JournalScreen(game: GameState, onBackToPhase: () -> Unit, onOpenPlayerBoard:
             if (sections.isEmpty()) item { Text(stringResource(R.string.journal_empty), color = SporzTheme.colors.textMuted) }
             items(sections) { section -> Section(section) }
         }
-        SporzTabBar(
-            items = listOf(
-                TabItem(stringResource(R.string.tab_phase), if (game.phase == Phase.Night) SporzIcons.Night else SporzIcons.Day),
-                TabItem(stringResource(R.string.tab_players), SporzIcons.Players),
-                TabItem(stringResource(R.string.tab_journal), SporzIcons.Journal),
-            ),
-            selectedIndex = 2,
-            onSelect = { index ->
-                when (index) {
-                    0 -> onBackToPhase()
-                    1 -> onOpenPlayerBoard()
-                }
-            },
-        )
+        if (!standalone) {
+            SporzTabBar(
+                items = listOf(
+                    TabItem(stringResource(R.string.tab_phase), if (game.phase == Phase.Night) SporzIcons.Night else SporzIcons.Day),
+                    TabItem(stringResource(R.string.tab_players), SporzIcons.Players),
+                    TabItem(stringResource(R.string.tab_journal), SporzIcons.Journal),
+                ),
+                selectedIndex = 2,
+                onSelect = { index ->
+                    when (index) {
+                        0 -> onBackToPhase()
+                        1 -> onOpenPlayerBoard?.invoke()
+                    }
+                },
+            )
+        } else {
+            Spacer(Modifier.windowInsetsPadding(WindowInsets.navigationBars))
+        }
     }
 }
 
@@ -190,7 +207,9 @@ private fun Modifier.drawLeftLine(color: Color): Modifier = drawBehind {
 fun journalSections(game: GameState): List<JournalSection> {
     val names = game.players.associate { it.id to it.name }
     val name: (PlayerId) -> String = { names[it] ?: it.value }
-    val groups = game.journal.groupBy { it.round to it.phase }
+    // The end entry belongs to the night or day where the game ended; once over, nothing is "en cours".
+    val endedIn = GameEndViewModel.endedIn(game)
+    val groups = game.journal.groupBy { it.round to if (it.phase == Phase.Ended) endedIn else it.phase }
     return groups.entries.map { (key, entries) ->
         val (round, phase) = key
         JournalSection(
