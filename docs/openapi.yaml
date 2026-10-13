@@ -1148,7 +1148,8 @@ components:
             - type: 'null'
         reason:
           type: string
-          enum: [allMutantsGone, allHealthyGone, aborted]
+          enum: [allMutantsGone, allHealthyGone, noSurvivors, aborted]
+          description: rules §5 (R-WIN-1 to R-WIN-4).
         endedAt:
           type: object
           properties:
