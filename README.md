@@ -324,7 +324,7 @@ Tickets are grouped in epics, in a suggested order. **Size**: S ≈ ½ day, M �
 |---|---|---|---|
 | B1 | ✅ Domain model aligned with the design: `Role`, `Genome`, `Camp`, `PlayerState` (healthy / mutated, plus an `alive` flag: dead players keep their state), `Player`, `GameSettings`, `Composition`, `Variants`. | S | A5 |
 | B2 | ✅ Composition validation + **suggestion table** per player count (DEC-6). Astronauts auto-fill. | S | B1 |
-| B3 | Random **deal** of roles and genomes (base mutant = host, constraints from DEC-3), seedable RNG for tests. | S | B1 |
+| B3 | ✅ Random **deal** of roles and genomes (base mutant = host, constraints from DEC-3), seedable RNG for tests. | S | B1 |
 | B4 | **Night state machine**: ordered steps, skip dead/absent roles and mutated power holders (DEC-4), configurable call order. | M | B1 |
 | B5 | Night **action resolution**: mutation (host/resistant rules, a mutated player loses their power, a healed one gets it back — DEC-4), doctors heal/kill (DEC-2), kill, order of resolution, deaths. | M | B4 |
 | B6 | **Reports**: psychologist, geneticist, IT, hacker (incl. hack-spy variant), spy (what happened to the target). | M | B5 |
