@@ -1,3 +1,52 @@
 <resources>
     <string name="app_name">Sporz</string>
+
+    <!-- Placeholder screens (removed once each screen is built) -->
+    <string name="placeholder_design_board">Écran à venir · design.html : %1$s</string>
+
+    <!-- Screen titles -->
+    <string name="screen_home">Accueil</string>
+    <string name="screen_role_guide">Guide des rôles</string>
+    <string name="screen_recent_games">Parties récentes</string>
+    <string name="screen_game_end">Fin de partie</string>
+    <string name="screen_game_mode">Mode de partie</string>
+    <string name="screen_lobby">Lobby</string>
+    <string name="screen_composition">Composition des rôles</string>
+    <string name="screen_distribution">Distribution des rôles</string>
+    <string name="screen_settings">Paramètres</string>
+    <string name="screen_night">Nuit</string>
+    <string name="screen_day">Jour et vote</string>
+    <string name="screen_player_board">Tableau des joueurs</string>
+    <string name="screen_journal">Journal</string>
+    <string name="screen_join">Rejoindre</string>
+    <string name="screen_waiting_room">Salle d\'attente</string>
+    <string name="screen_my_role">Mon rôle</string>
+    <string name="screen_night_action">Action de nuit</string>
+    <string name="screen_vote">Vote</string>
+
+    <!-- Tabs -->
+    <string name="tab_players">Joueurs</string>
+    <string name="tab_journal">Journal</string>
+
+    <!-- Actions (labels from design.html) -->
+    <string name="action_create_game">Créer une partie</string>
+    <string name="action_join_game">Rejoindre une partie</string>
+    <string name="action_rules_and_roles">Règles et rôles</string>
+    <string name="action_open_lobby">Ouvrir le lobby</string>
+    <string name="action_choose_roles">Choisir les rôles</string>
+    <string name="action_deal">Tirer au sort et distribuer</string>
+    <string name="action_start_first_night">Lancer la nuit 1</string>
+    <string name="action_end_night">Terminer la nuit</string>
+    <string name="action_start_night">Lancer la nuit</string>
+    <string name="action_game_over">Fin de partie</string>
+    <string name="action_join_this_game">Rejoindre la partie</string>
+    <string name="action_role_dealt">Rôle reçu</string>
+    <string name="action_open_role_guide">Ouvrir le guide des rôles</string>
+    <string name="action_leave_game">Quitter la partie</string>
+    <string name="action_your_turn">C\'est ton tour</string>
+    <string name="action_vote_opened">Vote ouvert</string>
+    <string name="action_confirm">Valider</string>
+    <string name="action_replay_same_crew">Rejouer avec le même équipage</string>
+    <string name="action_open_full_journal">Revoir le journal complet</string>
+    <string name="action_back_home">Retour à l\'accueil</string>
 </resources>

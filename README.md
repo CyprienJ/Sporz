@@ -311,7 +311,7 @@ Tickets are grouped in epics, in a suggested order. **Size**: S ≈ ½ day, M �
 |---|---|---|---|
 | A1 | ✅ Write the final rules in [`docs/rules.md`](docs/rules.md) from the decisions DEC-1 to DEC-7, including the role suggestion table per player count (7 to 20). | S | — |
 | A2 | ✅ Create the project from scratch: `git` repository, Gradle multi-module build (`:app`, `:engine`), version catalog, package `io.github.cyprienj.sporz` (DEC-21), backend URL per build type (DEC-18), min SDK, `.gitignore`, CI (GitHub Actions: build + unit tests + lint). | M | — |
-| A3 | Set up the Android app skeleton: **Jetpack Compose**, Navigation Compose, single activity, dependency injection (Hilt), empty screens for every route of the design. | M | A2 |
+| A3 | ✅ Set up the Android app skeleton: **Jetpack Compose**, Navigation Compose, single activity, dependency injection (Hilt), empty screens for every route of the design. | M | A2 |
 | A4 | **Design system**: colors, typography (Barlow / Barlow Condensed bundled), components (primary/secondary card buttons, stepper −/+, toggle, chips, player row with avatar initial, state badge, bottom tab bar *Phase / Joueurs / Journal*, dark "secret" surfaces). | M | A3 |
 | A5 | Set up the `:engine` module (pure Kotlin, kotlinx.serialization, JUnit 5). | S | A2 |
 
@@ -407,9 +407,10 @@ If you build outside Android Studio, create `local.properties` with `sdk.dir=/pa
 ./gradlew assembleDebug        # build the app
 ./gradlew test                 # unit tests
 ./gradlew lintDebug            # lint (report in app/build/reports/)
+./gradlew connectedDebugAndroidTest   # UI tests, needs a running emulator or device
 ```
 
-CI (`.github/workflows/ci.yml`) runs the same three commands on every push to `master` and on every pull request.
+CI (`.github/workflows/ci.yml`) runs the first three commands on every push to `master` and on every pull request. The UI tests are not in CI yet: they need an emulator.
 
 **Backend URL** (DEC-18): the app reads `BuildConfig.BACKEND_URL`, set from `gradle.properties`:
 
