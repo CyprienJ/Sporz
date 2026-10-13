@@ -331,7 +331,7 @@ Tickets are grouped in epics, in a suggested order. **Size**: S ≈ ½ day, M �
 | B7 | ✅ **Day & vote**: eligible voters/targets, blank votes, relative majority (DEC-22), ties, captain variant (DEC-5), reveal-on-elimination variant. | M | B1 |
 | B8 | ✅ **Win detection** (incl. traitor, DEC-7) after each night and each vote. | S | B5, B7 |
 | B9 | ✅ **Game state & journal**: `GameState` drives a whole game with commands (night steps, captain, vote, abort), delivers reports to notebooks, records every action/result/vote as typed journal events (public / MJ-only) and saves/restores as JSON. | M | B5, B7, B8 |
-| B10 | Exhaustive unit tests: full scripted games (e.g. the scenario of the design: Hugo ejected J1, Chloé mutated then healed N2…). | M | B8 |
+| B10 | ✅ Exhaustive unit tests: full scripted games (e.g. the scenario of the design: Hugo ejected J1, Chloé mutated then healed N2…). | M | B8 |
 
 #### EPIC C — Offline MJ app
 
@@ -347,7 +347,7 @@ Tickets are grouped in epics, in a suggested order. **Size**: S ≈ ½ day, M �
 | C8 | Screen **MJ · Jour et vote**: announcement, MJ-only details, manual vote entry, tally, close/cancel, debate timer. Show "9 vivants" without the "majorité : 5 voix" of the design (no threshold, DEC-22). | M | B7 |
 | C9 | Screen **Tableau des joueurs** with filters. | S | B1 |
 | C10 | Screen **Journal**. | S | B9 |
-| C11 | Screen **Fin de partie** + *Rejouer avec le même équipage*. | S | B8 |
+| C11 | Screen **Fin de partie** + *Rejouer avec le même équipage*. Note: the sample data of `design.html` ends on day 4 with Dorian killed night 3, which the rules cannot produce (the last mutant is ejected day 2, R-WIN-1); use data from a real `GameState`. | S | B8 |
 | C12 | **Guide des rôles** (3 tabs, expandable cards). | S | A4 |
 | C13 | Persist the running game (process death / phone call must not lose the game) + **Parties récentes** history (Room database). | M | B9 |
 | C14 | Keep screen awake during a game, back-button confirmation, accessibility pass (TalkBack, font scaling, contrast). | S | C7 |

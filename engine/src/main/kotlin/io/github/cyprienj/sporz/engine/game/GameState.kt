@@ -163,8 +163,9 @@ public data class GameState(
         return copy(captain = election.captain).log(JournalEvent.CaptainElected(election))
     }
 
-    /** R-DAY-6 */
+    /** R-DAY-6: named when the death is known, at dawn or after the vote. */
     public fun nameNewCaptain(successor: PlayerId): GameState {
+        check(phase == Phase.Day) { "The successor is named during the day" }
         val from = checkNotNull(captainToReplace) { "No captain to replace" }
         val to = passCaptaincy(players, from, successor)
         return copy(captain = to, captainToReplace = null).log(JournalEvent.CaptainNamed(from, to))
@@ -250,6 +251,7 @@ public data class GameState(
         )
         return copy(players = newPlayers, night = newNight, reports = reports + deliveries)
             .log(JournalEvent.StepPlayed(step, actors, events, report))
+            .withCaptainCheck()
             .logSkipped(night.progress.skipped.size)
             .finishNightIfOver()
     }
