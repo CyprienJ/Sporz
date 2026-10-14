@@ -979,6 +979,10 @@ components:
           items: { type: string, format: uuid }
           maxItems: 3
           uniqueItems: true
+        paralysedId:
+          type: string
+          format: uuid
+          description: Mutants' step only, required there — living, non-mutated player paralysed for the rest of the night (R-NIGHT-22).
         hackedRole:
           $ref: '#/components/schemas/Role'
     NightAction:
@@ -991,6 +995,7 @@ components:
         targetIds:
           type: array
           items: { type: string, format: uuid }
+        paralysedId: { type: string, format: uuid, description: Mutants' step only (R-NIGHT-22). }
         hackedRole: { $ref: '#/components/schemas/Role' }
         enteredBy:
           type: string
@@ -1006,6 +1011,7 @@ components:
           description: For a heal, one distinct player per acting doctor (R-NIGHT-11).
           items: { type: string, format: uuid }
           uniqueItems: true
+        paralysedId: { type: string, format: uuid, description: Mutants' step only (R-NIGHT-22). }
         hackedRole: { $ref: '#/components/schemas/Role' }
     Report:
       type: object
@@ -1026,7 +1032,7 @@ components:
           description: "spy: actions that targeted the player this night, in order (R-NIGHT-19)."
           items:
             type: string
-            enum: [mutated, mutationFailed, killedByMutants, healed, healFailed, killedByDoctors, analysedByPsychologist, analysedByGeneticist]
+            enum: [mutated, mutationFailed, killedByMutants, paralysed, healed, healFailed, killedByDoctors, analysedByPsychologist, analysedByGeneticist]
         hackedFrom:
           $ref: '#/components/schemas/NightStepKind'
           description: "hacked: the step whose report was copied (R-NIGHT-18)."

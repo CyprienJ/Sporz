@@ -81,7 +81,7 @@ private val roles = listOf(
     GuideCard(GameRole.ComputerScientist.nameRes, R.string.guide_tag_every_night, R.string.guide_computer_scientist, Tone.Healthy),
     GuideCard(GameRole.Hacker.nameRes, R.string.guide_tag_every_night, R.string.guide_hacker, Tone.Healthy),
     GuideCard(GameRole.Spy.nameRes, R.string.guide_tag_every_night, R.string.guide_spy, Tone.Healthy),
-    GuideCard(GameRole.Traitor.nameRes, R.string.guide_tag_traitor, R.string.guide_traitor, Tone.Mutant),
+    GuideCard(GameRole.Traitor.nameRes, R.string.guide_tag_traitor, R.string.guide_traitor, Tone.Healthy),
     GuideCard(GameRole.Astronaut.nameRes, R.string.guide_tag_astronaut, R.string.guide_astronaut, Tone.Healthy),
 )
 

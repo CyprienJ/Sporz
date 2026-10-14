@@ -33,7 +33,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.cyprienj.sporz.R
-import io.github.cyprienj.sporz.engine.model.Camp
 import io.github.cyprienj.sporz.engine.model.Genome
 import io.github.cyprienj.sporz.engine.model.Player
 import io.github.cyprienj.sporz.engine.model.PlayerId
@@ -207,9 +206,10 @@ private fun PlayerCard(
             FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 Pill(stringResource(player.role.nameRes))
                 Pill(stringResource(R.string.distribution_genome, stringResource(player.genome.nameRes)), style = PillStyle.Outlined)
+                // The state: the traitor is healthy, their role says whom they play for (R-SET-12).
                 Pill(
-                    stringResource(if (player.camp == Camp.Mutant) R.string.camp_mutant else R.string.camp_healthy),
-                    tone = if (player.camp == Camp.Mutant) Tone.Mutant else Tone.Healthy,
+                    stringResource(if (player.isMutated) R.string.camp_mutant else R.string.camp_healthy),
+                    tone = if (player.isMutated) Tone.Mutant else Tone.Healthy,
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

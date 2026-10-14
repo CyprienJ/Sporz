@@ -1,5 +1,6 @@
 package io.github.cyprienj.sporz.ui.home
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -7,16 +8,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -25,6 +25,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -50,10 +51,10 @@ import io.github.cyprienj.sporz.ui.theme.StandardSurface
 @Composable
 fun HomeRoute(
     onCreateGame: () -> Unit,
-    onJoinGame: () -> Unit,
+    /** Null until online play is available: the card is then disabled. */
+    onJoinGame: (() -> Unit)?,
     onOpenRoleGuide: () -> Unit,
     onOpenRecentGames: () -> Unit,
-    onOpenDesignCatalog: (() -> Unit)?,
     onResume: (ResumeTarget) -> Unit,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -71,7 +72,6 @@ fun HomeRoute(
         onJoinGame = onJoinGame,
         onOpenRoleGuide = onOpenRoleGuide,
         onOpenRecentGames = onOpenRecentGames,
-        onOpenDesignCatalog = onOpenDesignCatalog,
     )
     val running = resumable
     if (confirmNewGame && running != null) {
@@ -101,10 +101,10 @@ fun HomeScreen(
     resumable: ResumableGame?,
     onResume: () -> Unit,
     onCreateGame: () -> Unit,
-    onJoinGame: () -> Unit,
+    /** Null until online play is available: the card is then disabled. */
+    onJoinGame: (() -> Unit)?,
     onOpenRoleGuide: () -> Unit,
     onOpenRecentGames: () -> Unit,
-    onOpenDesignCatalog: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     LightStatusBarIcons()
@@ -119,7 +119,7 @@ fun HomeScreen(
                         .fillMaxWidth(),
                 )
                 Actions(
-                    resumable, onResume, onCreateGame, onJoinGame, onOpenRoleGuide, onOpenRecentGames, onOpenDesignCatalog,
+                    resumable, onResume, onCreateGame, onJoinGame, onOpenRoleGuide, onOpenRecentGames,
                     Modifier.heightIn(max = actionsMaxHeight),
                 )
             }
@@ -137,7 +137,7 @@ private fun Brand(modifier: Modifier = Modifier) {
             .padding(horizontal = 24.dp, vertical = 32.dp),
         verticalArrangement = Arrangement.spacedBy(14.dp, Alignment.Bottom),
     ) {
-        Icon(SporzIcons.Logo, contentDescription = null, tint = colors.accent, modifier = Modifier.size(64.dp))
+        Image(painterResource(R.drawable.logo), contentDescription = null, modifier = Modifier.height(80.dp))
         Text(
             stringResource(R.string.app_name).uppercase(),
             style = SporzTypography.display,
@@ -157,10 +157,10 @@ private fun Actions(
     resumable: ResumableGame?,
     onResume: () -> Unit,
     onCreateGame: () -> Unit,
-    onJoinGame: () -> Unit,
+    /** Null until online play is available: the card is then disabled. */
+    onJoinGame: (() -> Unit)?,
     onOpenRoleGuide: () -> Unit,
     onOpenRecentGames: () -> Unit,
-    onOpenDesignCatalog: (() -> Unit)?,
     modifier: Modifier = Modifier,
 ) {
     StandardSurface(modifier.fillMaxWidth(), shape = SporzShapes.sheet) {
@@ -193,18 +193,13 @@ private fun Actions(
                 title = stringResource(R.string.action_join_game),
                 subtitle = stringResource(R.string.home_join_subtitle),
                 icon = SporzIcons.Join,
-                onClick = onJoinGame,
+                onClick = { onJoinGame?.invoke() },
+                enabled = onJoinGame != null,
+                tag = if (onJoinGame == null) stringResource(R.string.mode_coming_soon) else null,
             )
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 TextLink(stringResource(R.string.action_rules_and_roles), onOpenRoleGuide)
                 TextLink(stringResource(R.string.screen_recent_games), onOpenRecentGames)
-            }
-            if (onOpenDesignCatalog != null) {
-                TextLink(
-                    stringResource(R.string.screen_design_catalog),
-                    onOpenDesignCatalog,
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                )
             }
         }
     }
@@ -213,11 +208,11 @@ private fun Actions(
 @Preview(name = "Light")
 @Composable
 private fun HomeLightPreview() {
-    SporzTheme(darkTheme = false) { HomeScreen(null, {}, {}, {}, {}, {}, onOpenDesignCatalog = null) }
+    SporzTheme(darkTheme = false) { HomeScreen(null, {}, {}, {}, {}, {}) }
 }
 
 @Preview(name = "Dark")
 @Composable
 private fun HomeDarkPreview() {
-    SporzTheme(darkTheme = true) { HomeScreen(ResumableGame(ResumeTarget.Night, 2, 9), {}, {}, {}, {}, {}, onOpenDesignCatalog = {}) }
+    SporzTheme(darkTheme = true) { HomeScreen(ResumableGame(ResumeTarget.Night, 2, 9), {}, {}, {}, {}, {}) }
 }

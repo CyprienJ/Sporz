@@ -47,8 +47,8 @@ public data class Player(
     val isMutated: Boolean get() = state == PlayerState.Mutated
 
     /**
-     * Mutant camp = mutated players + the traitor while not mutated (§1,
-     * DEC-7). A healed traitor is back in the mutant camp (R-SET-12).
+     * Camp the player wins with (§1, DEC-7): mutated players and the traitor,
+     * who is otherwise a healthy player (R-SET-12).
      */
     val camp: Camp
         get() = if (isMutated || role == Role.Traitor) Camp.Mutant else Camp.Healthy

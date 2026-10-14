@@ -100,11 +100,13 @@ public data class GameState(
 
     // --- Night -----------------------------------------------------------------
 
-    /** R-NIGHT-6 to R-NIGHT-10 */
+    /** R-NIGHT-6 to R-NIGHT-10, R-NIGHT-22 */
     public fun playMutants(decision: MutantsDecision): GameState {
         val actors = requireStep(NightStep.Mutants)
         val outcome = resolveMutants(players, decision)
-        return afterStep(outcome.players, NightStep.Mutants, actors, outcome.events)
+        val night = night!!
+        val withParalysis = copy(night = night.copy(progress = night.progress.copy(paralysed = decision.paralysed)))
+        return withParalysis.afterStep(outcome.players, NightStep.Mutants, actors, outcome.events)
     }
 
     /** R-NIGHT-11 to R-NIGHT-14 */

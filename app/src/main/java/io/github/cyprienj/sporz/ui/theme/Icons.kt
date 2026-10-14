@@ -13,7 +13,6 @@ import androidx.compose.ui.unit.dp
  * rects are converted to path data. Tint them with `Icon(tint = …)`.
  */
 object SporzIcons {
-    val Logo by icon("Logo", 1.4f, "M8 3c0 5 8 5 8 9s-8 4-8 9", "M16 3c0 5-8 5-8 9s8 4 8 9", "M9 6.5h6M9 17.5h6M10.5 12h3")
     val Plus by icon("Plus", 1.8f, "M12 5v14M5 12h14")
     val Close by icon("Close", 1.8f, "M6 6l12 12M18 6L6 18")
     val Check by icon("Check", 2.4f, "M5 12.5l4.5 4.5L19 7.5")

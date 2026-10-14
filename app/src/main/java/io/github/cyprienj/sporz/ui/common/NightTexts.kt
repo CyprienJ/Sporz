@@ -22,10 +22,12 @@ fun nightEventText(event: NightEvent, name: (PlayerId) -> String): String = when
     is NightEvent.Mutation ->
         stringResource(if (event.succeeded) R.string.event_mutated else R.string.event_mutation_failed, name(event.target))
     is NightEvent.Kill -> stringResource(R.string.event_killed, name(event.target))
+    is NightEvent.Paralysis -> stringResource(R.string.event_paralysed, name(event.target))
     is NightEvent.Heal -> stringResource(
         when (event.outcome) {
             HealOutcome.Healed -> R.string.event_healed
             HealOutcome.Host -> R.string.event_heal_host
+            HealOutcome.Traitor -> R.string.event_heal_traitor
             HealOutcome.NotMutated -> R.string.event_heal_not_mutated
         },
         name(event.target),
@@ -64,6 +66,7 @@ private val SpyFinding.textRes: Int
         SpyFinding.Mutated -> R.string.spy_mutated
         SpyFinding.MutationFailed -> R.string.spy_mutation_failed
         SpyFinding.KilledByMutants -> R.string.spy_killed_by_mutants
+        SpyFinding.Paralysed -> R.string.spy_paralysed
         SpyFinding.Healed -> R.string.spy_healed
         SpyFinding.HealFailed -> R.string.spy_heal_failed
         SpyFinding.KilledByDoctors -> R.string.spy_killed_by_doctors

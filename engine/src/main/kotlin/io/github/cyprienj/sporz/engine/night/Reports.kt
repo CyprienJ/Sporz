@@ -40,9 +40,10 @@ public enum class SpyFinding {
     @SerialName("mutated") Mutated,
     @SerialName("mutationFailed") MutationFailed,
     @SerialName("killedByMutants") KilledByMutants,
+    @SerialName("paralysed") Paralysed,
     @SerialName("healed") Healed,
 
-    /** Heal on a host or on a player who was not mutated: nothing happened. */
+    /** Heal on a host, on the traitor or on a player who was not mutated: nothing happened. */
     @SerialName("healFailed") HealFailed,
     @SerialName("killedByDoctors") KilledByDoctors,
     @SerialName("analysedByPsychologist") AnalysedByPsychologist,
@@ -79,6 +80,7 @@ public fun spyReport(players: List<Player>, actor: PlayerId, target: PlayerId, e
                 Killer.Mutants -> SpyFinding.KilledByMutants
                 Killer.Doctors -> SpyFinding.KilledByDoctors
             }
+            is NightEvent.Paralysis -> SpyFinding.Paralysed
             is NightEvent.Heal -> if (event.outcome == HealOutcome.Healed) SpyFinding.Healed else SpyFinding.HealFailed
             is NightEvent.Analysis -> when (event.by) {
                 Analyst.Psychologist -> SpyFinding.AnalysedByPsychologist

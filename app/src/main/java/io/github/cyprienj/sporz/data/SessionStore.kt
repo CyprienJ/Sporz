@@ -73,8 +73,8 @@ class FileSessionStore(path: File) : SessionStore {
         }
     }
 
-    private companion object {
+    companion object {
         const val FILE_NAME = "current_game.json"
-        const val TAG = "SessionStore"
+        private const val TAG = "SessionStore"
     }
 }

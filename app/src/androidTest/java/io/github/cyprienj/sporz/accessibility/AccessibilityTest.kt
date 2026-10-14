@@ -131,7 +131,7 @@ class AccessibilityTest(private val darkTheme: Boolean, private val fontScale: F
     }
 
     @Test
-    fun home() = check { HomeScreen(ResumableGame(ResumeTarget.Night, 2, 10), {}, {}, {}, {}, {}, onOpenDesignCatalog = {}) }
+    fun home() = check { HomeScreen(ResumableGame(ResumeTarget.Night, 2, 10), {}, {}, onJoinGame = null, {}, {}) }
 
     @Test
     fun gameMode() {

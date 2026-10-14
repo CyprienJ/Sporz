@@ -20,6 +20,13 @@ class NightViewModelTest {
 
     private fun pick(vararg names: String) = names.forEach { viewModel.toggleTarget(id(it)) }
 
+    /** Mutants' step: one target and one paralysed player (R-NIGHT-22), then confirm. */
+    private fun mutants(target: String, paralysed: String = if (target == "Hugo") "Chloé" else "Hugo") {
+        pick(target)
+        viewModel.toggleParalysed(id(paralysed))
+        viewModel.confirm()
+    }
+
     @Test
     fun `mutants target living healthy players only (R-NIGHT-7)`() {
         val eligible = NightViewModel.eligibleTargets(game, kill = false)
@@ -30,9 +37,12 @@ class NightViewModelTest {
     @Test
     fun `mutate then heal, the night moves on step by step`() {
         pick("Chloé")
+        assertFalse(viewModel.canConfirm()) // the paralysis is still to choose
+        viewModel.toggleParalysed(id("Hugo"))
         assertTrue(viewModel.canConfirm())
         viewModel.confirm()
         assertEquals(NightStep.Doctors, game.currentStep)
+        assertEquals(null, viewModel.paralysed)
         assertEquals(PlayerState.Mutated, game.players.single { it.name == "Chloé" }.state)
         assertEquals(emptyList<Any>(), viewModel.targets)
 
@@ -48,7 +58,7 @@ class NightViewModelTest {
 
     @Test
     fun `doctors killing pick one player who is not a doctor (R-NIGHT-5)`() {
-        pick("Hugo"); viewModel.confirm()
+        mutants("Hugo")
         viewModel.chooseKill(true)
         val eligible = NightViewModel.eligibleTargets(game, kill = true)
         assertFalse(id("Bastien") in eligible || id("Emma") in eligible)
@@ -59,7 +69,7 @@ class NightViewModelTest {
 
     @Test
     fun `information roles cannot designate themselves (R-NIGHT-5)`() {
-        pick("Hugo"); viewModel.confirm()
+        mutants("Hugo")
         pick("Chloé", "Alice"); viewModel.confirm()
         viewModel.confirm() // computer scientist: nothing to pick
         assertEquals(NightStep.Psychologist, game.currentStep)
@@ -68,7 +78,7 @@ class NightViewModelTest {
 
     @Test
     fun `a whole night ends at dawn with the reports delivered`() {
-        pick("Chloé"); viewModel.confirm()
+        mutants("Chloé")
         pick("Chloé", "Alice"); viewModel.confirm()
         viewModel.confirm()
         pick("Gaëlle"); viewModel.confirm()
@@ -79,6 +89,20 @@ class NightViewModelTest {
 
         assertEquals(Phase.Day, game.phase)
         assertEquals(Report.State(id("Gaëlle"), PlayerState.Mutated), game.notebook(id("Dorian")).single().report)
+    }
+
+    @Test
+    fun `mutants paralyse a living healthy player, who then sits out the night (R-NIGHT-22)`() {
+        val eligible = NightViewModel.eligibleParalysis(game)
+        assertFalse(id("Gaëlle") in eligible)
+        assertEquals(9, eligible.size)
+
+        viewModel.toggleParalysed(id("Bastien"))
+        viewModel.toggleParalysed(id("Bastien")) // tapping again clears it
+        assertEquals(null, viewModel.paralysed)
+        mutants("Chloé", paralysed = "Bastien")
+        assertEquals(listOf(id("Emma")), game.night!!.progress.current!!.actors)
+        assertEquals(1, NightViewModel.maxTargets(game, kill = false))
     }
 
     @Test

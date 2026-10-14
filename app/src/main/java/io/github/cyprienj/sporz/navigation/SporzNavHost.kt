@@ -1,5 +1,6 @@
 package io.github.cyprienj.sporz.navigation
 
+import io.github.cyprienj.sporz.BuildConfig
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -7,8 +8,6 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import io.github.cyprienj.sporz.BuildConfig
-import io.github.cyprienj.sporz.ui.catalog.DesignCatalogScreen
 import io.github.cyprienj.sporz.ui.end.GameEndRoute
 import io.github.cyprienj.sporz.ui.gm.game.DayRoute
 import io.github.cyprienj.sporz.ui.gm.game.JournalRoute
@@ -41,12 +40,11 @@ fun SporzNavHost(
         composable<Home> {
             HomeRoute(
                 onCreateGame = { navController.navigate(GameMode) },
-                onJoinGame = { navController.navigate(Join) },
+                onJoinGame = if (BuildConfig.ONLINE_PLAY) {
+                    { navController.navigate(Join) }
+                } else null,
                 onOpenRoleGuide = { navController.navigate(RoleGuide) },
                 onOpenRecentGames = { navController.navigate(RecentGames) },
-                onOpenDesignCatalog = if (BuildConfig.DEBUG) {
-                    { navController.navigate(DesignCatalog) }
-                } else null,
                 onResume = { target ->
                     navController.startFresh(
                         when (target) {
@@ -59,7 +57,6 @@ fun SporzNavHost(
             )
         }
         composable<RoleGuide> { RoleGuideScreen(onBack = { navController.popBackStack() }) }
-        composable<DesignCatalog> { DesignCatalogScreen(onBack = { navController.popBackStack() }) }
         composable<RecentGames> {
             RecentGamesRoute(
                 onBack = { navController.popBackStack() },

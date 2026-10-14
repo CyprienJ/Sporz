@@ -260,4 +260,45 @@ class GameStateTest {
         assertNull(day.day!!.result)
         assertEquals(VoteResult.NoVotes, day.closeVote().day!!.result)
     }
+
+    @Test
+    fun `a paralysed doctor sits out the night, and only that night (R-NIGHT-22)`() {
+        val night = game().playMutants(MutantsDecision.Mutate(id("Chloé"), paralysed = id("Bastien")))
+        assertEquals(NightStep.Doctors, night.currentStep)
+        assertEquals(listOf(id("Emma")), night.night!!.progress.current!!.actors)
+        // One doctor left: one heal.
+        val healed = night.playDoctors(DoctorsDecision.Heal(listOf(id("Chloé"))))
+        assertEquals(PlayerState.Healthy, healed.player("Chloé").state)
+
+        val nextNight = healed.playComputerScientist()
+            .playPsychologist(id("Hugo"))
+            .playGeneticist(id("Hugo"))
+            .playHacker(NightStep.Psychologist)
+            .playSpy(id("Bastien"))
+            .closeVote()
+            .startNight()
+            .playMutants(MutantsDecision.Kill(id("Hugo")))
+        assertEquals(listOf(id("Bastien"), id("Emma")), nextNight.night!!.progress.current!!.actors)
+    }
+
+    @Test
+    fun `a paralysed information role is skipped and the spy sees the paralysis (R-NIGHT-22, R-NIGHT-19)`() {
+        val night = game().playMutants(MutantsDecision.Kill(id("Hugo"), paralysed = id("Dorian")))
+            .playDoctors(DoctorsDecision.Heal(listOf(id("Bastien"), id("Emma"))))
+            .playComputerScientist()
+        // The psychologist is skipped; the hacker copying them gets nothing.
+        assertEquals(NightStep.Geneticist, night.currentStep)
+        val spied = night.playGeneticist(id("Chloé"))
+            .playHacker(NightStep.Psychologist)
+            .playSpy(id("Dorian"))
+        assertTrue(spied.journal.any { it.event == StepSkipped(NightStep.Psychologist) })
+        assertEquals(Report.Hacked(NightStep.Psychologist, null), spied.notebook(id("Alice")).single().report)
+        assertEquals(Report.Spy(id("Dorian"), listOf(SpyFinding.Paralysed)), spied.notebook(id("Farid")).single().report)
+    }
+
+    @Test
+    fun `a game saved before paralysis existed still loads`() {
+        val json = game().toJson().replace(Regex(",?\"paralysed\":null"), "")
+        assertNull(GameState.fromJson(json).night!!.progress.paralysed)
+    }
 }

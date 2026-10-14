@@ -15,7 +15,7 @@ Every rule has an id (`R-…`) so tickets, code comments and tests can point to 
 | **State** | `healthy` (*sain*) or `mutated` (*muté*). Dead players keep the state they had when they died. |
 | **Genome** | `host` (*hôte*), `normal` or `resistant` (*résistant*). Fixed for the whole game. |
 | **Role** | The card dealt at setup (*Médecin*, *Psychologue*…). Fixed for the whole game. |
-| **Mutant camp** | Living mutated players + the traitor while not mutated. |
+| **Mutant camp** | Living mutated players + the traitor (a healthy player who wins with the mutants, R-SET-12). |
 | **Healthy camp** | Every other living player. |
 | **Round** | Night *n* followed by Day *n*. The game starts with Night 1. |
 
@@ -39,7 +39,7 @@ Every rule has an id (`R-…`) so tickets, code comments and tests can point to 
 | Informaticien | `computerScientist` | 0 or 1 | healthy |
 | Hacker | `hacker` | 0 or 1 | healthy |
 | Espion | `spy` | 0 or 1 | healthy |
-| Traître | `traitor` | 0 or 1 | mutant camp, but healthy |
+| Traître | `traitor` | 0 or 1 | healthy, wins with the mutant camp |
 | Astronaute | `astronaut` | the rest (computed) | healthy |
 
 - **R-SET-3** The number of astronauts is always *players − all other roles*. A composition is valid only if this number is ≥ 0.
@@ -57,7 +57,7 @@ Every rule has an id (`R-…`) so tickets, code comments and tests can point to 
 - **R-SET-9** Roles are shuffled and dealt at random, then genomes are drawn (R-SET-5 to 7). The random generator is seedable so tests are reproducible.
 - **R-SET-10** At the start, the base mutant is `mutated`, everybody else is `healthy`.
 - **R-SET-11** Each player learns secretly their **role, genome and state**. Mutants do not learn who the other mutants are at this point; they discover each other when they wake up together (R-NIGHT-6).
-- **R-SET-12** **Traitor** (DEC-23): the traitor never wakes up with the mutants and does not know who they are; the mutants do not know who the traitor is. If mutated, the traitor becomes a normal mutant (wakes up with them); if healed afterwards, they are the traitor again.
+- **R-SET-12** **Traitor** (DEC-23): the traitor is a healthy astronaut — no power, never woken at night — who wins with the mutants (DEC-7). They do not know who the mutants are, and the mutants do not know who the traitor is. The mutants can mutate the traitor, who then wakes up with them; **a mutated traitor cannot be healed** (R-NIGHT-13).
 
 ### 2.5 Suggested compositions (*Suggérer* button)
 
@@ -105,12 +105,15 @@ The base mutant (1) is always included. Default variants: see §6.
 
 - **R-NIGHT-6** All living mutated players wake up together (the base mutant alone on Night 1). They choose **one** action:
   - **mutate** one living healthy player, **or**
-  - **kill** one living healthy player.
+  - **kill** one living healthy player,
+
+  **and** they paralyse one player (R-NIGHT-22).
 - **R-NIGHT-7** Mutants cannot target a mutated player. They can target the traitor (they may not know who it is).
 - **R-NIGHT-8** Mutation outcome by genome:
   - `normal` or `host` → the target becomes `mutated`;
   - `resistant` → nothing happens, but the mutants' action is used up.
 - **R-NIGHT-9** If the mutants disagree, the MJ decides.
+- **R-NIGHT-22** **Paralysis** (DEC-1): with their action, the mutants choose one living, non-mutated player to paralyse (it may be the player they target). The paralysed player is not woken for the rest of the night: their step is played by the other holders of the role (one doctor left heals one player) or skipped if nobody else can play it (R-NIGHT-3); a hacker copying a skipped role gets "nothing". The paralysis is never announced and ends with the night.
 - **R-NIGHT-10** The mutated player is told secretly that they are now a mutant: by the MJ (touch on the shoulder) or on their phone if *notify mutated player* is on. They wake up with the mutants from the **next** night.
 
 ### 3.3 Doctors
@@ -122,6 +125,7 @@ The base mutant (1) is always included. Default variants: see §6.
 - **R-NIGHT-13** Heal outcome:
   - `mutated` and not `host` → becomes `healthy` (and recovers their power, R-NIGHT-4);
   - `mutated` and `host` → nothing happens;
+  - `mutated` traitor → nothing happens (R-SET-12);
   - `healthy` → nothing happens.
 - **R-NIGHT-14** Kill works on any genome and any state.
 
@@ -133,7 +137,7 @@ Each one designates a living player (except the computer scientist) and receives
 - **R-NIGHT-16** **Psychologue**: learns whether the target is `mutated` or `healthy`. The traitor shows as `healthy` unless mutated.
 - **R-NIGHT-17** **Généticien**: learns the target's genome.
 - **R-NIGHT-18** **Hacker**: chooses one role among psychologist, geneticist, computer scientist (and spy with the variant). They receive a **copy** of that role's report of the night. If that role produced no report (absent, dead, mutated), the hacker receives "nothing". The hacked player still receives their own report and is not told they were hacked (DEC-24).
-- **R-NIGHT-19** **Espion**: designates a player and learns every action that targeted them this night, with its outcome — mutated / mutation failed / killed by mutants / healed / heal failed / killed by doctors / analysed by the psychologist / analysed by the geneticist. With the *hacker can hack the spy* variant, the spy report is computed after the spy's step and the hacker's copy is delivered at the end of the night.
+- **R-NIGHT-19** **Espion**: designates a player and learns every action that targeted them this night, with its outcome — mutated / mutation failed / killed by mutants / paralysed / healed / heal failed / killed by doctors / analysed by the psychologist / analysed by the geneticist. With the *hacker can hack the spy* variant, the spy report is computed after the spy's step and the hacker's copy is delivered at the end of the night.
 
 ### 3.5 End of night
 
@@ -188,7 +192,6 @@ Checked after the end of each night (R-NIGHT-20) and after each vote (R-DAY-12).
 | Reveal role and state on death | on | R-NIGHT-21, R-DAY-11 |
 | Blank vote allowed | on | R-DAY-7, R-DAY-9 |
 | Captain (double vote) | off | R-DAY-4 to R-DAY-6, R-DAY-10 |
-| Paralysis | not in v1 (DEC-1) | — |
 
 ---
 
@@ -205,3 +208,7 @@ Checked after the end of each night (R-NIGHT-20) and after each vote (R-DAY-12).
 **E-5 — vote.** 9 living players, votes Gaëlle 4, Chloé 1, blank 1, 3 abstentions → Gaëlle is ejected (relative majority, R-DAY-9).
 
 **E-6 — traitor.** Living: 3 healthy players, 1 mutant, 1 traitor. The 3 healthy ones eject the mutant → the traitor is still alive, the game goes on. The mutant camp wins if the traitor survives until every other living player is mutated or dead.
+
+**E-7 — paralysis.** Night 1: the mutants kill Hugo and paralyse Bastien (doctor). Emma is the only doctor woken and heals one player. Paralysing the psychologist instead skips step 4; the hacker who chose the psychologist gets "nothing". The spy targeting the paralysed player learns "paralysed".
+
+**E-8 — mutated traitor.** The mutants mutate Tom (traitor); the doctors heal Tom → nothing happens, Tom stays mutated and wakes up with the mutants from the next night.

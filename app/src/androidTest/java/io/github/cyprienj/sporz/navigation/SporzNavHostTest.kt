@@ -4,6 +4,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.assertIsDisplayed
+import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
@@ -13,18 +14,32 @@ import androidx.compose.ui.test.performClick
 import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import androidx.test.platform.app.InstrumentationRegistry
+import io.github.cyprienj.sporz.BuildConfig
 import io.github.cyprienj.sporz.MainActivity
 import io.github.cyprienj.sporz.R
+import io.github.cyprienj.sporz.data.FileSessionStore
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
+import org.junit.Assume.assumeFalse
+import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
+import org.junit.rules.ExternalResource
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
 class SporzNavHostTest {
 
-    @get:Rule
+    /** No game in progress left on the device by an earlier run or a manual try: it would ask before creating one. */
+    @get:Rule(order = 0)
+    val noSavedGame = object : ExternalResource() {
+        override fun before() {
+            InstrumentationRegistry.getInstrumentation().targetContext.filesDir.resolve(FileSessionStore.FILE_NAME).delete()
+        }
+    }
+
+    @get:Rule(order = 1)
     val rule = createAndroidComposeRule<MainActivity>()
 
     private fun text(@StringRes id: Int) = rule.activity.getString(id)
@@ -128,7 +143,15 @@ class SporzNavHostTest {
     }
 
     @Test
+    fun joinIsDisabledUntilOnlinePlay() {
+        assumeFalse(BuildConfig.ONLINE_PLAY)
+        rule.onNodeWithText(text(R.string.action_join_game), ignoreCase = true).assertIsNotEnabled()
+        rule.onNodeWithText(text(R.string.mode_coming_soon), ignoreCase = true).assertIsDisplayed()
+    }
+
+    @Test
     fun playerFlow_joinWaitRoleVote() {
+        assumeTrue(BuildConfig.ONLINE_PLAY)
         click(R.string.action_join_game)
         assertOn(R.string.screen_join)
         click(R.string.action_join_this_game)
@@ -142,15 +165,8 @@ class SporzNavHostTest {
     }
 
     @Test
-    fun designCatalogOpensInDebugBuilds() {
-        click(R.string.screen_design_catalog)
-        assertOn(R.string.screen_design_catalog)
-        pressBack()
-        assertOnHome()
-    }
-
-    @Test
     fun leavingTheWaitingRoomGoesHome() {
+        assumeTrue(BuildConfig.ONLINE_PLAY)
         click(R.string.action_join_game)
         click(R.string.action_join_this_game)
         click(R.string.action_leave_game)

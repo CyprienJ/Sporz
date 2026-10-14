@@ -18,6 +18,9 @@ android {
         versionName = "0.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // Joining a game and the online modes need the backend (Milestone 2).
+        buildConfigField("boolean", "ONLINE_PLAY", "false")
     }
 
     buildTypes {

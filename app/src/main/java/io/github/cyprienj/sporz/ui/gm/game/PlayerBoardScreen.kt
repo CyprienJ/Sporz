@@ -29,7 +29,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.cyprienj.sporz.R
 import io.github.cyprienj.sporz.engine.game.GameState
 import io.github.cyprienj.sporz.engine.game.Phase
-import io.github.cyprienj.sporz.engine.model.Camp
 import io.github.cyprienj.sporz.engine.model.Player
 import io.github.cyprienj.sporz.ui.common.nameRes
 import io.github.cyprienj.sporz.ui.components.CampBar
@@ -128,8 +127,9 @@ fun PlayerBoardScreen(
 @Composable
 private fun Header(game: GameState) {
     val alive = game.players.filter { it.alive }
-    val healthy = alive.count { it.camp == Camp.Healthy }
-    val mutant = alive.count { it.camp == Camp.Mutant }
+    // By state: the traitor counts as healthy until mutated (R-SET-12).
+    val healthy = alive.count { !it.isMutated }
+    val mutant = alive.count { it.isMutated }
     val eliminated = game.players.size - alive.size
     Column(
         Modifier
@@ -159,7 +159,7 @@ private fun Header(game: GameState) {
     }
 }
 
-/** Camp bar (red for the mutant camp, traitor included), role and genome, state badge. */
+/** State bar (red when mutated; the traitor is healthy until mutated), role and genome, state badge. */
 @Composable
 private fun BoardRow(player: Player, wasEjected: Boolean) {
     val colors = SporzTheme.colors
@@ -170,7 +170,7 @@ private fun BoardRow(player: Player, wasEjected: Boolean) {
     }
     val bar = when {
         !player.alive -> colors.neutral.strong
-        player.camp == Camp.Mutant -> colors.mutant.strong
+        player.isMutated -> colors.mutant.strong
         else -> colors.healthy.strong
     }
     PlayerRow(

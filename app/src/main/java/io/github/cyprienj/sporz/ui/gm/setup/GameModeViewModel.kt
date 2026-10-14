@@ -2,6 +2,7 @@ package io.github.cyprienj.sporz.ui.gm.setup
 
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
+import io.github.cyprienj.sporz.BuildConfig
 import io.github.cyprienj.sporz.data.GameSession
 import io.github.cyprienj.sporz.engine.model.GameMode
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -13,7 +14,7 @@ import javax.inject.Inject
 class GameModeViewModel @Inject constructor(private val session: GameSession) : ViewModel() {
 
     /** Online and semi-online need the backend: Milestone 2 (README, epics D and E). */
-    val availableModes: Set<GameMode> = setOf(GameMode.Offline)
+    val availableModes: Set<GameMode> = if (BuildConfig.ONLINE_PLAY) GameMode.entries.toSet() else setOf(GameMode.Offline)
 
     private val _selected = MutableStateFlow(
         session.draft.value?.mode?.takeIf { it in availableModes } ?: GameMode.Offline,

@@ -82,6 +82,33 @@ class NightActionsTest {
         assertTrue(resolveMutants(withTraitor, MutantsDecision.Mutate(id("Hugo"))).players.get("Hugo").isMutated)
     }
 
+    @Test
+    fun `a mutated traitor cannot be healed (R-SET-12)`() {
+        val mutatedTraitor = crew.update("Hugo") { it.copy(role = Role.Traitor, state = PlayerState.Mutated) }
+        val outcome = resolveDoctors(mutatedTraitor, doctors, heal("Hugo", "Alice"))
+        assertTrue(outcome.players.get("Hugo").isMutated)
+        assertEquals(NightEvent.Heal(id("Hugo"), HealOutcome.Traitor), outcome.events.first())
+    }
+
+    @Test
+    fun `mutants also paralyse a living healthy player (R-NIGHT-22)`() {
+        val outcome = resolveMutants(crew, MutantsDecision.Kill(id("Hugo"), paralysed = id("Dorian")))
+        assertEquals(listOf(NightEvent.Kill(id("Hugo"), Killer.Mutants), NightEvent.Paralysis(id("Dorian"))), outcome.events)
+        assertTrue(outcome.players.get("Dorian").alive)
+
+        val mutated = assertThrows<IllegalActionException> { resolveMutants(crew, MutantsDecision.Mutate(id("Hugo"), paralysed = id("Gaëlle"))) }
+        assertEquals(ActionProblem.TargetAlreadyMutated, mutated.problem)
+        val dead = crew.update("Dorian") { it.copy(alive = false) }
+        assertEquals(ActionProblem.TargetDead, assertThrows<IllegalActionException> { resolveMutants(dead, MutantsDecision.Mutate(id("Hugo"), id("Dorian"))) }.problem)
+    }
+
+    @Test
+    fun `the paralysed player is not woken (R-NIGHT-22)`() {
+        assertEquals(ids("Emma"), NightStep.Doctors.actors(crew, paralysed = id("Bastien")))
+        assertEquals(emptyList<PlayerId>(), NightStep.Psychologist.actors(crew, paralysed = id("Dorian")))
+        assertEquals(ids("Gaëlle"), NightStep.Mutants.actors(crew, paralysed = id("Gaëlle")))
+    }
+
     // --- Doctors ---------------------------------------------------------------
 
     @Test

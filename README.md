@@ -41,7 +41,7 @@ The project starts **from a clean sheet**: no code exists yet, only this README,
 
 | # | Topic | Decision |
 |---|-------|----------|
-| DEC-1 | **Paralysis** | Not in v1. The rules engine keeps a variant flag so it can be added later (ticket F3). |
+| DEC-1 | **Paralysis** | Every night, besides mutating or killing, the mutants paralyse one living, non-mutated player, who does not play for the rest of the night (R-NIGHT-22). Not announced at dawn; the spy can see it. |
 | DEC-2 | **Doctors** | The doctors are awake together and decide together. They heal one player per living, non-mutated doctor, all different (nobody is healed twice in a night), **or** they agree on one kill. If they disagree, the MJ decides. |
 | DEC-3 | **Genomes of special roles** | The base mutant is always *host*, doctors are always *normal*. The other genomes are drawn at random among the remaining players, whatever their role. |
 | DEC-4 | **Mutated players with a power** | A mutated player **wakes up with the mutants** and **loses their role power** (they are no longer called at their role's step). If the doctors heal them, they leave the mutants and **get their power back**. |
@@ -49,7 +49,7 @@ The project starts **from a clean sheet**: no code exists yet, only this README,
 | DEC-6 | **Number of players** | Min 7, max 20. The *Suggérer* button uses a suggestion table per player count (written in ticket A1). |
 | DEC-7 | **Traitor & win conditions** | The traitor counts in the mutant camp for win detection. |
 | DEC-22 | **Vote** | Relative majority with no threshold: the option (a player or blank) with the most votes wins. A tie ejects nobody (DEC-5). |
-| DEC-23 | **Traitor** | The traitor never wakes up with the mutants; neither side knows who the other is. |
+| DEC-23 | **Traitor** | The traitor is a healthy astronaut (no power, never wakes up at night) who wants the mutants to win; neither side knows who the other is. The mutants can mutate them; a mutated traitor cannot be healed. |
 | DEC-24 | **Hacker** | The hacked player still receives their own report; the hacker gets a copy. |
 
 ### Product
@@ -100,14 +100,14 @@ A spaceship crew. Among them, one **base mutant** wants to turn everyone into mu
 
 | Role | Camp | Night power |
 |---|---|---|
-| Mutant de base | Mutant | With all mutants: mutate **or** kill one player. A mutated player loses their own role power and only acts with the mutants (DEC-4). |
+| Mutant de base | Mutant | With all mutants: mutate **or** kill one player, **and** paralyse one player for the night (DEC-1). A mutated player loses their own role power and only acts with the mutants (DEC-4). |
 | Médecin (×2 by default) | Healthy | Heal a mutated player (unless host) **or** kill a player. |
 | Psychologue | Healthy | Learns whether a player is mutated or healthy. |
 | Généticien | Healthy | Learns a player's genome. |
 | Informaticien | Healthy | Learns the number of mutants on board. |
 | Hacker | Healthy | Steals the report of the psychologist, geneticist or IT (and the spy in a variant). |
-| Espion | Healthy | Learns what happened to a player during the night (mutated, healed, analysed…). |
-| Traître | Mutant (but healthy) | No power; plays for the mutants. Optional. |
+| Espion | Healthy | Learns what happened to a player during the night (mutated, paralysed, healed, analysed…). |
+| Traître | Healthy, wins with the mutants | No power, never wakes up. Can be mutated; once mutated, cannot be healed. Optional. |
 | Astronaute | Healthy | No power. Fills the remaining seats. |
 
 **Night order** (default, configurable): Mutants → Médecins → Informaticien → Psychologue → Généticien → Hacker → Espion.
@@ -289,7 +289,7 @@ sporz/
 ├── gradle/libs.versions.toml # single version catalog
 ├── engine/                   # pure Kotlin: rules, state machine, win detection (JUnit 5)
 ├── app/                      # Android app (Compose, Room, Ktor client)
-│   └── …/ui/theme, ui/components  # design system (A4); debug builds show it in « Catalogue du design »
+│   └── …/ui/theme, ui/components  # design system (A4)
 ├── web/                      # v2: web player app (stack: OPEN-1)
 ├── docs/
 │   ├── openapi.yaml          # API contract
@@ -393,7 +393,7 @@ The backend is built outside this project. These tickets let the app be develope
 |---|---|---|---|
 | F1 | Rematch with the same crew (`POST /rematch`) online. | S | E10 |
 | F2 | English translation, once the French version is stable (DEC-8). | S | — |
-| F3 | Optional rules variants not in v1 (paralysis DEC-1, etc.). | M | B10 |
+| F3 | Optional rules variants not in v1. | M | B10 |
 | F4 | App icon, splash screen, store listing, privacy policy (nicknames only, no personal data), Play Store release (internal → open testing). | M | A2 |
 | F5 | Crash reporting & analytics (opt-in). | S | F4 |
 | F6 | **v2** — Web player app in `web/` (join, waiting room, my role, night action, vote), also used by iPhone players (DEC-10, DEC-11). Stack decided by OPEN-1. Served next to the backend so the QR code can open it directly. | L | D1, *backend* |

@@ -13,12 +13,12 @@ public data class StepCall(val step: NightStep, val actors: List<PlayerId>)
 /**
  * Who is woken at [this] step given the players' current state (R-NIGHT-1,
  * R-NIGHT-4): every living mutated player for the mutants, otherwise the
- * living, non-mutated holders of the step's role. The traitor is never woken
- * (R-SET-12).
+ * living, non-mutated holders of the step's role, except the [paralysed]
+ * player (R-NIGHT-22). The traitor is never woken (R-SET-12).
  */
-public fun NightStep.actors(players: List<Player>): List<PlayerId> = when (this) {
+public fun NightStep.actors(players: List<Player>, paralysed: PlayerId? = null): List<PlayerId> = when (this) {
     NightStep.Mutants -> players.filter { it.alive && it.isMutated }
-    else -> players.filter { it.role == role && it.hasRolePower }
+    else -> players.filter { it.role == role && it.hasRolePower && it.id != paralysed }
 }.map { it.id }
 
 /** Role whose holders play this step, or null for the mutants (they act whatever their role). */
@@ -48,6 +48,8 @@ public data class NightProgress(
     val current: StepCall?,
     /** Steps skipped so far because nobody could play them (R-NIGHT-3). */
     val skipped: List<NightStep> = emptyList(),
+    /** Player paralysed by the mutants: not woken for the rest of the night (R-NIGHT-22). */
+    val paralysed: PlayerId? = null,
 ) {
     val isOver: Boolean get() = current == null
 
@@ -66,14 +68,14 @@ public data class NightProgress(
      */
     public fun upcoming(players: List<Player>): List<StepCall> =
         order.drop(position + 1)
-            .map { StepCall(it, it.actors(players)) }
+            .map { StepCall(it, it.actors(players, paralysed)) }
             .filter { it.actors.isNotEmpty() }
 
     private fun moveFrom(start: Int, players: List<Player>): NightProgress {
         val newlySkipped = mutableListOf<NightStep>()
         for (index in start until order.size) {
             val step = order[index]
-            val actors = step.actors(players)
+            val actors = step.actors(players, paralysed)
             if (actors.isNotEmpty()) {
                 return copy(position = index, current = StepCall(step, actors), skipped = skipped + newlySkipped)
             }

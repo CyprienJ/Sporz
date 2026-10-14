@@ -4,19 +4,25 @@ import io.github.cyprienj.sporz.engine.model.Genome
 import io.github.cyprienj.sporz.engine.model.Player
 import io.github.cyprienj.sporz.engine.model.PlayerId
 import io.github.cyprienj.sporz.engine.model.PlayerState
+import io.github.cyprienj.sporz.engine.model.Role
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
-/** Final choice of the mutants for the night (R-NIGHT-6); the MJ settles disagreements (R-NIGHT-9). */
+/**
+ * Final choice of the mutants for the night (R-NIGHT-6); the MJ settles
+ * disagreements (R-NIGHT-9). [paralysed] does not play for the rest of the
+ * night (R-NIGHT-22); null when the MJ records no paralysis.
+ */
 @Serializable
 public sealed interface MutantsDecision {
     public val target: PlayerId
+    public val paralysed: PlayerId?
 
     @Serializable @SerialName("mutate")
-    public data class Mutate(override val target: PlayerId) : MutantsDecision
+    public data class Mutate(override val target: PlayerId, override val paralysed: PlayerId? = null) : MutantsDecision
 
     @Serializable @SerialName("kill")
-    public data class Kill(override val target: PlayerId) : MutantsDecision
+    public data class Kill(override val target: PlayerId, override val paralysed: PlayerId? = null) : MutantsDecision
 }
 
 /**
@@ -39,7 +45,7 @@ public enum class ActionProblem {
     @SerialName("unknownPlayer") UnknownPlayer,
     @SerialName("targetDead") TargetDead,
 
-    /** R-NIGHT-7 */
+    /** R-NIGHT-7, R-NIGHT-22 */
     @SerialName("targetAlreadyMutated") TargetAlreadyMutated,
 
     /** R-NIGHT-5 */
@@ -63,15 +69,23 @@ public class IllegalActionException(public val problem: ActionProblem, public va
 public data class StepOutcome(val players: List<Player>, val events: List<NightEvent>)
 
 /**
- * Applies the mutants' decision (R-NIGHT-6 to R-NIGHT-8). Effects are
- * immediate (R-NIGHT-2): a killed player is dead for the rest of the night.
+ * Applies the mutants' decision (R-NIGHT-6 to R-NIGHT-8, R-NIGHT-22).
+ * Effects are immediate (R-NIGHT-2): a killed player is dead for the rest of
+ * the night. The paralysis itself is applied by `NightProgress.paralysed`.
  */
 public fun resolveMutants(players: List<Player>, decision: MutantsDecision): StepOutcome {
     val target = players.find(decision.target)
     if (!target.alive) throw IllegalActionException(ActionProblem.TargetDead, target.id)
     if (target.isMutated) throw IllegalActionException(ActionProblem.TargetAlreadyMutated, target.id)
+    // Checked before the action: the mutants choose both at the same time.
+    val paralysis = decision.paralysed?.let { id ->
+        val paralysed = players.find(id)
+        if (!paralysed.alive) throw IllegalActionException(ActionProblem.TargetDead, id)
+        if (paralysed.isMutated) throw IllegalActionException(ActionProblem.TargetAlreadyMutated, id)
+        NightEvent.Paralysis(id)
+    }
 
-    return when (decision) {
+    val action = when (decision) {
         is MutantsDecision.Mutate -> {
             val succeeded = target.genome != Genome.Resistant
             StepOutcome(
@@ -84,10 +98,11 @@ public fun resolveMutants(players: List<Player>, decision: MutantsDecision): Ste
             events = listOf(NightEvent.Kill(target.id, Killer.Mutants)),
         )
     }
+    return action.copy(events = action.events + listOfNotNull(paralysis))
 }
 
 /**
- * Applies the doctors' decision (R-NIGHT-11 to R-NIGHT-14). [actors] are the
+ * Applies the doctors' decision (R-NIGHT-11 to R-NIGHT-14, R-SET-12). [actors] are the
  * doctors woken for the step (see `NightStep.actors`).
  */
 public fun resolveDoctors(players: List<Player>, actors: List<PlayerId>, decision: DoctorsDecision): StepOutcome =
@@ -103,6 +118,7 @@ public fun resolveDoctors(players: List<Player>, actors: List<PlayerId>, decisio
                 if (!target.alive) throw IllegalActionException(ActionProblem.TargetDead, target.id)
                 val outcome = when {
                     !target.isMutated -> HealOutcome.NotMutated
+                    target.role == Role.Traitor -> HealOutcome.Traitor
                     target.genome == Genome.Host -> HealOutcome.Host
                     else -> HealOutcome.Healed
                 }

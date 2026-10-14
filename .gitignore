@@ -13,3 +13,6 @@ captures/
 
 # OS
 .DS_Store
+
+# Signed builds exported from Android Studio
+app/release/

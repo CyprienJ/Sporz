@@ -12,7 +12,6 @@ import kotlinx.serialization.Serializable
 @Serializable data class PastGame(val id: Long) // a finished game of RecentGames
 @Serializable data class PastJournal(val id: Long)
 @Serializable data object GameEnd
-@Serializable data object DesignCatalog // debug builds only
 
 // Game Master: setup
 @Serializable data object GameMode

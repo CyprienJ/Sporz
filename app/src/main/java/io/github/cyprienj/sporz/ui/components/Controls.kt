@@ -307,6 +307,8 @@ fun TargetChip(
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
     eliminated: Boolean = false,
+    /** Read instead of [label] when two rows of chips show the same names. */
+    contentDescription: String? = null,
 ) {
     val colors = SporzTheme.colors
     val unavailable = stringResource(R.string.state_unavailable)
@@ -314,7 +316,10 @@ fun TargetChip(
         modifier = modifier
             .minimumInteractiveComponentSize() // 48 dp touch target (C14)
             .height(40.dp)
-            .semantics { if (!enabled) stateDescription = unavailable }
+            .semantics {
+                if (!enabled) stateDescription = unavailable
+                if (contentDescription != null) this.contentDescription = contentDescription
+            }
             .selectable(selected = selected, enabled = enabled, role = Role.RadioButton, onClick = onClick),
         shape = SporzShapes.pill,
         color = if (selected) colors.accentSoft else colors.card,

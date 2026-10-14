@@ -138,14 +138,22 @@ fun ActionCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     primary: Boolean = false,
+    enabled: Boolean = true,
+    /** Shown next to the title, e.g. "Bientôt" on a disabled card. */
+    tag: String? = null,
 ) {
     val colors = SporzTheme.colors
     Surface(
         onClick = onClick,
         modifier = modifier.fillMaxWidth(),
+        enabled = enabled,
         shape = SporzShapes.large,
         color = if (primary) colors.accent else colors.card,
-        contentColor = if (primary) colors.onAccent else colors.text,
+        contentColor = when {
+            !enabled -> colors.textMuted
+            primary -> colors.onAccent
+            else -> colors.text
+        },
         border = if (primary) null else BorderStroke(1.dp, colors.cardBorder),
     ) {
         Row(
@@ -155,14 +163,17 @@ fun ActionCard(
         ) {
             Icon(icon, contentDescription = null, modifier = Modifier.size(26.dp))
             Column(Modifier.weight(1f)) {
-                Text(title.uppercase(), style = SporzTypography.heading)
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Text(title.uppercase(), style = SporzTypography.heading, modifier = Modifier.weight(1f, fill = false))
+                    if (tag != null) Tag(tag)
+                }
                 Text(
                     subtitle,
                     style = SporzTypography.label.copy(fontWeight = FontWeight.Normal),
                     color = if (primary) colors.onAccent else colors.textMuted,
                 )
             }
-            Icon(SporzIcons.ChevronRight, contentDescription = null, modifier = Modifier.size(20.dp))
+            if (enabled) Icon(SporzIcons.ChevronRight, contentDescription = null, modifier = Modifier.size(20.dp))
         }
     }
 }

@@ -255,7 +255,7 @@ private fun Announcement(game: GameState, name: (PlayerId) -> String) {
         )
         // Who acted is said in front, e.g. "Mutants : ont muté Chloé".
         val secret = nightEvents.filter { it !is NightEvent.Kill && it !is NightEvent.Analysis }.map { event ->
-            val actor = stringResource(if (event is NightEvent.Mutation) R.string.night_step_mutants else R.string.night_step_doctors)
+            val actor = stringResource(if (event is NightEvent.Heal) R.string.night_step_doctors else R.string.night_step_mutants)
             "$actor : ${nightEventText(event, name)}"
         }
         InfoNote(stringResource(R.string.day_gm_only, secret.joinToString(" · ").ifEmpty { stringResource(R.string.day_nothing_else) }))

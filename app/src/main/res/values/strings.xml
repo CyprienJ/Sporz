@@ -3,7 +3,6 @@
 
     <!-- Placeholder screens (removed once each screen is built) -->
     <string name="placeholder_design_board">Écran à venir · design.html : %1$s</string>
-    <string name="screen_design_catalog">Catalogue du design</string>
 
     <!-- Screen titles -->
     <string name="screen_recent_games">Parties récentes</string>
@@ -65,7 +64,7 @@
 
     <!-- Roles (design.html, composition screen) -->
     <string name="role_base_mutant">Mutant de base</string>
-    <string name="role_base_mutant_hint">Hôte · mute ou tue chaque nuit</string>
+    <string name="role_base_mutant_hint">Hôte · mute ou tue, et paralyse</string>
     <string name="role_doctor">Médecin</string>
     <string name="role_doctor_hint">Soigne ou tue</string>
     <string name="role_psychologist">Psychologue</string>
@@ -201,6 +200,9 @@
     <string name="night_kill">Tuer</string>
     <string name="night_heal">Soigner</string>
     <string name="night_target">Cible</string>
+    <string name="night_paralyse_target">Joueur paralysé (n’agira pas cette nuit)</string>
+    <string name="night_paralyse_description">Paralyser %1$s</string>
+    <string name="night_choose_paralysed">Choisissez le joueur à paralyser</string>
     <plurals name="night_heal_targets">
         <item quantity="one">Choisissez %1$d joueur à soigner</item>
         <item quantity="other">Choisissez %1$d joueurs différents à soigner</item>
@@ -210,6 +212,8 @@
     <string name="night_choose_target">Choisissez une cible</string>
     <string name="night_confirm_mutate">Valider : muter %1$s</string>
     <string name="night_confirm_kill">Valider : tuer %1$s</string>
+    <string name="night_confirm_mutate_paralyse">Valider : muter %1$s, paralyser %2$s</string>
+    <string name="night_confirm_kill_paralyse">Valider : tuer %1$s, paralyser %2$s</string>
     <string name="night_confirm_heal">Valider : soigner %1$s</string>
     <string name="night_confirm_analyse">Valider : analyser %1$s</string>
     <string name="night_confirm_spy">Valider : espionner %1$s</string>
@@ -218,7 +222,7 @@
     <string name="night_over">La nuit est terminée.</string>
     <string name="night_go_to_day">Passer au jour</string>
     <string name="night_error">Action impossible : %1$s</string>
-    <string name="call_mutants">« Mutants, réveillez-vous. Choisissez un joueur à muter, ou à tuer. »</string>
+    <string name="call_mutants">« Mutants, réveillez-vous. Choisissez un joueur à muter ou à tuer, puis un joueur à paralyser. »</string>
     <string name="call_doctors">« Médecins, réveillez-vous. Choisissez qui soigner, ou un joueur à tuer. »</string>
     <string name="call_computer_scientist">« Informaticien, réveille-toi. Voici le nombre de mutants à bord. »</string>
     <string name="call_psychologist">« Psychologue, réveille-toi. Désigne un joueur : je te dirai s’il est muté. »</string>
@@ -232,6 +236,8 @@
     <string name="event_killed">ont tué %1$s</string>
     <string name="event_healed">%1$s guéri</string>
     <string name="event_heal_host">%1$s : hôte, pas guéri</string>
+    <string name="event_heal_traitor">%1$s : traître, pas guéri</string>
+    <string name="event_paralysed">ont paralysé %1$s</string>
     <string name="event_heal_not_mutated">%1$s : rien à soigner</string>
     <plurals name="report_mutant_count">
         <item quantity="one">%1$d mutant à bord</item>
@@ -248,6 +254,7 @@
     <string name="spy_mutated">muté</string>
     <string name="spy_mutation_failed">mutation ratée</string>
     <string name="spy_killed_by_mutants">tué par les mutants</string>
+    <string name="spy_paralysed">paralysé</string>
     <string name="spy_healed">soigné</string>
     <string name="spy_heal_failed">soin sans effet</string>
     <string name="spy_killed_by_doctors">tué par les médecins</string>
@@ -373,14 +380,14 @@
     <string name="guide_tag_every_night">Camp sain · chaque nuit</string>
     <string name="guide_tag_traitor">Sain, joue pour les mutants</string>
     <string name="guide_tag_astronaut">Camp sain · aucun pouvoir</string>
-    <string name="guide_base_mutant">Le premier mutant. Chaque nuit, les mutants se réveillent ensemble et choisissent de muter un joueur ou de le tuer. Un joueur muté perd son pouvoir et se réveille désormais avec les mutants ; s’il est guéri, il le retrouve.</string>
+    <string name="guide_base_mutant">Le premier mutant. Chaque nuit, les mutants se réveillent ensemble et choisissent de muter un joueur ou de le tuer, puis paralysent un joueur, qui n’agira pas cette nuit. Un joueur muté perd son pouvoir et se réveille désormais avec les mutants ; s’il est guéri, il le retrouve.</string>
     <string name="guide_doctor">Les médecins se réveillent ensemble et décident ensemble : chacun soigne un joueur différent (un hôte muté ne guérit pas), ou bien ils tuent un joueur.</string>
     <string name="guide_psychologist">Désigne un joueur et apprend s’il est muté ou sain.</string>
     <string name="guide_geneticist">Désigne un joueur et apprend son génome : hôte, normal ou résistant.</string>
     <string name="guide_computer_scientist">Apprend le nombre de mutants présents à bord.</string>
     <string name="guide_hacker">Pirate le rapport du généticien, du psychologue ou de l’informaticien (et de l’espion en variante). Le joueur piraté reçoit quand même son rapport.</string>
-    <string name="guide_spy">Désigne un joueur et apprend ce qui lui est arrivé pendant la nuit : muté, soigné, analysé…</string>
-    <string name="guide_traitor">N’est pas muté, mais gagne avec les mutants et les aide en journée. Il ne se réveille pas avec eux et ne sait pas qui ils sont.</string>
+    <string name="guide_spy">Désigne un joueur et apprend ce qui lui est arrivé pendant la nuit : muté, paralysé, soigné, analysé…</string>
+    <string name="guide_traitor">Un astronaute sain qui veut la victoire des mutants : il gagne avec eux et les aide en journée. Il ne se réveille pas la nuit et ne sait pas qui ils sont. Les mutants peuvent le muter ; une fois muté, il ne peut plus être guéri.</string>
     <string name="guide_astronaut">Débat, observe et vote. Peut être muté et rejoindre l’autre camp.</string>
     <string name="guide_host">Hôte</string>
     <string name="guide_host_tag">Ne peut pas être guéri</string>

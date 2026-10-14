@@ -84,11 +84,13 @@ fun NightRoute(
         mode = viewModel.mode,
         kill = viewModel.kill,
         targets = viewModel.targets,
+        paralysed = viewModel.paralysed,
         hackSource = viewModel.hackSource,
         canConfirm = viewModel.canConfirm(),
         error = viewModel.error,
         onKill = viewModel::chooseKill,
         onTarget = viewModel::toggleTarget,
+        onParalyse = viewModel::toggleParalysed,
         onHack = viewModel::selectHack,
         onConfirm = viewModel::confirm,
         onGoToDay = onEndNight,
@@ -103,11 +105,13 @@ fun NightScreen(
     mode: GameMode,
     kill: Boolean,
     targets: List<PlayerId>,
+    paralysed: PlayerId?,
     hackSource: NightStep?,
     canConfirm: Boolean,
     error: String?,
     onKill: (Boolean) -> Unit,
     onTarget: (PlayerId) -> Unit,
+    onParalyse: (PlayerId) -> Unit,
     onHack: (NightStep) -> Unit,
     onConfirm: () -> Unit,
     onGoToDay: () -> Unit,
@@ -134,7 +138,7 @@ fun NightScreen(
             PlayedSteps(game, name)
             val call = game.night?.progress?.current
             if (game.phase == Phase.Night && call != null) {
-                CurrentStep(game, kill, targets, hackSource, canConfirm, error, name, onKill, onTarget, onHack, onConfirm)
+                CurrentStep(game, kill, targets, paralysed, hackSource, canConfirm, error, name, onKill, onTarget, onParalyse, onHack, onConfirm)
                 Upcoming(game, name)
             } else {
                 InfoNote(stringResource(R.string.night_over), icon = SporzIcons.Night)
@@ -235,12 +239,14 @@ private fun CurrentStep(
     game: GameState,
     kill: Boolean,
     targets: List<PlayerId>,
+    paralysed: PlayerId?,
     hackSource: NightStep?,
     canConfirm: Boolean,
     error: String?,
     name: (PlayerId) -> String,
     onKill: (Boolean) -> Unit,
     onTarget: (PlayerId) -> Unit,
+    onParalyse: (PlayerId) -> Unit,
     onHack: (NightStep) -> Unit,
     onConfirm: () -> Unit,
 ) {
@@ -304,11 +310,12 @@ private fun CurrentStep(
                         )
                     }
                 }
+                if (step == NightStep.Mutants) Paralysis(game, paralysed, onParalyse)
             }
         }
         if (error != null) Text(stringResource(R.string.night_error, error), style = SporzTypography.small, color = colors.mutant.content)
         SporzButton(
-            text = confirmLabel(step, kill, targets, hackSource, name),
+            text = confirmLabel(step, kill, targets, paralysed, hackSource, name),
             onClick = onConfirm,
             enabled = canConfirm,
             modifier = Modifier.fillMaxWidth(),
@@ -317,18 +324,47 @@ private fun CurrentStep(
 }
 
 @Composable
-private fun confirmLabel(step: NightStep, kill: Boolean, targets: List<PlayerId>, hackSource: NightStep?, name: (PlayerId) -> String): String {
+private fun confirmLabel(
+    step: NightStep,
+    kill: Boolean,
+    targets: List<PlayerId>,
+    paralysed: PlayerId?,
+    hackSource: NightStep?,
+    name: (PlayerId) -> String,
+): String {
     val chosen = targets.joinToString(", ") { name(it) }
     return when {
         step == NightStep.ComputerScientist -> stringResource(R.string.night_confirm_info)
         step == NightStep.Hacker -> hackSource?.let { stringResource(R.string.night_confirm_hack, stringResource(it.nameRes)) }
             ?: stringResource(R.string.night_hack_choice)
         targets.isEmpty() -> stringResource(R.string.night_choose_target)
+        step == NightStep.Mutants && paralysed == null -> stringResource(R.string.night_choose_paralysed)
+        step == NightStep.Mutants && paralysed != null ->
+            stringResource(if (kill) R.string.night_confirm_kill_paralyse else R.string.night_confirm_mutate_paralyse, chosen, name(paralysed))
         kill -> stringResource(R.string.night_confirm_kill, chosen)
         step == NightStep.Mutants -> stringResource(R.string.night_confirm_mutate, chosen)
         step == NightStep.Doctors -> stringResource(R.string.night_confirm_heal, chosen)
         step == NightStep.Spy -> stringResource(R.string.night_confirm_spy, chosen)
         else -> stringResource(R.string.night_confirm_analyse, chosen)
+    }
+}
+
+/** Second choice of the mutants: the player who will not play tonight (R-NIGHT-22). */
+@Composable
+private fun Paralysis(game: GameState, paralysed: PlayerId?, onParalyse: (PlayerId) -> Unit) {
+    Text(stringResource(R.string.night_paralyse_target), style = SporzTypography.small, color = SporzTheme.colors.textMuted)
+    val eligible = NightViewModel.eligibleParalysis(game).toSet()
+    FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        game.players.forEach { player ->
+            TargetChip(
+                label = player.name,
+                selected = player.id == paralysed,
+                onClick = { onParalyse(player.id) },
+                enabled = player.id in eligible,
+                eliminated = !player.alive,
+                contentDescription = stringResource(R.string.night_paralyse_description, player.name),
+            )
+        }
     }
 }
 

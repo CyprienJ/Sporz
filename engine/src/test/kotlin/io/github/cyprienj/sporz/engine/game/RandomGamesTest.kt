@@ -67,8 +67,10 @@ class RandomGamesTest {
             val actors = game.night!!.progress.current!!.actors
             return when (game.currentStep!!) {
                 NightStep.Mutants -> {
-                    val target = alive.filter { !it.isMutated }.random(random).id
-                    game.playMutants(if (random.nextBoolean()) MutantsDecision.Mutate(target) else MutantsDecision.Kill(target))
+                    val healthy = alive.filter { !it.isMutated }
+                    val target = healthy.random(random).id
+                    val paralysed = healthy.random(random).id
+                    game.playMutants(if (random.nextBoolean()) MutantsDecision.Mutate(target, paralysed) else MutantsDecision.Kill(target, paralysed))
                 }
                 NightStep.Doctors -> {
                     val others = alive.filter { it.id !in actors }
@@ -119,8 +121,17 @@ class RandomGamesTest {
             if (player.role == Role.BaseMutant) assertEquals(Genome.Host, player.genome, "$where: base mutant is a host")
             if (player.isMutated && player.genome == Genome.Resistant) throw AssertionError("$where: a resistant player was mutated")
             if (previous.isMutated && !player.isMutated) assertTrue(player.genome != Genome.Host, "$where: a host was healed")
+            if (previous.isMutated && !player.isMutated) assertTrue(player.role != Role.Traitor, "$where: the traitor was healed")
         }
         assertTrue(after.journal.size >= before.journal.size && after.journal.take(before.journal.size) == before.journal, "$where: journal only grows")
+
+        // The paralysed player is never woken for the rest of the night (R-NIGHT-22).
+        after.night?.progress?.let { progress ->
+            val call = progress.current
+            if (progress.paralysed != null && call != null && call.step != NightStep.Mutants) {
+                assertTrue(progress.paralysed !in call.actors, "$where: ${progress.paralysed} played while paralysed")
+            }
+        }
 
         // Victory is checked at dawn and after the vote (R-NIGHT-20, R-DAY-12), not mid-night.
         val victory = checkVictory(after.players)

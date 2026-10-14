@@ -24,6 +24,10 @@ public sealed interface NightEvent {
     @Serializable @SerialName("heal")
     public data class Heal(override val target: PlayerId, val outcome: HealOutcome) : NightEvent
 
+    /** R-NIGHT-22: [target] does not play for the rest of the night. */
+    @Serializable @SerialName("paralysis")
+    public data class Paralysis(override val target: PlayerId) : NightEvent
+
     /** R-NIGHT-16, R-NIGHT-17: seen by the spy (R-NIGHT-19). */
     @Serializable @SerialName("analysis")
     public data class Analysis(override val target: PlayerId, val by: Analyst) : NightEvent
@@ -48,6 +52,9 @@ public enum class HealOutcome {
 
     /** Mutated host: cannot be healed. */
     @SerialName("host") Host,
+
+    /** Mutated traitor: cannot be healed (R-SET-12). */
+    @SerialName("traitor") Traitor,
 
     /** Was not mutated: nothing to heal. */
     @SerialName("notMutated") NotMutated,

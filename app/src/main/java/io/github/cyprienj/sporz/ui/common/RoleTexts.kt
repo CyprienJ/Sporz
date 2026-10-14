@@ -38,9 +38,9 @@ val Role.hintRes: Int
         Role.Astronaut -> R.string.role_astronaut_hint
     }
 
-/** Camp color of the role at the start of the game (red for the mutant camp). */
+/** Color of the role at the start of the game: red for the base mutant; the traitor starts healthy (R-SET-12). */
 val Role.startTone: Tone
-    get() = if (this == Role.BaseMutant || this == Role.Traitor) Tone.Mutant else Tone.Healthy
+    get() = if (this == Role.BaseMutant) Tone.Mutant else Tone.Healthy
 
 /** Genome name, lowercase as in "Génome hôte". */
 @get:StringRes

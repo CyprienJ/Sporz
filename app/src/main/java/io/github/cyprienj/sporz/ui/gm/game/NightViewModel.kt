@@ -32,6 +32,10 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
     var targets by mutableStateOf<List<PlayerId>>(emptyList())
         private set
 
+    /** Player the mutants paralyse (R-NIGHT-22). */
+    var paralysed by mutableStateOf<PlayerId?>(null)
+        private set
+
     var hackSource by mutableStateOf<NightStep?>(null)
         private set
 
@@ -56,6 +60,10 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
         }
     }
 
+    fun toggleParalysed(id: PlayerId) {
+        paralysed = if (paralysed == id) null else id
+    }
+
     fun selectHack(step: NightStep) {
         hackSource = step
     }
@@ -66,6 +74,7 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
             null -> false
             NightStep.ComputerScientist -> true
             NightStep.Hacker -> hackSource != null
+            NightStep.Mutants -> targets.size == 1 && paralysed != null
             else -> targets.size == maxTargets(game, kill)
         }
     }
@@ -76,7 +85,7 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
             session.updateGame { game ->
                 when (game.currentStep) {
                     NightStep.Mutants -> game.playMutants(
-                        if (kill) MutantsDecision.Kill(targets.single()) else MutantsDecision.Mutate(targets.single()),
+                        if (kill) MutantsDecision.Kill(targets.single(), paralysed) else MutantsDecision.Mutate(targets.single(), paralysed),
                     )
                     NightStep.Doctors -> game.playDoctors(
                         if (kill) DoctorsDecision.Kill(targets.single()) else DoctorsDecision.Heal(targets),
@@ -91,6 +100,7 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
             }
             kill = false
             targets = emptyList()
+            paralysed = null
             hackSource = null
             error = null
         } catch (e: IllegalActionException) {
@@ -112,6 +122,10 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
                 NightStep.ComputerScientist, NightStep.Hacker, null -> emptyList()
             }.map { it.id }
         }
+
+        /** Players the mutants can paralyse: living and not mutated (R-NIGHT-22). */
+        fun eligibleParalysis(game: GameState): List<PlayerId> =
+            if (game.currentStep == NightStep.Mutants) game.players.filter { it.alive && !it.isMutated }.map { it.id } else emptyList()
 
         /** Number of targets to pick: one per acting doctor when healing, one otherwise. */
         fun maxTargets(game: GameState, kill: Boolean): Int = when (game.currentStep) {
