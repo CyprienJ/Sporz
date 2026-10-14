@@ -184,8 +184,8 @@ private fun PlayerCard(
     SporzCard(highlighted = isRevealed, contentPadding = PaddingValues(start = 14.dp, top = 12.dp, end = 12.dp, bottom = 12.dp)) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
             Text(player.name.uppercase(), style = SporzTypography.number, modifier = Modifier.weight(1f))
-            when {
-                isAnnounced -> Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+            if (isAnnounced) {
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(6.dp)) {
                     Icon(SporzIcons.Check, contentDescription = null, tint = colors.healthy.strong, modifier = Modifier.size(16.dp))
                     Text(
                         stringResource(R.string.distribution_announced),
@@ -193,6 +193,16 @@ private fun PlayerCard(
                         color = colors.healthy.strong,
                     )
                 }
+            }
+            when {
+                // An announced role can be shown again until the game starts (a player forgot it).
+                isAnnounced && !isRevealed -> SporzButton(
+                    stringResource(R.string.action_reveal_again),
+                    onReveal,
+                    style = SporzButtonStyle.Secondary,
+                    height = 44.dp,
+                    contentDescription = stringResource(R.string.distribution_reveal_again_description, player.name),
+                )
                 !isRevealed -> SporzButton(
                     stringResource(R.string.action_reveal),
                     onReveal,
@@ -213,14 +223,22 @@ private fun PlayerCard(
                 )
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                SporzButton(stringResource(R.string.action_hide), onHide, style = SporzButtonStyle.Secondary, height = 44.dp)
                 SporzButton(
-                    stringResource(R.string.action_confirm_announced),
-                    onConfirm,
-                    style = SporzButtonStyle.Positive,
+                    stringResource(R.string.action_hide),
+                    onHide,
+                    style = SporzButtonStyle.Secondary,
                     height = 44.dp,
-                    modifier = Modifier.weight(1f),
+                    modifier = if (isAnnounced) Modifier.weight(1f) else Modifier,
                 )
+                if (!isAnnounced) {
+                    SporzButton(
+                        stringResource(R.string.action_confirm_announced),
+                        onConfirm,
+                        style = SporzButtonStyle.Positive,
+                        height = 44.dp,
+                        modifier = Modifier.weight(1f),
+                    )
+                }
             }
         }
     }

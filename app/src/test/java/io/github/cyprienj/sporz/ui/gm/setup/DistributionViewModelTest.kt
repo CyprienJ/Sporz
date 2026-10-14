@@ -37,6 +37,15 @@ class DistributionViewModelTest {
     }
 
     @Test
+    fun `an announced role can be shown again and stays announced`() {
+        viewModel.confirmAnnounced(players[0].id)
+        viewModel.reveal(players[0].id)
+        assertEquals(players[0].id, viewModel.revealed)
+        viewModel.hide()
+        assertEquals(setOf(players[0].id), session.announced.value)
+    }
+
+    @Test
     fun `the night starts once every role is announced`() {
         players.dropLast(1).forEach { viewModel.confirmAnnounced(it.id) }
         assertFalse(viewModel.canStartNight())

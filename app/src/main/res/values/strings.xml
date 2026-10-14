@@ -432,6 +432,7 @@
     <string name="action_add">Ajouter</string>
     <string name="action_reveal">Révéler</string>
     <string name="action_hide">Masquer</string>
+    <string name="action_reveal_again">Revoir</string>
     <string name="action_confirm_announced">C\'est annoncé</string>
     <string name="action_suggest">Suggérer</string>
     <string name="action_save">Enregistrer</string>
@@ -464,4 +465,5 @@
     <string name="confirm_leave_body">La partie reste enregistrée : vous pourrez la reprendre depuis l\'accueil.</string>
     <string name="action_leave">Quitter</string>
     <string name="distribution_reveal_description">Révéler le rôle de %1$s</string>
+    <string name="distribution_reveal_again_description">Révéler à nouveau le rôle de %1$s</string>
 </resources>
