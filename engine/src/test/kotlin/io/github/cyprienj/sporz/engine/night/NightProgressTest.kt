@@ -16,6 +16,7 @@ import io.github.cyprienj.sporz.engine.model.PlayerState
 import io.github.cyprienj.sporz.engine.model.Role
 import kotlinx.serialization.encodeToString
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -43,8 +44,8 @@ class NightProgressTest {
     private fun ids(vararg names: String) = names.map { PlayerId(it) }
 
     /** Plays the whole night without changes, returning the steps called in order. */
-    private fun callOrder(players: List<Player>, order: List<NightStep> = NightStep.DefaultOrder): List<NightStep> {
-        var night = NightProgress.start(1, order, players)
+    private fun callOrder(players: List<Player>, order: List<NightStep> = NightStep.DefaultOrder, deadRevealed: Boolean = true): List<NightStep> {
+        var night = NightProgress.start(1, order, players, deadRevealed)
         val called = mutableListOf<NightStep>()
         while (!night.isOver) {
             called += night.current!!.step
@@ -84,11 +85,25 @@ class NightProgressTest {
     }
 
     @Test
-    fun `a dead or mutated holder does not play their step (R-NIGHT-3, R-NIGHT-4)`() {
+    fun `a dead or mutated holder does not play their step but it is pretended (R-NIGHT-3, R-NIGHT-4)`() {
         val players = crew
             .update("Dorian") { it.copy(state = PlayerState.Mutated) }
             .update("Jules") { it.copy(alive = false) }
-        assertEquals(listOf(Mutants, Doctors, ComputerScientist, Hacker, Spy), callOrder(players))
+        // Reveal variant on: Jules's death and role are known, his step is skipped.
+        assertEquals(listOf(Mutants, Doctors, ComputerScientist, Psychologist, Hacker, Spy), callOrder(players))
+        val psychologist = NightProgress.start(1, listOf(Psychologist) + (NightStep.DefaultOrder - Psychologist), players).current!!
+        assertEquals(StepCall(Psychologist, emptyList(), listOf(Absence(PlayerId("Dorian"), AbsenceReason.Mutated))), psychologist)
+        assertTrue(psychologist.pretend)
+        // Reveal variant off: nobody knows Jules was the geneticist, his step is pretended too.
+        assertEquals(NightStep.DefaultOrder, callOrder(players, deadRevealed = false))
+    }
+
+    @Test
+    fun `a holder absent among others is listed, the step is played normally (R-NIGHT-22)`() {
+        // The mutants paralysed Bastien: Emma heals alone, the MJ is reminded not to wake Bastien.
+        val call = NightProgress.start(1, NightStep.DefaultOrder, crew).copy(paralysed = PlayerId("Bastien")).advance(crew).current!!
+        assertEquals(StepCall(Doctors, ids("Emma"), listOf(Absence(PlayerId("Bastien"), AbsenceReason.Paralysed))), call)
+        assertFalse(call.pretend)
     }
 
     @Test

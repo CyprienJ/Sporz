@@ -19,6 +19,9 @@ import io.github.cyprienj.sporz.engine.model.PlayerId
 import io.github.cyprienj.sporz.engine.model.PlayerState
 import io.github.cyprienj.sporz.engine.model.Role
 import io.github.cyprienj.sporz.engine.model.Variants
+import io.github.cyprienj.sporz.engine.night.Absence
+import io.github.cyprienj.sporz.engine.night.AbsenceReason
+import io.github.cyprienj.sporz.engine.night.StepCall
 import io.github.cyprienj.sporz.engine.night.DoctorsDecision
 import io.github.cyprienj.sporz.engine.night.HealOutcome
 import io.github.cyprienj.sporz.engine.night.MutantsDecision
@@ -282,18 +285,37 @@ class GameStateTest {
     }
 
     @Test
-    fun `a paralysed information role is skipped and the spy sees the paralysis (R-NIGHT-22, R-NIGHT-19)`() {
+    fun `a paralysed information role is pretended and the spy sees the paralysis (R-NIGHT-22, R-NIGHT-3, R-NIGHT-19)`() {
         val night = game().playMutants(MutantsDecision.Kill(id("Hugo"), paralysed = id("Dorian")))
             .playDoctors(DoctorsDecision.Heal(listOf(id("Alice"), id("Jules"))))
             .playComputerScientist()
-        // The psychologist is skipped; the hacker copying them gets nothing.
-        assertEquals(NightStep.Geneticist, night.currentStep)
-        val spied = night.playGeneticist(id("Chloé"))
+        // The psychologist is called for show: nobody can play it.
+        val call = night.night!!.progress.current!!
+        assertEquals(StepCall(NightStep.Psychologist, emptyList(), listOf(Absence(id("Dorian"), AbsenceReason.Paralysed))), call)
+        assertTrue(call.pretend)
+        assertThrows<IllegalStateException> { night.playPsychologist(id("Chloé")) }
+        val pretended = night.pretendStep()
+        assertEquals(NightStep.Geneticist, pretended.currentStep)
+        assertThrows<IllegalStateException> { pretended.pretendStep() } // the geneticist plays
+        // The hacker copying the psychologist gets nothing.
+        val spied = pretended.playGeneticist(id("Chloé"))
             .playHacker(NightStep.Psychologist)
             .playSpy(id("Dorian"))
-        assertTrue(spied.journal.any { it.event == StepSkipped(NightStep.Psychologist) })
+        assertTrue(spied.journal.any { it.event == JournalEvent.StepPretended(NightStep.Psychologist, call.absent) })
         assertEquals(Report.Hacked(NightStep.Psychologist, null), spied.notebook(id("Alice")).single().report)
         assertEquals(Report.Spy(id("Dorian"), listOf(SpyFinding.Paralysed)), spied.notebook(id("Farid")).single().report)
+    }
+
+    @Test
+    fun `a dead holder's step is pretended only while their role is secret (R-NIGHT-3, R-NIGHT-21)`() {
+        fun afterKillingThePsychologist(variants: Variants) = game(variants)
+            .playMutants(MutantsDecision.Kill(id("Dorian"), paralysed = id("Hugo")))
+            .playDoctors(DoctorsDecision.Heal(listOf(id("Alice"), id("Jules"))))
+            .playComputerScientist()
+        // Reveal variant on (default): everybody will learn Dorian was the psychologist.
+        assertEquals(NightStep.Geneticist, afterKillingThePsychologist(Variants()).currentStep)
+        val secret = afterKillingThePsychologist(Variants(revealOnElimination = false)).night!!.progress.current!!
+        assertEquals(StepCall(NightStep.Psychologist, emptyList(), listOf(Absence(id("Dorian"), AbsenceReason.Dead))), secret)
     }
 
     @Test

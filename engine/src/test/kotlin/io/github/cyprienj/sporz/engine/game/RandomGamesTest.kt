@@ -66,7 +66,9 @@ class RandomGamesTest {
         fun someone(except: PlayerId? = null) = alive.filter { it.id != except }.random(random).id
 
         if (game.phase == Phase.Night) {
-            val actors = game.night!!.progress.current!!.actors
+            val call = game.night!!.progress.current!!
+            if (call.pretend) return game.pretendStep()
+            val actors = call.actors
             return when (game.currentStep!!) {
                 NightStep.Mutants -> {
                     val healthy = alive.filter { !it.isMutated }

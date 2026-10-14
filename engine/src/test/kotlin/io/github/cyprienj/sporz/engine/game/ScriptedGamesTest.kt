@@ -118,19 +118,21 @@ class ScriptedGamesTest {
         val composition = Composition(mapOf(Role.BaseMutant to 1, Role.Doctor to 1, Role.Psychologist to 1))
         var game = GameState.fromDeal(crew, composition, GameSettings())
 
-        // Night 1: the doctor is mutated, so the doctors' step is skipped.
-        game = game.playMutants(MutantsDecision.Mutate(id("Doc"))).playPsychologist(id("Ana"))
-        assertTrue(game.journal.any { it.event == JournalEvent.StepSkipped(NightStep.Doctors) })
+        // Night 1: the doctor is mutated, so the doctors' step is only pretended (R-NIGHT-3).
+        game = game.playMutants(MutantsDecision.Mutate(id("Doc")))
+        assertTrue(game.night!!.progress.current!!.pretend)
+        game = game.pretendStep().playPsychologist(id("Ana"))
+        assertTrue(game.journal.any { (it.event as? JournalEvent.StepPretended)?.step == NightStep.Doctors })
         game = game.votes("Ana" to "Ben", "Mia" to "Ben", "Doc" to "Ben").closeVote().startNight()
 
-        // Night 2: two mutants, nobody to heal; the psychologist is killed.
+        // Night 2: two mutants, nobody to heal; the psychologist is killed (role revealed: skipped).
         assertEquals(ids("Mia", "Doc"), game.night!!.progress.current!!.actors)
-        game = game.playMutants(MutantsDecision.Kill(id("Psy")))
+        game = game.playMutants(MutantsDecision.Kill(id("Psy"))).pretendStep()
         assertEquals(Phase.Day, game.phase)
         game = game.votes("Ana" to "Cyd", "Mia" to "Cyd", "Doc" to "Cyd").closeVote().startNight()
 
         // Night 3: Ana mutated → only Dan is healthy; day 3 the mutants eject him.
-        game = game.playMutants(MutantsDecision.Mutate(id("Ana")))
+        game = game.playMutants(MutantsDecision.Mutate(id("Ana"))).pretendStep()
         game = game.votes("Mia" to "Dan", "Doc" to "Dan", "Ana" to "Dan").closeVote()
         assertEquals(GameEnd.MutantsWin, game.end)
         assertEquals(JournalEvent.GameEnded(GameEnd.MutantsWin), game.journal.last().event)

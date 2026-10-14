@@ -215,9 +215,8 @@ class NightActionsTest {
         night = night.advance(afterMutants.players)
         val afterDoctors = resolveDoctors(afterMutants.players, night.current!!.actors, heal("Alice", "Jules"))
         night = night.advance(afterDoctors.players) // computer scientist
-        night = night.advance(afterDoctors.players) // psychologist skipped
-        assertEquals(NightStep.Geneticist, night.current!!.step)
-        assertEquals(listOf(NightStep.Psychologist), night.skipped)
+        night = night.advance(afterDoctors.players) // psychologist: nobody plays, only pretended
+        assertEquals(StepCall(NightStep.Psychologist, emptyList(), listOf(Absence(id("Dorian"), AbsenceReason.Mutated))), night.current)
     }
 
     @Test

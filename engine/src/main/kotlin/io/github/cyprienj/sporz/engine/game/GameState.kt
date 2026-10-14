@@ -147,6 +147,22 @@ public data class GameState(
         return withChoice.afterStep(players, NightStep.Hacker, actors, report = copy, keepReport = false)
     }
 
+    /**
+     * R-NIGHT-3: the current step has nobody to wake but holders whose absence
+     * must not show (paralysed, mutated, dead and not revealed). The MJ has
+     * called it as if somebody played; nothing happens and the night goes on.
+     */
+    public fun pretendStep(): GameState {
+        check(phase == Phase.Night) { "Not night: $phase" }
+        val night = night!!
+        val current = checkNotNull(night.progress.current) { "The night is over" }
+        check(current.pretend) { "${current.step} has players to wake: play it" }
+        return copy(night = night.copy(progress = night.progress.advance(players)))
+            .log(JournalEvent.StepPretended(current.step, current.absent))
+            .logSkipped(night.progress.skipped.size)
+            .finishNightIfOver()
+    }
+
     /** R-NIGHT-19 */
     public fun playSpy(target: PlayerId): GameState {
         val actors = requireStep(NightStep.Spy)
@@ -231,6 +247,7 @@ public data class GameState(
         check(phase == Phase.Night) { "Not night: $phase" }
         val current = checkNotNull(night?.progress?.current) { "The night is over" }
         check(current.step == step) { "Current step is ${current.step}, not $step" }
+        check(!current.pretend) { "$step has nobody to wake: pretend it" }
         return current.actors
     }
 
@@ -265,7 +282,7 @@ public data class GameState(
     }
 
     private fun beginNight(round: Int): GameState {
-        val progress = NightProgress.start(round, settings.nightOrder, players)
+        val progress = NightProgress.start(round, settings.nightOrder, players, deadRevealed = variants.revealOnElimination)
         return copy(round = round, phase = Phase.Night, night = NightState(progress), day = null)
             .logSkipped(0)
             .finishNightIfOver()

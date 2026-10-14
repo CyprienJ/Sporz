@@ -8,6 +8,8 @@ import io.github.cyprienj.sporz.engine.game.GameState
 import io.github.cyprienj.sporz.engine.model.NightStep
 import io.github.cyprienj.sporz.engine.model.PlayerId
 import io.github.cyprienj.sporz.engine.model.PlayerState
+import io.github.cyprienj.sporz.engine.night.Absence
+import io.github.cyprienj.sporz.engine.night.AbsenceReason
 import io.github.cyprienj.sporz.engine.night.HealOutcome
 import io.github.cyprienj.sporz.engine.night.Killer
 import io.github.cyprienj.sporz.engine.night.NightEvent
@@ -86,10 +88,23 @@ val NightStep.callRes: Int
         NightStep.Spy -> R.string.call_spy
     }
 
+/** "Dorian : paralysé · Jules : mort": holders of a step who are not woken (R-NIGHT-3). */
+@Composable
+fun absenceText(absent: List<Absence>, name: (PlayerId) -> String): String = absent.map {
+    stringResource(
+        when (it.reason) {
+            AbsenceReason.Paralysed -> R.string.absence_paralysed
+            AbsenceReason.Mutated -> R.string.absence_mutated
+            AbsenceReason.Dead -> R.string.absence_dead
+        },
+        name(it.player),
+    )
+}.joinToString(" · ")
+
 /**
  * Whether a skipped step is worth showing: yes when its role is in the game
- * (dead or mutated holder: the MJ may pretend to call it, R-NIGHT-3), no when
- * the role is not in the composition at all (everybody knows it is absent).
+ * (dead holder whose role was revealed), no when the role is not in the
+ * composition at all (everybody knows it is absent).
  */
 fun GameState.showsSkipped(step: NightStep): Boolean {
     val role = step.role ?: return true

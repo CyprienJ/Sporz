@@ -117,6 +117,19 @@ class NightViewModelTest {
     }
 
     @Test
+    fun `a paralysed psychologist's step is called for show, then the night goes on (R-NIGHT-3)`() {
+        mutants("Chloé", paralysed = "Dorian")
+        pick("Chloé", "Alice"); viewModel.confirm()
+        viewModel.confirm() // computer scientist
+        val call = game.night!!.progress.current!!
+        assertEquals(NightStep.Psychologist, call.step)
+        assertTrue(call.pretend)
+        assertTrue(viewModel.canConfirm())
+        viewModel.confirm()
+        assertEquals(NightStep.Geneticist, game.currentStep)
+    }
+
+    @Test
     fun `hacker choices follow the variant (R-NIGHT-18)`() {
         assertEquals(listOf(NightStep.Psychologist, NightStep.Geneticist, NightStep.ComputerScientist), NightViewModel.hackChoices(game))
     }

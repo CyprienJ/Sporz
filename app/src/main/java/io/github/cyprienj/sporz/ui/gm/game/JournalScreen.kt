@@ -52,6 +52,7 @@ import io.github.cyprienj.sporz.engine.model.NightStep
 import io.github.cyprienj.sporz.engine.model.PlayerId
 import io.github.cyprienj.sporz.engine.model.PlayerState
 import io.github.cyprienj.sporz.engine.night.NightEvent
+import io.github.cyprienj.sporz.ui.common.absenceText
 import io.github.cyprienj.sporz.ui.common.nameRes
 import io.github.cyprienj.sporz.ui.common.nightEventText
 import io.github.cyprienj.sporz.ui.common.reportText
@@ -240,6 +241,8 @@ private fun journalRows(event: JournalEvent, game: GameState, name: (PlayerId) -
     }
     is JournalEvent.StepSkipped ->
         if (game.showsSkipped(event.step)) listOf(stringResource(event.step.nameRes) to stringResource(R.string.night_nobody)) else emptyList()
+    is JournalEvent.StepPretended ->
+        listOf(stringResource(event.step.nameRes) to "${stringResource(R.string.night_pretended)} · ${absenceText(event.absent, name)}")
     is JournalEvent.HackDelivered -> listOf(stringResource(NightStep.Hacker.nameRes) to reportText(event.report, name))
     is JournalEvent.Dawn -> listOf(
         stringResource(R.string.journal_who_dawn) to

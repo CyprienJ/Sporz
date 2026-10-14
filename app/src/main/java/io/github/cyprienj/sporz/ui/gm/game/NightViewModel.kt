@@ -71,6 +71,7 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
 
     fun canConfirm(): Boolean {
         val game = game.value ?: return false
+        if (game.night?.progress?.current?.pretend == true) return true // R-NIGHT-3: the MJ only confirms the call
         return when (game.currentStep) {
             null -> false
             NightStep.ComputerScientist -> true
@@ -85,6 +86,7 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
         if (!canConfirm()) return
         try {
             session.updateGame { game ->
+                if (game.night?.progress?.current?.pretend == true) return@updateGame game.pretendStep()
                 when (game.currentStep) {
                     NightStep.Mutants -> game.playMutants(
                         if (kill) MutantsDecision.Kill(targets.single(), paralysed) else MutantsDecision.Mutate(targets.single(), paralysed),

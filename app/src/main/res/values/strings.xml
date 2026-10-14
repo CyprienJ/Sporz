@@ -155,6 +155,13 @@
     </plurals>
     <string name="night_hack_choice">Rapport à pirater</string>
     <string name="night_nobody">personne à réveiller</string>
+    <string name="night_pretend_hint">Personne ne joue cette étape. Appelez-la quand même et laissez passer un moment, pour que la table ne remarque rien.</string>
+    <string name="night_pretend_continue">Appel fait, continuer</string>
+    <string name="night_pretended">appel pour la forme</string>
+    <string name="night_absent_reminder">Ne pas réveiller : %1$s</string>
+    <string name="absence_paralysed">%1$s : paralysé</string>
+    <string name="absence_mutated">%1$s : muté</string>
+    <string name="absence_dead">%1$s : mort</string>
     <string name="night_choose_target">Choisissez une cible</string>
     <string name="night_confirm_mutate">Valider : muter %1$s</string>
     <string name="night_confirm_kill">Valider : tuer %1$s</string>

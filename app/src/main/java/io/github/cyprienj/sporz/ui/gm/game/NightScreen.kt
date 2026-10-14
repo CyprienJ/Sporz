@@ -38,6 +38,7 @@ import io.github.cyprienj.sporz.engine.model.NightStep
 import io.github.cyprienj.sporz.engine.model.PlayerId
 import io.github.cyprienj.sporz.engine.night.NightEvent
 import io.github.cyprienj.sporz.engine.night.computerScientistReport
+import io.github.cyprienj.sporz.ui.common.absenceText
 import io.github.cyprienj.sporz.ui.common.callRes
 import io.github.cyprienj.sporz.ui.common.hackPendingText
 import io.github.cyprienj.sporz.ui.common.nameRes
@@ -198,6 +199,8 @@ private fun PlayedSteps(game: GameState, name: (PlayerId) -> String) {
             }
             is JournalEvent.StepSkipped ->
                 if (game.showsSkipped(event.step)) PlayedRow(event.step, "", stringResource(R.string.night_nobody), done = false)
+            is JournalEvent.StepPretended ->
+                PlayedRow(event.step, absenceText(event.absent, name), stringResource(R.string.night_pretended), done = false)
             else -> Unit
         }
     }
@@ -257,6 +260,16 @@ private fun CurrentStep(
         }
         if (game.settings.guidedCall) {
             Text(stringResource(step.callRes), style = SporzTypography.body.copy(fontStyle = FontStyle.Italic), color = colors.textBody)
+        }
+        // R-NIGHT-3: nobody can play, but the table must not notice; the MJ calls the step anyway.
+        if (call.pretend) {
+            Text(absenceText(call.absent, name), style = SporzTypography.bodyStrong)
+            Text(stringResource(R.string.night_pretend_hint), style = SporzTypography.small, color = colors.textMuted)
+            SporzButton(stringResource(R.string.night_pretend_continue), onConfirm, modifier = Modifier.fillMaxWidth())
+            return@SporzCard
+        }
+        if (call.absent.isNotEmpty()) {
+            Text(stringResource(R.string.night_absent_reminder, absenceText(call.absent, name)), style = SporzTypography.small, color = colors.textMuted)
         }
         when (step) {
             NightStep.Mutants, NightStep.Doctors -> SegmentedControl(
@@ -373,7 +386,11 @@ private fun Upcoming(game: GameState, name: (PlayerId) -> String) {
         ) {
             StepIndicator(order.indexOf(call.step) + 1, StepState.Upcoming)
             Text(stringResource(call.step.nameRes), style = SporzTypography.body.copy(fontWeight = FontWeight.Medium), color = colors.textMuted, modifier = Modifier.weight(1f))
-            Text(call.actors.joinToString(" · ") { name(it) }, style = SporzTypography.small, color = colors.textMuted)
+            Text(
+                if (call.pretend) stringResource(R.string.night_pretended) else call.actors.joinToString(" · ") { name(it) },
+                style = SporzTypography.small,
+                color = colors.textMuted,
+            )
         }
     }
 }

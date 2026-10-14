@@ -6,6 +6,7 @@ import io.github.cyprienj.sporz.engine.day.VoteOption
 import io.github.cyprienj.sporz.engine.day.VoteResult
 import io.github.cyprienj.sporz.engine.model.NightStep
 import io.github.cyprienj.sporz.engine.model.PlayerId
+import io.github.cyprienj.sporz.engine.night.Absence
 import io.github.cyprienj.sporz.engine.night.NightEvent
 import io.github.cyprienj.sporz.engine.night.Report
 import kotlinx.serialization.SerialName
@@ -48,6 +49,10 @@ public sealed interface JournalEvent {
     /** R-NIGHT-3 */
     @Serializable @SerialName("stepSkipped")
     public data class StepSkipped(val step: NightStep) : JournalEvent
+
+    /** R-NIGHT-3: called by the MJ although nobody could play it, so the table notices nothing. */
+    @Serializable @SerialName("stepPretended")
+    public data class StepPretended(val step: NightStep, val absent: List<Absence>) : JournalEvent
 
     /** R-NIGHT-18: the hacker's copy delivered at the end of the night. */
     @Serializable @SerialName("hackDelivered")

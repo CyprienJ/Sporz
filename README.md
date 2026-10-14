@@ -117,7 +117,7 @@ One phone, held by the MJ. Names are typed in and roles are announced privately 
 - Lobby: add, rename and remove players.
 - **Composition**: role counters (base mutant locked to 1, astronauts auto-fill), number of host / resistant genomes, variants, *Suggérer* button, total must match the number of players.
 - **Distribution**: random draw, then a *Révéler → C'est annoncé* flow for each player; an announced role can be shown again before the first night.
-- **Night**: step-by-step wizard (who wakes up, who to target, heal/kill choice, paralysis), the result of each step, then *Terminer la nuit*.
+- **Night**: step-by-step wizard (who wakes up, who to target, heal/kill choice, paralysis), the result of each step, then *Terminer la nuit*. A step whose holder is paralysed, mutated or secretly dead is still called for show (R-NIGHT-3).
 - **Day**: summary of what to announce, MJ-only details, vote entry, tally, close/cancel vote, debate timer.
 - **Player board** (*Équipage*): role, genome, state of every player, filters (alive, mutated, ejected).
 - **Journal**: chronological log of every night and day.

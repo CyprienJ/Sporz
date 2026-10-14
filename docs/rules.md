@@ -97,7 +97,11 @@ The base mutant (1) is always included. Default variants: see §6.
   6. Hacker
   7. Espion
 - **R-NIGHT-2** **Effects apply immediately**, in step order. A player killed at step 1 does not act at later steps; a player mutated at step 1 loses their power for the rest of the night unless healed at step 2 (R-NIGHT-4).
-- **R-NIGHT-3** A step is **skipped** when nobody can play it: the role is not in the game, or its holder is dead or mutated. The MJ may still pretend to call it, so players cannot deduce anything from silence (the guided call text says so).
+- **R-NIGHT-3** When nobody can play a step:
+  - if a holder of the role is **paralysed**, **mutated**, or **dead with their role still secret** (*reveal* variant off), the MJ **pretends to call the step** as usual and lets a moment pass, so players cannot deduce anything from silence. Nothing happens; the app shows the step with who is missing and why, then moves on;
+  - otherwise (role not in the game, or every holder dead with their role revealed) the step is **skipped**.
+
+  When some holders are woken and others are missing for one of these reasons, the step is played normally and the app reminds the MJ whom not to wake.
 - **R-NIGHT-4** **A mutated player loses their role power and wakes up with the mutants. If healed, they get their power back** (DEC-4). A power holder who is mutated *and* healed in the same night acts normally at their step.
 - **R-NIGHT-5** Players cannot target themselves, except where stated. Dead players cannot be targeted.
 
@@ -113,7 +117,7 @@ The base mutant (1) is always included. Default variants: see §6.
   - `normal` or `host` → the target becomes `mutated`;
   - `resistant` → nothing happens, but the mutants' action is used up.
 - **R-NIGHT-9** If the mutants disagree, the MJ decides.
-- **R-NIGHT-22** **Paralysis** (DEC-1): with their action, the mutants choose one living, non-mutated player to paralyse, other than the player they target (if that player is the only one left, nobody is paralysed). The paralysed player is not woken for the rest of the night: their step is played by the other holders of the role (one doctor left heals one player) or skipped if nobody else can play it (R-NIGHT-3); a hacker copying a skipped role gets "nothing". The paralysis is never announced and ends with the night.
+- **R-NIGHT-22** **Paralysis** (DEC-1): with their action, the mutants choose one living, non-mutated player to paralyse, other than the player they target (if that player is the only one left, nobody is paralysed). The paralysed player is not woken for the rest of the night: their step is played by the other holders of the role (one doctor left heals one player) or, if nobody else can play it, only pretended (R-NIGHT-3); a hacker copying that role gets "nothing". The paralysis is never announced and ends with the night.
 - **R-NIGHT-10** The mutated player is told secretly that they are now a mutant: by the MJ (touch on the shoulder). They wake up with the mutants from the **next** night.
 
 ### 3.3 Doctors
