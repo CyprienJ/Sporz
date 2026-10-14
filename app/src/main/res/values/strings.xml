@@ -1,23 +1,14 @@
 <resources>
     <string name="app_name">Sporz</string>
 
-    <!-- Placeholder screens (removed once each screen is built) -->
-    <string name="placeholder_design_board">Écran à venir · design.html : %1$s</string>
-
     <!-- Screen titles -->
     <string name="screen_recent_games">Parties récentes</string>
     <string name="screen_game_end">Fin de partie</string>
     <string name="screen_lobby">Lobby</string>
     <string name="screen_settings">Paramètres</string>
-    <string name="screen_join">Rejoindre</string>
-    <string name="screen_waiting_room">Salle d\'attente</string>
-    <string name="screen_my_role">Mon rôle</string>
-    <string name="screen_night_action">Action de nuit</string>
-    <string name="screen_vote">Vote</string>
 
     <!-- Common -->
     <string name="action_back">Retour</string>
-    <string name="tag_offline">Hors ligne</string>
     <string name="state_unavailable">indisponible</string>
     <string name="state_expanded">ouvert</string>
     <string name="state_collapsed">fermé</string>
@@ -30,24 +21,11 @@
     <!-- Home -->
     <string name="home_tagline">L\'assistant du maître du jeu. Distribue les rôles, suis chaque nuit, compte les votes.</string>
     <string name="home_create_subtitle">Je suis le MJ</string>
-    <string name="home_join_subtitle">Avec un code ou un QR</string>
-
-    <!-- Game mode -->
-    <string name="mode_step">Nouvelle partie · étape 1 sur 3</string>
-    <string name="mode_title">Comment jouez-vous ?</string>
-    <string name="mode_offline_title">Hors ligne</string>
-    <string name="mode_offline_description">Un seul téléphone. Vous saisissez les noms et annoncez chaque rôle en privé.</string>
-    <string name="mode_semi_online_title">Semi-online</string>
-    <string name="mode_semi_online_description">Certains rejoignent avec leur téléphone, les autres sont ajoutés à la main.</string>
-    <string name="mode_online_title">En ligne</string>
-    <string name="mode_online_description">Chacun rejoint le lobby et reçoit son rôle et sa définition sur son écran.</string>
-    <string name="mode_gm_note">Le MJ ne joue pas. Vous pourrez ajouter des joueurs hors ligne à tout moment avant la distribution.</string>
-    <string name="mode_coming_soon">Bientôt</string>
 
     <!-- Lobby -->
-    <string name="lobby_step">Lobby · %1$s · étape 2 sur 3</string>
-    <string name="lobby_add_label">Nom du joueur hors ligne</string>
-    <string name="lobby_add_placeholder">Ajouter un joueur hors ligne</string>
+    <string name="lobby_step">Nouvelle partie · étape 1 sur 2</string>
+    <string name="lobby_add_label">Nom du joueur</string>
+    <string name="lobby_add_placeholder">Ajouter un joueur</string>
     <string name="lobby_crew">Équipage · %1$d</string>
     <string name="lobby_empty">Ajoutez les joueurs présents autour de la table.</string>
     <string name="lobby_remove">Retirer %1$s</string>
@@ -83,7 +61,7 @@
     <string name="role_astronaut_hint">Complète automatiquement</string>
 
     <!-- Composition -->
-    <string name="composition_step">Étape 3 sur 3</string>
+    <string name="composition_step">Étape 2 sur 2</string>
     <string name="composition_title">Rôles</string>
     <plurals name="composition_total">
         <item quantity="one">%1$d / %2$d joueur</item>
@@ -125,7 +103,7 @@
         <item quantity="other">%1$d / %2$d joueurs informés</item>
     </plurals>
     <string name="distribution_dealt">Rôles tirés au sort</string>
-    <string name="distribution_offline">Hors ligne · à annoncer en privé</string>
+    <string name="distribution_offline">À annoncer en privé</string>
     <string name="distribution_offline_hint">Prenez chaque joueur à part, révélez, puis confirmez.</string>
     <string name="distribution_genome">Génome %1$s</string>
     <string name="distribution_announced">Annoncé</string>
@@ -133,41 +111,10 @@
     <string name="distribution_no_game">Aucune partie distribuée. Revenez à la composition des rôles.</string>
 
     <!-- Settings (design.html) -->
-    <string name="settings_automation">Degré d’automatisation</string>
-    <string name="preset_manual">Manuel</string>
-    <string name="preset_assisted">Assisté</string>
-    <string name="preset_automatic">Automatique</string>
-    <string name="preset_manual_description">Le téléphone sert de carnet au MJ. Les joueurs ne reçoivent que leur rôle ; tout le reste se dit à voix haute.</string>
-    <string name="preset_assisted_description">Les joueurs agissent sur leur téléphone, mais le MJ valide chaque résultat avant envoi.</string>
-    <string name="preset_automatic_description">L’app enchaîne seule : actions, rapports et votes. Le MJ anime et arbitre.</string>
-    <string name="preset_custom_description">Réglages personnalisés.</string>
     <string name="settings_section_night">Nuit</string>
-    <string name="settings_section_information">Informations aux joueurs</string>
-    <string name="settings_section_votes">Votes</string>
-    <string name="settings_section_privacy">Confidentialité</string>
     <string name="settings_section_flow">Déroulé</string>
-    <string name="setting_night_actions_on_phone">Actions de nuit sur téléphone</string>
-    <string name="setting_night_actions_on_phone_hint">Les joueurs connectés désignent leur cible (espionner, soigner, muter…) eux-mêmes. Sinon, ils la montrent au MJ.</string>
     <string name="setting_guided_call">Appel guidé</string>
     <string name="setting_guided_call_hint">Le MJ voit le texte à lire pour réveiller chaque rôle.</string>
-    <string name="setting_vibrate">Vibration discrète</string>
-    <string name="setting_vibrate_hint">Le téléphone vibre quand c’est au joueur d’agir.</string>
-    <string name="setting_auto_reports">Envoi automatique des rapports</string>
-    <string name="setting_auto_reports_hint">Le résultat (génome, état, nombre de mutants…) arrive sur le téléphone sans validation du MJ.</string>
-    <string name="setting_notify_mutation">Prévenir le joueur muté</string>
-    <string name="setting_notify_mutation_hint">Sinon le MJ l’annonce lui-même en le touchant à l’épaule.</string>
-    <string name="setting_notebook">Carnet des découvertes</string>
-    <string name="setting_notebook_hint">Chaque joueur garde l’historique de ses actions et résultats.</string>
-    <string name="setting_turn_reminder">Rappel de l’action à faire</string>
-    <string name="setting_turn_reminder_hint">Affiche ce que le rôle doit faire cette nuit.</string>
-    <string name="setting_vote_on_phone">Vote sur téléphone</string>
-    <string name="setting_vote_on_phone_hint">Sinon le MJ saisit tous les votes à la main.</string>
-    <string name="setting_auto_close_vote">Clôture automatique</string>
-    <string name="setting_auto_close_vote_hint">Le vote se ferme dès que tous les vivants ont voté.</string>
-    <string name="setting_live_tally">Décompte visible par les joueurs</string>
-    <string name="setting_live_tally_hint">Montre le nombre de voix en direct, sans dire qui a voté quoi.</string>
-    <string name="setting_auto_hide_role">Masquer le rôle automatiquement</string>
-    <string name="setting_auto_hide_role_hint">L’écran du rôle se cache après 10 secondes.</string>
     <string name="setting_debate_timer">Minuteur de débat</string>
     <string name="setting_debate_timer_hint">Alerte quand le temps du jour est écoulé</string>
     <string name="setting_timer_off">Off</string>
@@ -175,7 +122,6 @@
     <string name="setting_timer_less">Moins de temps</string>
     <string name="setting_timer_more">Plus de temps</string>
     <string name="setting_night_order">Ordre d’appel de la nuit</string>
-    <string name="settings_offline_note">Hors ligne, les joueurs n’ont pas de téléphone : les réglages des actions, rapports et votes sur téléphone arriveront avec le mode en ligne.</string>
     <string name="night_order_title">Ordre d’appel</string>
     <string name="night_order_up">Monter : %1$s</string>
     <string name="night_order_down">Descendre : %1$s</string>
@@ -281,7 +227,7 @@
         <item quantity="other">%1$d / %2$d votes</item>
     </plurals>
     <string name="day_blank">Blanc</string>
-    <string name="day_offline_votes">Votes hors ligne</string>
+    <string name="day_offline_votes">Votes</string>
     <string name="day_choose">Choisir…</string>
     <string name="day_close_vote">Clore le vote</string>
     <string name="day_cancel_vote">Annuler</string>
@@ -323,7 +269,6 @@
     <string name="board_filter_all">Tous</string>
     <string name="board_filter_alive">Vivants</string>
     <string name="board_filter_mutated">Mutés</string>
-    <string name="board_filter_offline">Hors ligne</string>
     <string name="board_filter_eliminated">Éliminés</string>
     <string name="board_role_genome">%1$s · génome %2$s</string>
     <string name="board_empty">Aucun joueur dans ce filtre.</string>
@@ -400,7 +345,7 @@
     <string name="guide_resistant_body">Une tentative de mutation échoue, mais elle consomme quand même l’action des mutants.</string>
     <string name="guide_night">Nuit</string>
     <string name="guide_night_tag">Le MJ appelle chaque rôle</string>
-    <string name="guide_night_body">Tout le monde ferme les yeux. Les rôles se réveillent un par un pour agir, sur appel du MJ ou sur leur téléphone.</string>
+    <string name="guide_night_body">Tout le monde ferme les yeux. Les rôles se réveillent un par un pour agir, sur appel du MJ.</string>
     <string name="guide_day">Jour</string>
     <string name="guide_day_tag">Débat libre</string>
     <string name="guide_day_body">Le MJ annonce les morts de la nuit. Les joueurs débattent, sans former de groupe de plus de 4.</string>
@@ -413,20 +358,10 @@
 
     <!-- Actions (labels from design.html) -->
     <string name="action_create_game">Créer une partie</string>
-    <string name="action_join_game">Rejoindre une partie</string>
     <string name="action_rules_and_roles">Règles et rôles</string>
-    <string name="action_open_lobby">Ouvrir le lobby</string>
     <string name="action_choose_roles">Choisir les rôles</string>
     <string name="action_deal">Tirer au sort et distribuer</string>
     <string name="action_start_first_night">Lancer la nuit 1</string>
-    <string name="action_game_over">Fin de partie</string>
-    <string name="action_join_this_game">Rejoindre la partie</string>
-    <string name="action_role_dealt">Rôle reçu</string>
-    <string name="action_open_role_guide">Ouvrir le guide des rôles</string>
-    <string name="action_leave_game">Quitter la partie</string>
-    <string name="action_your_turn">C\'est ton tour</string>
-    <string name="action_vote_opened">Vote ouvert</string>
-    <string name="action_confirm">Valider</string>
     <string name="action_replay_same_crew">Rejouer avec le même équipage</string>
     <string name="action_open_full_journal">Revoir le journal complet</string>
     <string name="action_add">Ajouter</string>

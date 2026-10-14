@@ -51,8 +51,6 @@ import io.github.cyprienj.sporz.ui.theme.StandardSurface
 @Composable
 fun HomeRoute(
     onCreateGame: () -> Unit,
-    /** Null until online play is available: the card is then disabled. */
-    onJoinGame: (() -> Unit)?,
     onOpenRoleGuide: () -> Unit,
     onOpenRecentGames: () -> Unit,
     onResume: (ResumeTarget) -> Unit,
@@ -69,7 +67,6 @@ fun HomeRoute(
         onResume = { resumable?.let { onResume(it.target) } },
         // A new game stops the one in progress: ask first.
         onCreateGame = { if (resumable != null) confirmNewGame = true else createGame() },
-        onJoinGame = onJoinGame,
         onOpenRoleGuide = onOpenRoleGuide,
         onOpenRecentGames = onOpenRecentGames,
     )
@@ -101,8 +98,6 @@ fun HomeScreen(
     resumable: ResumableGame?,
     onResume: () -> Unit,
     onCreateGame: () -> Unit,
-    /** Null until online play is available: the card is then disabled. */
-    onJoinGame: (() -> Unit)?,
     onOpenRoleGuide: () -> Unit,
     onOpenRecentGames: () -> Unit,
     modifier: Modifier = Modifier,
@@ -119,7 +114,7 @@ fun HomeScreen(
                         .fillMaxWidth(),
                 )
                 Actions(
-                    resumable, onResume, onCreateGame, onJoinGame, onOpenRoleGuide, onOpenRecentGames,
+                    resumable, onResume, onCreateGame, onOpenRoleGuide, onOpenRecentGames,
                     Modifier.heightIn(max = actionsMaxHeight),
                 )
             }
@@ -157,8 +152,6 @@ private fun Actions(
     resumable: ResumableGame?,
     onResume: () -> Unit,
     onCreateGame: () -> Unit,
-    /** Null until online play is available: the card is then disabled. */
-    onJoinGame: (() -> Unit)?,
     onOpenRoleGuide: () -> Unit,
     onOpenRecentGames: () -> Unit,
     modifier: Modifier = Modifier,
@@ -189,14 +182,6 @@ private fun Actions(
                 onClick = onCreateGame,
                 primary = resumable == null,
             )
-            ActionCard(
-                title = stringResource(R.string.action_join_game),
-                subtitle = stringResource(R.string.home_join_subtitle),
-                icon = SporzIcons.Join,
-                onClick = { onJoinGame?.invoke() },
-                enabled = onJoinGame != null,
-                tag = if (onJoinGame == null) stringResource(R.string.mode_coming_soon) else null,
-            )
             Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 TextLink(stringResource(R.string.action_rules_and_roles), onOpenRoleGuide)
                 TextLink(stringResource(R.string.screen_recent_games), onOpenRecentGames)
@@ -208,11 +193,11 @@ private fun Actions(
 @Preview(name = "Light")
 @Composable
 private fun HomeLightPreview() {
-    SporzTheme(darkTheme = false) { HomeScreen(null, {}, {}, {}, {}, {}) }
+    SporzTheme(darkTheme = false) { HomeScreen(null, {}, {}, {}, {}) }
 }
 
 @Preview(name = "Dark")
 @Composable
 private fun HomeDarkPreview() {
-    SporzTheme(darkTheme = true) { HomeScreen(ResumableGame(ResumeTarget.Night, 2, 9), {}, {}, {}, {}, {}) }
+    SporzTheme(darkTheme = true) { HomeScreen(ResumableGame(ResumeTarget.Night, 2, 9), {}, {}, {}, {}) }
 }

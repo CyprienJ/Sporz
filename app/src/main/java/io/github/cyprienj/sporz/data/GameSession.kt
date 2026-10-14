@@ -6,7 +6,6 @@ import io.github.cyprienj.sporz.engine.game.GameState
 import io.github.cyprienj.sporz.engine.game.JournalEvent
 import io.github.cyprienj.sporz.engine.game.Phase
 import io.github.cyprienj.sporz.engine.model.Composition
-import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.engine.model.GameSettings
 import io.github.cyprienj.sporz.engine.model.PlayerId
 import io.github.cyprienj.sporz.engine.setup.Lobby
@@ -28,18 +27,16 @@ import kotlin.random.Random
 import javax.inject.Inject
 import javax.inject.Singleton
 
-/** A game being set up by the MJ, before the deal (game mode, lobby, composition, settings). */
+/** A game being set up by the MJ, before the deal (lobby, composition, settings). */
 @Serializable
 data class SetupDraft(
-    val mode: GameMode = GameMode.Offline,
     val seats: List<Seat> = emptyList(),
     val composition: Composition? = null,
     val settings: GameSettings = GameSettings(),
 )
 
 /**
- * The game of this phone, shared by the MJ screens (the online source is
- * ticket E2). It is restored from [store] when created and saved there after
+ * The game of this phone, shared by the MJ screens. It is restored from [store] when created and saved there after
  * every change, so a game survives the app being killed; finished games go
  * to [history].
  */
@@ -59,12 +56,12 @@ class GameSession @Inject constructor(
     /** Null when no game is being set up. */
     val draft: StateFlow<SetupDraft?> = _draft.asStateFlow()
 
-    /** Starts a setup with [mode], or changes the mode of the current one (players are kept). */
-    fun chooseMode(mode: GameMode) {
-        _draft.update { (it ?: SetupDraft()).copy(mode = mode) }
+    /** Starts a setup, or keeps the current one. */
+    fun startSetup() {
+        _draft.update { it ?: SetupDraft() }
     }
 
-    /** Adds an offline player; returns why it was refused, or null. */
+    /** Adds a player; returns why it was refused, or null. */
     fun addSeat(name: String): SeatProblem? {
         val draft = current()
         Lobby.checkNewSeat(name, draft.seats)?.let { return it }
@@ -99,7 +96,7 @@ class GameSession @Inject constructor(
 
     private val _game = MutableStateFlow(saved?.game)
 
-    /** The game once the roles are dealt (offline mode: the whole game runs on this phone). */
+    /** The game once the roles are dealt: the whole game runs on this phone. */
     val game: StateFlow<GameState?> = _game.asStateFlow()
 
     /**
@@ -116,23 +113,22 @@ class GameSession @Inject constructor(
     }
 
     /** Continues an existing game (a saved one, ticket C13). Every role counts as announced. */
-    fun resumeGame(game: GameState, mode: GameMode = GameMode.Offline) {
-        _draft.value = SetupDraft(mode, game.players.map { Seat(it.id, it.name) }, game.composition, game.settings)
+    fun resumeGame(game: GameState) {
+        _draft.value = SetupDraft(game.players.map { Seat(it.id, it.name) }, game.composition, game.settings)
         _game.value = game
         _announced.value = game.players.map { it.id }.toSet()
     }
 
     /**
      * "Rejouer avec le même équipage": a new setup with the same players (ids
-     * kept), composition, settings and mode; the finished game is forgotten.
+     * kept), composition and settings; the finished game is forgotten.
      */
     fun replaySameCrew() = replay(checkNotNull(_game.value) { "No game to replay" })
 
     /** Same as [replaySameCrew] from any game, e.g. one of the recent games (a game in progress is stopped first). */
     fun replay(game: GameState) {
         stopGameInProgress()
-        val mode = _draft.value?.mode ?: GameMode.Offline
-        _draft.value = SetupDraft(mode, game.players.map { Seat(it.id, it.name) }, game.composition, game.settings)
+        _draft.value = SetupDraft(game.players.map { Seat(it.id, it.name) }, game.composition, game.settings)
         _game.value = null
         _announced.value = emptySet()
     }
@@ -160,7 +156,7 @@ class GameSession @Inject constructor(
 
     private val _announced = MutableStateFlow(saved?.announced.orEmpty())
 
-    /** Offline players whose role the MJ has announced in private (distribution screen). */
+    /** Players whose role the MJ has announced in private (distribution screen). */
     val announced: StateFlow<Set<PlayerId>> = _announced.asStateFlow()
 
     fun markAnnounced(id: PlayerId) {

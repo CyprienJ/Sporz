@@ -20,7 +20,6 @@ object SporzIcons {
     val ChevronRight by icon("ChevronRight", 2f, "M9 5l7 7-7 7")
     val ChevronDown by icon("ChevronDown", 2f, "M6 9l6 6 6-6")
     val ChevronUp by icon("ChevronUp", 2f, "M6 15l6-6 6 6")
-    val Join by icon("Join", 1.8f, "M14 4h4a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-4", "M10 8l4 4-4 4M14 12H4")
     val Info by icon("Info", 1.8f, circle(12f, 12f, 9f), "M12 11v5M12 8h.01")
     val ScanQr by icon(
         "ScanQr", 1.8f,

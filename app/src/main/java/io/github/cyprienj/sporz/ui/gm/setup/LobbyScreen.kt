@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.cyprienj.sporz.R
-import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.engine.model.PlayerId
 import io.github.cyprienj.sporz.engine.setup.Seat
 import io.github.cyprienj.sporz.engine.setup.SeatProblem
@@ -53,7 +52,7 @@ import io.github.cyprienj.sporz.ui.theme.SporzIcons
 import io.github.cyprienj.sporz.ui.theme.SporzTheme
 import io.github.cyprienj.sporz.ui.theme.SporzTypography
 
-/** design.html, board "MJ · Lobby", offline version (no game code nor QR: ticket E3). */
+/** design.html, board "MJ · Lobby": the MJ types the players' names. */
 @Composable
 fun LobbyRoute(
     onBack: () -> Unit,
@@ -63,7 +62,6 @@ fun LobbyRoute(
 ) {
     val draft by viewModel.draft.collectAsStateWithLifecycle()
     LobbyScreen(
-        mode = draft?.mode ?: GameMode.Offline,
         seats = draft?.seats.orEmpty(),
         newName = viewModel.newName,
         addProblem = viewModel.addProblem,
@@ -88,7 +86,6 @@ fun LobbyRoute(
 
 @Composable
 fun LobbyScreen(
-    mode: GameMode,
     seats: List<Seat>,
     newName: String,
     addProblem: SeatProblem?,
@@ -112,7 +109,7 @@ fun LobbyScreen(
         SecretSurface(Modifier.fillMaxWidth()) {
             ScreenHeader(
                 title = stringResource(R.string.screen_lobby),
-                overline = stringResource(R.string.lobby_step, stringResource(mode.titleRes)),
+                overline = stringResource(R.string.lobby_step),
                 onBack = onBack,
                 titleStyle = SporzTypography.titleMedium,
             ) {
@@ -168,9 +165,8 @@ fun LobbyScreen(
                             PlayerRow(
                                 name = seat.name,
                                 onClick = { onRename(seat) },
-                                leading = { Avatar(seat.name, offline = true) },
+                                leading = { Avatar(seat.name) },
                                 trailing = {
-                                    Text(stringResource(R.string.tag_offline), style = SporzTypography.small, color = SporzTheme.colors.textMuted)
                                     SporzIconButton(
                                         icon = SporzIcons.Close,
                                         contentDescription = stringResource(R.string.lobby_remove, seat.name),
@@ -243,20 +239,13 @@ private val SeatProblem.messageRes: Int
         SeatProblem.LobbyFull -> R.string.lobby_error_full
     }
 
-internal val GameMode.titleRes: Int
-    get() = when (this) {
-        GameMode.Offline -> R.string.mode_offline_title
-        GameMode.SemiOnline -> R.string.mode_semi_online_title
-        GameMode.Online -> R.string.mode_online_title
-    }
-
 private val previewSeats = listOf("Bastien", "Gaëlle", "Hugo").map { Seat(PlayerId(it), it) }
 
 @Preview(name = "Light")
 @Composable
 private fun LobbyLightPreview() {
     SporzTheme(darkTheme = false) {
-        LobbyScreen(GameMode.Offline, previewSeats, "Ali", null, {}, {}, {}, {}, {}, {}, {})
+        LobbyScreen(previewSeats, "Ali", null, {}, {}, {}, {}, {}, {}, {})
     }
 }
 
@@ -264,6 +253,6 @@ private fun LobbyLightPreview() {
 @Composable
 private fun LobbyDarkPreview() {
     SporzTheme(darkTheme = true) {
-        LobbyScreen(GameMode.Offline, previewSeats, "hugo", SeatProblem.NameTaken, {}, {}, {}, {}, {}, {}, {})
+        LobbyScreen(previewSeats, "hugo", SeatProblem.NameTaken, {}, {}, {}, {}, {}, {}, {})
     }
 }

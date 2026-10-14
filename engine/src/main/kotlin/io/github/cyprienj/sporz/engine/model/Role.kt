@@ -4,8 +4,8 @@ import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
 
 /**
- * Roles of docs/rules.md §2.2. Serial names are the codes of the rules and
- * of docs/openapi.yaml. [minCount] and [maxCount] are the allowed numbers in
+ * Roles of docs/rules.md §2.2. Serial names are the codes of the rules.
+ * [minCount] and [maxCount] are the allowed numbers in
  * a composition; the astronauts fill the remaining seats (R-SET-3).
  */
 @Serializable

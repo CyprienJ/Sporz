@@ -38,17 +38,12 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import io.github.cyprienj.sporz.R
-import io.github.cyprienj.sporz.engine.model.AutomationPreset
-import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.engine.model.GameSettings
 import io.github.cyprienj.sporz.engine.model.NightStep
 import io.github.cyprienj.sporz.ui.common.nameRes
 import io.github.cyprienj.sporz.ui.components.CardGroup
 import io.github.cyprienj.sporz.ui.components.GroupDivider
-import io.github.cyprienj.sporz.ui.components.InfoNote
-import io.github.cyprienj.sporz.ui.components.Overline
 import io.github.cyprienj.sporz.ui.components.SectionTitle
-import io.github.cyprienj.sporz.ui.components.SegmentedControl
 import io.github.cyprienj.sporz.ui.components.SporzButton
 import io.github.cyprienj.sporz.ui.components.SporzButtonStyle
 import io.github.cyprienj.sporz.ui.components.SporzIconButton
@@ -60,16 +55,12 @@ import io.github.cyprienj.sporz.ui.theme.SporzIcons
 import io.github.cyprienj.sporz.ui.theme.SporzTheme
 import io.github.cyprienj.sporz.ui.theme.SporzTypography
 
-private val presets = listOf(AutomationPreset.Manual, AutomationPreset.Assisted, AutomationPreset.Automatic)
-
-/** design.html, board "MJ · Paramètres et automatisation". */
+/** design.html, board "MJ · Paramètres". */
 @Composable
 fun SettingsRoute(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewModel()) {
     val settings by viewModel.settings.collectAsStateWithLifecycle()
     SettingsScreen(
-        mode = viewModel.mode,
         settings = settings,
-        onPreset = viewModel::selectPreset,
         onToggle = viewModel::toggle,
         onDebateTimer = viewModel::setDebateTimer,
         onNightOrder = viewModel::setNightOrder,
@@ -79,9 +70,7 @@ fun SettingsRoute(onBack: () -> Unit, viewModel: SettingsViewModel = hiltViewMod
 
 @Composable
 fun SettingsScreen(
-    mode: GameMode,
     settings: GameSettings,
-    onPreset: (AutomationPreset) -> Unit,
     onToggle: (SettingToggle, Boolean) -> Unit,
     onDebateTimer: (Int) -> Unit,
     onNightOrder: (List<NightStep>) -> Unit,
@@ -89,7 +78,6 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
 ) {
     LightStatusBarIcons()
-    val offline = mode == GameMode.Offline
     var editingOrder by remember { mutableStateOf(false) }
     Column(
         modifier
@@ -97,7 +85,7 @@ fun SettingsScreen(
             .background(SporzTheme.colors.background),
     ) {
         SecretSurface(Modifier.fillMaxWidth()) {
-            Header(settings.preset, showPresets = !offline, onPreset = onPreset, onBack = onBack)
+            Header(onBack = onBack)
         }
         Column(
             Modifier
@@ -107,22 +95,18 @@ fun SettingsScreen(
                 .padding(start = 20.dp, end = 20.dp, top = 16.dp, bottom = 24.dp),
             verticalArrangement = Arrangement.spacedBy(18.dp),
         ) {
-            if (offline) InfoNote(stringResource(R.string.settings_offline_note))
             SettingToggle.sections.forEach { (title, toggles) ->
-                val shown = toggles.filter { !offline || !it.needsPhones }
-                if (shown.isNotEmpty()) {
-                    Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                        SectionTitle(stringResource(title))
-                        CardGroup {
-                            shown.forEachIndexed { index, toggle ->
-                                if (index > 0) GroupDivider()
-                                ToggleRow(
-                                    label = stringResource(toggle.label),
-                                    hint = stringResource(toggle.hint),
-                                    checked = toggle.get(settings),
-                                    onCheckedChange = { onToggle(toggle, it) },
-                                )
-                            }
+                Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
+                    SectionTitle(stringResource(title))
+                    CardGroup {
+                        toggles.forEachIndexed { index, toggle ->
+                            if (index > 0) GroupDivider()
+                            ToggleRow(
+                                label = stringResource(toggle.label),
+                                hint = stringResource(toggle.hint),
+                                checked = toggle.get(settings),
+                                onCheckedChange = { onToggle(toggle, it) },
+                            )
                         }
                     }
                 }
@@ -143,7 +127,7 @@ fun SettingsScreen(
 }
 
 @Composable
-private fun Header(preset: AutomationPreset, showPresets: Boolean, onPreset: (AutomationPreset) -> Unit, onBack: () -> Unit) {
+private fun Header(onBack: () -> Unit) {
     Column(
         Modifier
             .windowInsetsPadding(WindowInsets.statusBars)
@@ -157,15 +141,6 @@ private fun Header(preset: AutomationPreset, showPresets: Boolean, onPreset: (Au
                 style = SporzTypography.titleSmall,
                 modifier = Modifier.semantics { heading() },
             )
-        }
-        if (showPresets) {
-            Overline(stringResource(R.string.settings_automation))
-            SegmentedControl(
-                options = presets.map { stringResource(it.labelRes) },
-                selectedIndex = presets.indexOf(preset),
-                onSelect = { onPreset(presets[it]) },
-            )
-            Text(stringResource(preset.descriptionRes), style = SporzTypography.label.copy(fontWeight = FontWeight.Normal), color = SporzTheme.colors.textMuted)
         }
     }
 }
@@ -243,30 +218,14 @@ private fun NightOrderDialog(initial: List<NightStep>, onSave: (List<NightStep>)
     )
 }
 
-private val AutomationPreset.labelRes: Int
-    get() = when (this) {
-        AutomationPreset.Manual -> R.string.preset_manual
-        AutomationPreset.Assisted -> R.string.preset_assisted
-        AutomationPreset.Automatic -> R.string.preset_automatic
-        AutomationPreset.Custom -> R.string.preset_custom_description
-    }
-
-private val AutomationPreset.descriptionRes: Int
-    get() = when (this) {
-        AutomationPreset.Manual -> R.string.preset_manual_description
-        AutomationPreset.Assisted -> R.string.preset_assisted_description
-        AutomationPreset.Automatic -> R.string.preset_automatic_description
-        AutomationPreset.Custom -> R.string.preset_custom_description
-    }
-
-@Preview(name = "Light, semi-online", heightDp = 1500)
+@Preview(name = "Light")
 @Composable
 private fun SettingsLightPreview() {
-    SporzTheme(darkTheme = false) { SettingsScreen(GameMode.SemiOnline, GameSettings(), {}, { _, _ -> }, {}, {}, {}) }
+    SporzTheme(darkTheme = false) { SettingsScreen(GameSettings(), { _, _ -> }, {}, {}, {}) }
 }
 
-@Preview(name = "Dark, offline")
+@Preview(name = "Dark")
 @Composable
 private fun SettingsDarkPreview() {
-    SporzTheme(darkTheme = true) { SettingsScreen(GameMode.Offline, GameSettings(), {}, { _, _ -> }, {}, {}, {}) }
+    SporzTheme(darkTheme = true) { SettingsScreen(GameSettings(), { _, _ -> }, {}, {}, {}) }
 }

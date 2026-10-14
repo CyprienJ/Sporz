@@ -1,7 +1,7 @@
 package io.github.cyprienj.sporz.ui.gm.setup
 
 import io.github.cyprienj.sporz.data.GameSession
-import io.github.cyprienj.sporz.engine.model.GameMode
+import io.github.cyprienj.sporz.data.SetupDraft
 import io.github.cyprienj.sporz.engine.setup.SeatProblem
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
@@ -9,7 +9,7 @@ import org.junit.Test
 
 class LobbyViewModelTest {
 
-    private val session = GameSession().apply { chooseMode(GameMode.Offline) }
+    private val session = GameSession().apply { startSetup() }
     private val viewModel = LobbyViewModel(session)
     private fun names() = session.draft.value!!.seats.map { it.name }
 
@@ -57,9 +57,9 @@ class LobbyViewModelTest {
     }
 
     @Test
-    fun `opening the lobby without a setup starts an offline one`() {
+    fun `opening the lobby without a setup starts one`() {
         val fresh = GameSession()
         LobbyViewModel(fresh)
-        assertEquals(GameMode.Offline, fresh.draft.value!!.mode)
+        assertEquals(SetupDraft(), fresh.draft.value)
     }
 }

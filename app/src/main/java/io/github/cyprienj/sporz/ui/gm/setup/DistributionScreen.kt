@@ -53,7 +53,7 @@ import io.github.cyprienj.sporz.ui.theme.SporzTheme
 import io.github.cyprienj.sporz.ui.theme.SporzTypography
 import io.github.cyprienj.sporz.ui.theme.Tone
 
-/** design.html, board "MJ · Distribution des rôles", offline players only (phones: ticket E6). */
+/** design.html, board "MJ · Distribution des rôles". */
 @Composable
 fun DistributionRoute(
     onStartFirstNight: () -> Unit,

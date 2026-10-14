@@ -9,20 +9,18 @@ import io.github.cyprienj.sporz.data.GameSession
 import io.github.cyprienj.sporz.engine.day.VoteResult
 import io.github.cyprienj.sporz.engine.game.GameState
 import io.github.cyprienj.sporz.engine.game.JournalEvent
-import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.engine.model.Player
 import io.github.cyprienj.sporz.engine.model.PlayerId
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
-enum class BoardFilter { All, Alive, Mutated, Offline, Eliminated }
+enum class BoardFilter { All, Alive, Mutated, Eliminated }
 
 /** MJ player board (ticket C9). */
 @HiltViewModel
 class PlayerBoardViewModel @Inject constructor(session: GameSession) : ViewModel() {
 
     val game: StateFlow<GameState?> = session.game
-    val mode: GameMode = session.draft.value?.mode ?: GameMode.Offline
 
     var filter by mutableStateOf(BoardFilter.All)
         private set
@@ -31,15 +29,11 @@ class PlayerBoardViewModel @Inject constructor(session: GameSession) : ViewModel
         this.filter = filter
     }
 
-    /** Filters shown: "Hors ligne" only when some players have a phone. */
-    val filters: List<BoardFilter> =
-        if (mode == GameMode.Offline) BoardFilter.entries - BoardFilter.Offline else BoardFilter.entries
-
     companion object {
-        /** Players kept by [filter]; offline mode: every player is offline. */
+        /** Players kept by [filter]. */
         fun filtered(players: List<Player>, filter: BoardFilter): List<Player> = players.filter {
             when (filter) {
-                BoardFilter.All, BoardFilter.Offline -> true
+                BoardFilter.All -> true
                 BoardFilter.Alive -> it.alive
                 BoardFilter.Mutated -> it.alive && it.isMutated
                 BoardFilter.Eliminated -> !it.alive

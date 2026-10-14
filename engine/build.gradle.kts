@@ -1,7 +1,6 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
-// Pure Kotlin rules engine (docs/rules.md). No Android dependency, so the
-// backend can reuse it if it runs on the JVM (DEC-15).
+// Pure Kotlin rules engine (docs/rules.md), with no Android dependency.
 plugins {
     alias(libs.plugins.kotlin.jvm)
     alias(libs.plugins.kotlin.serialization)

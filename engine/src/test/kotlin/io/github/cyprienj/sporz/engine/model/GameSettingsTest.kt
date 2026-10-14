@@ -1,42 +1,20 @@
 package io.github.cyprienj.sporz.engine.model
 
+import io.github.cyprienj.sporz.engine.EngineJson
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertFalse
-import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 class GameSettingsTest {
 
     @Test
-    fun `default settings are the Assisted preset`() {
-        assertEquals(GameSettings.forPreset(AutomationPreset.Assisted), GameSettings())
-    }
-
-    @Test
-    fun `manual preset only keeps auto-hide of the role (design)`() {
-        val manual = GameSettings.forPreset(AutomationPreset.Manual)
-        assertTrue(manual.autoHideRole)
-        assertFalse(manual.nightActionsOnPhone || manual.guidedCall || manual.vibrate || manual.autoReports ||
-            manual.notifyMutation || manual.notebook || manual.turnReminder || manual.voteOnPhone ||
-            manual.autoCloseVote || manual.liveTally)
-    }
-
-    @Test
-    fun `automatic preset sends reports, notifies mutations and closes votes (design)`() {
-        val auto = GameSettings.forPreset(AutomationPreset.Automatic)
-        assertTrue(auto.autoReports && auto.notifyMutation && auto.autoCloseVote && auto.nightActionsOnPhone)
-        assertFalse(auto.liveTally)
-    }
-
-    @Test
-    fun `changing preset keeps the timer and the night order`() {
-        val order = NightStep.DefaultOrder.reversed()
-        val custom = GameSettings(debateTimerMinutes = 8, nightOrder = order)
-        val manual = custom.withPreset(AutomationPreset.Manual)
-        assertEquals(AutomationPreset.Manual, manual.preset)
-        assertEquals(8, manual.debateTimerMinutes)
-        assertEquals(order, manual.nightOrder)
+    fun `a save with the old phone settings still loads`() {
+        val old = """{"preset":"assisted","nightActionsOnPhone":true,"guidedCall":false,"voteOnPhone":true,"debateTimerMinutes":7,"nightOrder":["spy","mutants","doctors","computerScientist","psychologist","geneticist","hacker"]}"""
+        val settings = EngineJson.decodeFromString<GameSettings>(old)
+        assertFalse(settings.guidedCall)
+        assertEquals(7, settings.debateTimerMinutes)
+        assertEquals(NightStep.Spy, settings.nightOrder.first())
     }
 
     @Test

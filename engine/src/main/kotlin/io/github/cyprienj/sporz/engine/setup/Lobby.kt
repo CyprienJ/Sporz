@@ -18,7 +18,7 @@ public enum class SeatProblem {
     @SerialName("lobbyFull") LobbyFull,
 }
 
-/** Lobby limits (docs/openapi.yaml `JoinRequest.name`). */
+/** Lobby limits. */
 public object Lobby {
     public const val MAX_NAME_LENGTH: Int = 24
 

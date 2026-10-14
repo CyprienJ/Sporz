@@ -15,7 +15,7 @@ import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 import kotlin.random.Random
 
-/** MJ day screen (ticket C8): announcement, offline votes, captain, closing, next night. */
+/** MJ day screen (ticket C8): announcement, votes entered by the MJ, captain, closing, next night. */
 @HiltViewModel
 class DayViewModel @Inject constructor(private val session: GameSession) : ViewModel() {
 

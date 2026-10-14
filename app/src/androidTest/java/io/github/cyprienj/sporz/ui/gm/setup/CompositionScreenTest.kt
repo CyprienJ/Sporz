@@ -11,7 +11,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import io.github.cyprienj.sporz.R
 import io.github.cyprienj.sporz.data.GameSession
-import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.engine.model.Role
 import io.github.cyprienj.sporz.ui.theme.SporzTheme
 import org.junit.Assert.assertEquals
@@ -29,7 +28,7 @@ class CompositionScreenTest {
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
 
     private fun session(players: Int) = GameSession().apply {
-        chooseMode(GameMode.Offline)
+        startSetup()
         repeat(players) { addSeat("P$it") }
     }
 

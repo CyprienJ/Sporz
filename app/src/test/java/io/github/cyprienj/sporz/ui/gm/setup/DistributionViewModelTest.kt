@@ -1,7 +1,6 @@
 package io.github.cyprienj.sporz.ui.gm.setup
 
 import io.github.cyprienj.sporz.data.GameSession
-import io.github.cyprienj.sporz.engine.model.GameMode
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertNull
@@ -12,7 +11,7 @@ import kotlin.random.Random
 class DistributionViewModelTest {
 
     private val session = GameSession().apply {
-        chooseMode(GameMode.Offline)
+        startSetup()
         repeat(7) { addSeat("P$it") }
         CompositionViewModel(this).deal(Random(3))
     }

@@ -4,7 +4,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.assertIsDisplayed
-import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
 import androidx.compose.ui.test.onAllNodesWithContentDescription
@@ -15,14 +14,11 @@ import androidx.compose.ui.test.performScrollTo
 import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
-import io.github.cyprienj.sporz.BuildConfig
 import io.github.cyprienj.sporz.MainActivity
 import io.github.cyprienj.sporz.R
 import io.github.cyprienj.sporz.data.FileSessionStore
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Assume.assumeFalse
-import org.junit.Assume.assumeTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.rules.ExternalResource
@@ -89,8 +85,6 @@ class SporzNavHostTest {
     fun gameMasterFlow_reachesNightThenBackLeavesTheGame() {
         assertOnHome()
         click(R.string.action_create_game)
-        assertOn(R.string.mode_title)
-        click(R.string.action_open_lobby)
         assertOn(R.string.screen_lobby)
         addSevenPlayers()
         click(R.string.action_choose_roles)
@@ -129,7 +123,7 @@ class SporzNavHostTest {
         rule.onNodeWithText(text(R.string.action_resume_game), ignoreCase = true).assertIsDisplayed()
         click(R.string.action_create_game)
         click(R.string.action_stop_and_create)
-        assertOn(R.string.mode_title)
+        assertOn(R.string.screen_lobby)
         pressBack()
         rule.onNodeWithText(text(R.string.action_resume_game), ignoreCase = true).assertDoesNotExist()
     }
@@ -139,37 +133,6 @@ class SporzNavHostTest {
         click(R.string.screen_recent_games)
         assertOn(R.string.screen_recent_games)
         pressBack()
-        assertOnHome()
-    }
-
-    @Test
-    fun joinIsDisabledUntilOnlinePlay() {
-        assumeFalse(BuildConfig.ONLINE_PLAY)
-        rule.onNodeWithText(text(R.string.action_join_game), ignoreCase = true).assertIsNotEnabled()
-        rule.onNodeWithText(text(R.string.mode_coming_soon), ignoreCase = true).assertIsDisplayed()
-    }
-
-    @Test
-    fun playerFlow_joinWaitRoleVote() {
-        assumeTrue(BuildConfig.ONLINE_PLAY)
-        click(R.string.action_join_game)
-        assertOn(R.string.screen_join)
-        click(R.string.action_join_this_game)
-        assertOn(R.string.screen_waiting_room)
-        click(R.string.action_role_dealt)
-        assertOn(R.string.screen_my_role)
-        click(R.string.action_vote_opened)
-        assertOn(R.string.screen_vote)
-        click(R.string.action_confirm)
-        assertOn(R.string.screen_my_role)
-    }
-
-    @Test
-    fun leavingTheWaitingRoomGoesHome() {
-        assumeTrue(BuildConfig.ONLINE_PLAY)
-        click(R.string.action_join_game)
-        click(R.string.action_join_this_game)
-        click(R.string.action_leave_game)
         assertOnHome()
     }
 }

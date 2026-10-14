@@ -34,7 +34,6 @@ import io.github.cyprienj.sporz.R
 import io.github.cyprienj.sporz.engine.game.GameState
 import io.github.cyprienj.sporz.engine.game.JournalEvent
 import io.github.cyprienj.sporz.engine.game.Phase
-import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.engine.model.NightStep
 import io.github.cyprienj.sporz.engine.model.PlayerId
 import io.github.cyprienj.sporz.engine.night.NightEvent
@@ -46,7 +45,6 @@ import io.github.cyprienj.sporz.ui.common.nightEventText
 import io.github.cyprienj.sporz.ui.common.reportText
 import io.github.cyprienj.sporz.ui.common.showsSkipped
 import io.github.cyprienj.sporz.ui.components.InfoNote
-import io.github.cyprienj.sporz.ui.components.Pill
 import io.github.cyprienj.sporz.ui.components.SegmentedControl
 import io.github.cyprienj.sporz.ui.components.SporzButton
 import io.github.cyprienj.sporz.ui.components.SporzCard
@@ -55,13 +53,11 @@ import io.github.cyprienj.sporz.ui.components.StepIndicator
 import io.github.cyprienj.sporz.ui.components.StepState
 import io.github.cyprienj.sporz.ui.components.TabItem
 import io.github.cyprienj.sporz.ui.components.TargetChip
-import io.github.cyprienj.sporz.ui.gm.setup.titleRes
 import io.github.cyprienj.sporz.ui.theme.LightStatusBarIcons
 import io.github.cyprienj.sporz.ui.theme.SecretSurface
 import io.github.cyprienj.sporz.ui.theme.SporzIcons
 import io.github.cyprienj.sporz.ui.theme.SporzTheme
 import io.github.cyprienj.sporz.ui.theme.SporzTypography
-import io.github.cyprienj.sporz.ui.theme.Tone
 
 /** design.html, board "MJ · Nuit". */
 @Composable
@@ -77,7 +73,6 @@ fun NightRoute(
     // and moves to the day only when they end the night.
     NightScreen(
         game = current,
-        mode = viewModel.mode,
         kill = viewModel.kill,
         targets = viewModel.targets,
         paralysed = viewModel.paralysed,
@@ -98,7 +93,6 @@ fun NightRoute(
 @Composable
 fun NightScreen(
     game: GameState,
-    mode: GameMode,
     kill: Boolean,
     targets: List<PlayerId>,
     paralysed: PlayerId?,
@@ -123,7 +117,7 @@ fun NightScreen(
             .fillMaxSize()
             .background(SporzTheme.colors.background),
     ) {
-        SecretSurface(Modifier.fillMaxWidth()) { Header(game, mode) }
+        SecretSurface(Modifier.fillMaxWidth()) { Header(game) }
         Column(
             Modifier
                 .weight(1f)
@@ -159,7 +153,7 @@ fun NightScreen(
 }
 
 @Composable
-private fun Header(game: GameState, mode: GameMode) {
+private fun Header(game: GameState) {
     val alive = game.players.count { it.alive }
     val mutated = game.players.count { it.alive && it.isMutated }
     val dead = game.players.size - alive
@@ -185,7 +179,6 @@ private fun Header(game: GameState, mode: GameMode) {
                 color = SporzTheme.colors.textMuted,
             )
         }
-        Pill(stringResource(mode.titleRes).uppercase(), tone = Tone.Accent)
     }
 }
 

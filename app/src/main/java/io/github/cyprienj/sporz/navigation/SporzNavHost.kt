@@ -1,6 +1,5 @@
 package io.github.cyprienj.sporz.navigation
 
-import io.github.cyprienj.sporz.BuildConfig
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
@@ -16,7 +15,6 @@ import io.github.cyprienj.sporz.ui.gm.game.PlayerBoardRoute
 import io.github.cyprienj.sporz.ui.gm.settings.SettingsRoute
 import io.github.cyprienj.sporz.ui.gm.setup.CompositionRoute
 import io.github.cyprienj.sporz.ui.gm.setup.DistributionRoute
-import io.github.cyprienj.sporz.ui.gm.setup.GameModeRoute
 import io.github.cyprienj.sporz.ui.gm.setup.LobbyRoute
 import io.github.cyprienj.sporz.ui.guide.RoleGuideScreen
 import io.github.cyprienj.sporz.ui.history.PastGameRoute
@@ -24,11 +22,6 @@ import io.github.cyprienj.sporz.ui.history.PastJournalRoute
 import io.github.cyprienj.sporz.ui.history.RecentGamesRoute
 import io.github.cyprienj.sporz.ui.home.HomeRoute
 import io.github.cyprienj.sporz.ui.home.ResumeTarget
-import io.github.cyprienj.sporz.ui.player.JoinScreen
-import io.github.cyprienj.sporz.ui.player.MyRoleScreen
-import io.github.cyprienj.sporz.ui.player.NightActionScreen
-import io.github.cyprienj.sporz.ui.player.VoteScreen
-import io.github.cyprienj.sporz.ui.player.WaitingRoomScreen
 
 @Composable
 fun SporzNavHost(
@@ -39,10 +32,7 @@ fun SporzNavHost(
         // Common
         composable<Home> {
             HomeRoute(
-                onCreateGame = { navController.navigate(GameMode) },
-                onJoinGame = if (BuildConfig.ONLINE_PLAY) {
-                    { navController.navigate(Join) }
-                } else null,
+                onCreateGame = { navController.navigate(Lobby) },
                 onOpenRoleGuide = { navController.navigate(RoleGuide) },
                 onOpenRecentGames = { navController.navigate(RecentGames) },
                 onResume = { target ->
@@ -81,12 +71,6 @@ fun SporzNavHost(
         }
 
         // Game Master: setup
-        composable<GameMode> {
-            GameModeRoute(
-                onBack = { navController.popBackStack() },
-                onOpenLobby = { navController.navigate(Lobby) },
-            )
-        }
         composable<Lobby> {
             LobbyRoute(
                 onBack = { navController.popBackStack() },
@@ -141,32 +125,6 @@ fun SporzNavHost(
             )
         }
 
-        // Player
-        composable<Join> {
-            JoinScreen(onJoined = { navController.navigate(WaitingRoom) })
-        }
-        composable<WaitingRoom> {
-            WaitingRoomScreen(
-                onRoleDealt = { navController.startFresh(MyRole) },
-                onOpenRoleGuide = { navController.navigate(RoleGuide) },
-                onLeave = { navController.backToHome() },
-            )
-        }
-        composable<MyRole> {
-            MyRoleScreen(
-                onYourTurn = { navController.navigate(NightAction) },
-                onVoteOpened = { navController.navigate(Vote) },
-                onOpenPlayers = { navController.navigate(PlayerBoard) },
-                onOpenJournal = { navController.navigate(Journal) },
-                onGameOver = { navController.startFresh(GameEnd) },
-            )
-        }
-        composable<NightAction> {
-            NightActionScreen(onDone = { navController.popBackStack() })
-        }
-        composable<Vote> {
-            VoteScreen(onVoted = { navController.popBackStack() })
-        }
     }
 }
 

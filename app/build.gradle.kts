@@ -18,15 +18,11 @@ android {
         versionName = "0.1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-
-        // Joining a game and the online modes need the backend (Milestone 2).
-        buildConfigField("boolean", "ONLINE_PLAY", "false")
     }
 
     buildTypes {
         debug {
             applicationIdSuffix = ".debug"
-            buildConfigField("String", "BACKEND_URL", "\"${providers.gradleProperty("sporz.backendUrl.debug").get()}\"")
         }
         release {
             isMinifyEnabled = false
@@ -34,7 +30,6 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            buildConfigField("String", "BACKEND_URL", "\"${providers.gradleProperty("sporz.backendUrl.release").get()}\"")
         }
     }
 
@@ -45,7 +40,6 @@ android {
 
     buildFeatures {
         compose = true
-        buildConfig = true
     }
 
     lint {

@@ -22,7 +22,6 @@ import com.google.android.apps.common.testing.accessibility.framework.integratio
 import io.github.cyprienj.sporz.data.GameSession
 import io.github.cyprienj.sporz.data.history.FinishedGame
 import io.github.cyprienj.sporz.engine.day.VoteOption
-import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.engine.model.NightStep
 import io.github.cyprienj.sporz.engine.night.DoctorsDecision
 import io.github.cyprienj.sporz.engine.night.MutantsDecision
@@ -45,8 +44,6 @@ import io.github.cyprienj.sporz.ui.gm.setup.CompositionRoute
 import io.github.cyprienj.sporz.ui.gm.setup.CompositionViewModel
 import io.github.cyprienj.sporz.ui.gm.setup.DistributionRoute
 import io.github.cyprienj.sporz.ui.gm.setup.DistributionViewModel
-import io.github.cyprienj.sporz.ui.gm.setup.GameModeRoute
-import io.github.cyprienj.sporz.ui.gm.setup.GameModeViewModel
 import io.github.cyprienj.sporz.ui.gm.setup.LobbyRoute
 import io.github.cyprienj.sporz.ui.gm.setup.LobbyViewModel
 import io.github.cyprienj.sporz.ui.guide.RoleGuideScreen
@@ -110,7 +107,7 @@ class AccessibilityTest(private val darkTheme: Boolean, private val fontScale: F
     }
 
     private fun setupSession() = GameSession().apply {
-        chooseMode(GameMode.Offline)
+        startSetup()
         repeat(10) { addSeat("Joueur ${it + 1}") }
         setComposition(SuggestedCompositions.forPlayers(10))
     }
@@ -131,13 +128,7 @@ class AccessibilityTest(private val darkTheme: Boolean, private val fontScale: F
     }
 
     @Test
-    fun home() = check { HomeScreen(ResumableGame(ResumeTarget.Night, 2, 10), {}, {}, onJoinGame = null, {}, {}) }
-
-    @Test
-    fun gameMode() {
-        val viewModel = GameModeViewModel(GameSession())
-        check { GameModeRoute({}, {}, viewModel) }
-    }
+    fun home() = check { HomeScreen(ResumableGame(ResumeTarget.Night, 2, 10), {}, {}, {}, {}) }
 
     @Test
     fun lobby() {

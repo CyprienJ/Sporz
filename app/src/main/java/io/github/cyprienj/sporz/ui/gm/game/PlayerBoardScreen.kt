@@ -58,7 +58,6 @@ fun PlayerBoardRoute(
     val game by viewModel.game.collectAsStateWithLifecycle()
     PlayerBoardScreen(
         game = game ?: return,
-        filters = viewModel.filters,
         filter = viewModel.filter,
         onFilter = viewModel::select,
         onBackToPhase = onBackToPhase,
@@ -69,7 +68,6 @@ fun PlayerBoardRoute(
 @Composable
 fun PlayerBoardScreen(
     game: GameState,
-    filters: List<BoardFilter>,
     filter: BoardFilter,
     onFilter: (BoardFilter) -> Unit,
     onBackToPhase: () -> Unit,
@@ -91,7 +89,7 @@ fun PlayerBoardScreen(
                 .padding(horizontal = 16.dp, vertical = 12.dp),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
         ) {
-            filters.forEach { f -> FilterChip(stringResource(f.labelRes), f == filter, { onFilter(f) }) }
+            BoardFilter.entries.forEach { f -> FilterChip(stringResource(f.labelRes), f == filter, { onFilter(f) }) }
         }
         LazyColumn(Modifier.weight(1f), contentPadding = PaddingValues(start = 16.dp, end = 16.dp, bottom = 12.dp)) {
             item {
@@ -187,6 +185,5 @@ private val BoardFilter.labelRes: Int
         BoardFilter.All -> R.string.board_filter_all
         BoardFilter.Alive -> R.string.board_filter_alive
         BoardFilter.Mutated -> R.string.board_filter_mutated
-        BoardFilter.Offline -> R.string.board_filter_offline
         BoardFilter.Eliminated -> R.string.board_filter_eliminated
     }

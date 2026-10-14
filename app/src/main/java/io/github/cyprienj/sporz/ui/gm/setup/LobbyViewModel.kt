@@ -8,20 +8,19 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.cyprienj.sporz.data.GameSession
 import io.github.cyprienj.sporz.data.SetupDraft
 import io.github.cyprienj.sporz.engine.Rules
-import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.engine.model.PlayerId
 import io.github.cyprienj.sporz.engine.setup.Seat
 import io.github.cyprienj.sporz.engine.setup.SeatProblem
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
-/** Offline lobby (ticket C3): the MJ types the players' names. */
+/** Lobby (ticket C3): the MJ types the players' names. */
 @HiltViewModel
 class LobbyViewModel @Inject constructor(private val session: GameSession) : ViewModel() {
 
     init {
-        // Reached without a mode (e.g. after process death, before C13): offline setup.
-        if (session.draft.value == null) session.chooseMode(GameMode.Offline)
+        // Reached without a setup (e.g. after process death): start one.
+        if (session.draft.value == null) session.startSetup()
     }
 
     val draft: StateFlow<SetupDraft?> = session.draft

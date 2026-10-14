@@ -3,8 +3,6 @@ package io.github.cyprienj.sporz.ui.gm.settings
 import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.cyprienj.sporz.data.GameSession
-import io.github.cyprienj.sporz.engine.model.AutomationPreset
-import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.engine.model.GameSettings
 import io.github.cyprienj.sporz.engine.model.NightStep
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,16 +14,10 @@ import javax.inject.Inject
 @HiltViewModel
 class SettingsViewModel @Inject constructor(private val session: GameSession) : ViewModel() {
 
-    val mode: GameMode = session.draft.value?.mode ?: GameMode.Offline
-
     private val _settings = MutableStateFlow(session.currentSettings())
     val settings: StateFlow<GameSettings> = _settings.asStateFlow()
 
-    /** Manuel, Assisté, Automatique: replaces the toggles, keeps the timer and night order. */
-    fun selectPreset(preset: AutomationPreset) = update { it.withPreset(preset) }
-
-    /** Changing one toggle makes the settings custom, as in the design. */
-    fun toggle(toggle: SettingToggle, on: Boolean) = update { toggle.set(it, on).copy(preset = AutomationPreset.Custom) }
+    fun toggle(toggle: SettingToggle, on: Boolean) = update { toggle.set(it, on) }
 
     fun setDebateTimer(minutes: Int) =
         update { it.copy(debateTimerMinutes = minutes.coerceIn(0, GameSettings.MAX_DEBATE_MINUTES)) }

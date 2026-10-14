@@ -2,7 +2,6 @@ package io.github.cyprienj.sporz.ui.gm.setup
 
 import io.github.cyprienj.sporz.data.GameSession
 import io.github.cyprienj.sporz.engine.game.Phase
-import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.engine.model.Role
 import io.github.cyprienj.sporz.engine.model.Variants
 import io.github.cyprienj.sporz.engine.setup.CompositionProblem
@@ -17,7 +16,7 @@ import kotlin.random.Random
 class CompositionViewModelTest {
 
     private fun session(players: Int) = GameSession().apply {
-        chooseMode(GameMode.Offline)
+        startSetup()
         repeat(players) { addSeat("P$it") }
     }
 

@@ -6,11 +6,10 @@ built in another project; this file is the source of truth for **what it must
 say**.
 
 - §1 lists the requirements the page must meet.
-- §2 lists the facts about the app, checked against the code (version 0.1.0, offline).
+- §2 lists the facts about the app, checked against the code.
 - §3 gives the answers to Play Console's *Data safety* form, which must match the page.
 - §4 is a ready-to-adapt draft in French (the app's language, DEC-8).
-- §5 is what to add when online play ships (Milestone 2).
-- §6 lists the open points to settle before publishing.
+- §5 lists the open points to settle before publishing.
 
 Placeholders are written `[LIKE THIS]`.
 
@@ -48,47 +47,45 @@ Information required by article 13 GDPR, even when almost nothing is collected:
 
 ---
 
-## 2. Facts about the app (version 0.1.0, offline mode)
+## 2. Facts about the app
 
-Checked in the code on 2026-10-14. Re-check them before each release that adds a feature (see §5).
+Checked in the code on 2026-10-14. Re-check them before each release that adds a feature.
 
 | Topic | Fact | Where in the code |
 |---|---|---|
-| Accounts | **None.** No sign-in, no email, no phone number (DEC-9). | — |
+| Accounts | **None.** No sign-in, no email, no phone number. | — |
 | Data typed by the user | The game master types **players' first names or nicknames** for the game. These may be real first names of other people (the players). | Lobby screen |
 | Game data | Roles, genomes, night actions, votes and the journal of each game. Fictional game data, but tied to the names above. | `GameState` |
 | Where it is stored | **Only on the phone**, in the app's private storage: the current game in a file (`current_game.json`), finished games in a local database (`sporz.db`, "Parties récentes"). No other app can read them. | `SessionStore.kt`, `data/history/` |
 | How long | The current game: until a new game replaces it. Finished games: until the user deletes them ("Supprimer la partie") or uninstalls the app / clears its data. No automatic expiry. | — |
 | Backups | **Excluded** from Android cloud backup and from device-to-device transfer (`allowBackup="false"`, backup rules exclude everything). Data never reaches the user's Google Drive through Sporz. | `AndroidManifest.xml`, `res/xml/` |
-| Network | **No network traffic** in offline mode: no server, no network library is included. *Note:* the app still declares the `INTERNET` permission (prepared for online play); see §6. | `AndroidManifest.xml` |
+| Network | **No network access at all**: no server, no network library, and the app does not declare the `INTERNET` permission. | `AndroidManifest.xml` |
 | Sharing | **Nothing is sent automatically.** The only way data leaves the app is when the user taps **"Exporter le journal"**: the journal text (player names, roles, events) is handed to the app the user picks in Android's share menu (email, messaging…). Sporz does not receive or keep a copy; what happens next depends on that app. | `JournalScreen.kt` |
 | Analytics, crash reporting | **None** (no Firebase, no Crashlytics, no analytics SDK). Planned later as **opt-in** only (ticket F5); update the page when it ships. | `app/build.gradle.kts` |
 | Advertising | **None.** No ads, no advertising ID. | — |
 | Third-party SDKs | Only Android Jetpack libraries (Compose, Room, Hilt, Navigation) and Kotlin libraries. None of them sends data. | `gradle/libs.versions.toml` |
 | Fonts | Barlow (OFL) is **bundled** in the app, not downloaded from Google Fonts. | `res/font/`, `docs/licenses/` |
-| Permissions | `INTERNET` only. No camera, location, contacts, microphone or storage permissions. | `AndroidManifest.xml` |
+| Permissions | **None.** No internet, camera, location, contacts, microphone or storage permissions. | `AndroidManifest.xml` |
 | Screen kept on | During a game the screen stays on. A display setting only; no data involved. | `RunningGame.kt` |
 | Location of data | On the user's phone. No transfer anywhere, so no transfer outside the EU. | — |
 | Profiling, automated decisions | None. | — |
 
-**In one sentence:** in its offline version, Sporz collects no personal data. The names typed for a game stay on the phone, and only the user can share them, through the journal export.
+**In one sentence:** Sporz collects no personal data. The names typed for a game stay on the phone, and only the user can share them, through the journal export.
 
-GDPR note: the developer never receives these names, so for the offline version the developer has no data to give access to or delete. The page should still say so, and explain how users delete data themselves (in-app delete, clear storage, uninstall).
+GDPR note: the developer never receives these names, so the developer has no data to give access to or delete. The page should still say so, and explain how users delete data themselves (in-app delete, clear storage, uninstall).
 
 ---
 
-## 3. Play Console *Data safety* form (offline version)
+## 3. Play Console *Data safety* form
 
 | Question | Answer |
 |---|---|
 | Does your app collect or share any of the required user data types? | **No.** Data that stays on the device and is never sent off it doesn't count as "collected" in Google's definition. User-initiated sharing through the Android share sheet isn't "sharing" by the app either. |
-| Is all user data encrypted in transit? | Not applicable (nothing is transmitted). If the form requires an answer once a network feature exists, it will be **Yes** (HTTPS/WSS). |
+| Is all user data encrypted in transit? | Not applicable (nothing is transmitted; the app has no network access). |
 | Do you provide a way for users to request that their data is deleted? | Not applicable (no data collected). The page still explains in-app deletion. |
 | Account creation | None. |
 | Ads | **No**, the app contains no ads. |
 | Target audience | 13+ (or 18+), consistent with the page. |
-
-The answers change with online play: see §5.
 
 ---
 
@@ -152,38 +149,15 @@ Conformément au RGPD, vous disposez d'un droit d'accès, de rectification, d'ef
 L'application ne prend aucune décision automatisée vous concernant et ne fait pas de profilage.
 
 ## Modifications
-Cette politique sera mise à jour si l'application évolue, en particulier lors de l'arrivée du jeu en ligne. La date en haut de la page indique la dernière version. Les changements importants seront signalés dans les notes de mise à jour de l'application.
+Cette politique sera mise à jour si l'application évolue. La date en haut de la page indique la dernière version. Les changements importants seront signalés dans les notes de mise à jour de l'application.
 
 ---
 
-## 5. To add when online play ships (Milestone 2)
-
-Online and semi-online play changes the answers. Update the page **before** publishing that version, and update the Data safety form at the same time.
-
-| Topic | What to write | Decision / source |
-|---|---|---|
-| Data sent to the server | Nickname, game code, role and game state, night choices, votes, the journal; a random **player token** identifying the phone within one game. | `docs/openapi.yaml` |
-| Recipient | The Sporz server, run by the developer on **[HÉBERGEUR / own server, COUNTRY]**. No other recipient. | DEC-18 |
-| Retention on the server | Games deleted **48 hours** after they end (DEC-12). Say how long server logs (with **IP addresses**) are kept: **[DURATION]**. | DEC-12, §6 |
-| Legal basis | Performance of the service requested by the user (art. 6.1.b GDPR); logs: legitimate interest (security, art. 6.1.f). | — |
-| Security | HTTPS / WSS encryption in transit. | — |
-| Transfers outside the EU | Only if the server or host is outside the EU: say where and on what basis. | §6 |
-| Camera (QR code to join) | The camera is used only to read the game's QR code. Images are processed **on the phone** and never stored or sent. If Google ML Kit is used, check and mention what ML Kit itself sends to Google (usage metrics, model updates). | Ticket E4 |
-| Links `sporz://join/…` | Only carry the game code. | Ticket E4 |
-| Rematch | The same lobby is reused; same retention. | DEC-13 |
-| Web app (v2, iPhone players) | Same data through the browser. Mention cookies or local storage if any. | Ticket F6, OPEN-1 |
-| Data safety form | Answers become **Yes, collected**: "Name" (nickname) and "App activity / other user-generated content" (game actions); purpose "App functionality"; **not shared**; **encrypted in transit**; deletion **automatic after 48 h**. | — |
-| Crash reporting (if added, F5) | Opt-in only. Name the provider, the data (device model, stack trace) and retention. | Ticket F5 |
-
----
-
-## 6. Open points to settle before publishing
+## 5. Open points to settle before publishing
 
 1. **Developer name and contact email** to show (must match the Play listing). An alias address is fine; it must be read.
 2. **Target age** (13+ or 18+) in Play Console, and the same on the page.
-3. **`INTERNET` permission in the offline release:** the offline version never uses it. Either keep it (harmless, and online play will need it) or remove it until Milestone 2 for a cleaner store listing ("no permissions"). Tell me and I'll do it in the app.
-4. **Where the page is hosted:** any public HTTPS URL works (GitHub Pages, your own server). It must stay online as long as the app is on the store.
-5. **English version:** needed when the app is translated (ticket F2). Until then, a French page is accepted.
-6. For online play: the **host and country** of your server, and the **retention of server logs**.
+3. **Where the page is hosted:** any public HTTPS URL works (GitHub Pages, your own server). It must stay online as long as the app is on the store.
+4. **English version:** needed when the app is translated (ticket F2). Until then, a French page is accepted.
 
 *This brief describes the app's behaviour; it is not legal advice. For a commercial launch, a quick review by someone familiar with the GDPR is worthwhile.*

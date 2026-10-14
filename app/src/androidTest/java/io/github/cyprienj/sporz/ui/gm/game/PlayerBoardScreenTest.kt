@@ -37,7 +37,6 @@ class PlayerBoardScreenTest {
 
         rule.onNodeWithText("Hugo").assertExists()
         rule.onNodeWithText(text(R.string.badge_dead)).assertExists()
-        rule.onNodeWithText(text(R.string.board_filter_offline)).assertDoesNotExist()
 
         rule.onNodeWithText(text(R.string.board_filter_mutated)).performClick()
         rule.onNodeWithText("Gaëlle").assertExists()

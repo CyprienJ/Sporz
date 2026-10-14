@@ -1,14 +1,11 @@
 package io.github.cyprienj.sporz.ui.gm.game
 
-import io.github.cyprienj.sporz.data.GameSession
 import io.github.cyprienj.sporz.engine.day.VoteOption
-import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.engine.model.NightStep
 import io.github.cyprienj.sporz.engine.night.DoctorsDecision
 import io.github.cyprienj.sporz.engine.night.MutantsDecision
 import io.github.cyprienj.sporz.ui.gm.game.DesignCrew.id
 import org.junit.Assert.assertEquals
-import org.junit.Assert.assertFalse
 import org.junit.Test
 
 class PlayerBoardViewModelTest {
@@ -34,13 +31,5 @@ class PlayerBoardViewModelTest {
     @Test
     fun `ejected players are told apart from night deaths`() {
         assertEquals(setOf(id("Jules")), PlayerBoardViewModel.ejected(played))
-    }
-
-    @Test
-    fun `no Hors ligne filter in offline mode`() {
-        val session = GameSession().apply { resumeGame(played, GameMode.Offline) }
-        assertFalse(BoardFilter.Offline in PlayerBoardViewModel(session).filters)
-        val semi = GameSession().apply { resumeGame(played, GameMode.SemiOnline) }
-        assertEquals(BoardFilter.entries, PlayerBoardViewModel(semi).filters)
     }
 }

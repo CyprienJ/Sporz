@@ -5,7 +5,6 @@ import io.github.cyprienj.sporz.data.history.GameHistory
 import io.github.cyprienj.sporz.engine.GameEnd
 import io.github.cyprienj.sporz.engine.EngineJson
 import io.github.cyprienj.sporz.engine.game.GameState
-import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.engine.setup.SuggestedCompositions
 import io.github.cyprienj.sporz.engine.night.MutantsDecision
 import io.github.cyprienj.sporz.ui.gm.game.DesignCrew
@@ -57,7 +56,7 @@ class GameSessionPersistenceTest {
     fun `a game survives the session being recreated`() {
         val store = MemoryStore()
         val first = session(store)
-        first.chooseMode(GameMode.Offline)
+        first.startSetup()
         repeat(10) { first.addSeat("Joueur $it") }
         first.setComposition(SuggestedCompositions.forPlayers(10))
         val dealt = first.deal(Random(7))

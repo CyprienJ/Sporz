@@ -24,14 +24,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import io.github.cyprienj.sporz.R
 import io.github.cyprienj.sporz.ui.theme.SporzIcons
 import io.github.cyprienj.sporz.ui.theme.SurfaceKind
 import io.github.cyprienj.sporz.ui.theme.colors
@@ -40,19 +38,17 @@ import io.github.cyprienj.sporz.ui.theme.SporzTheme
 import io.github.cyprienj.sporz.ui.theme.SporzTypography
 import io.github.cyprienj.sporz.ui.theme.Tone
 
-/** Round initial of a player. Connected players are teal, offline ones grey. */
+/** Round initial of a player. */
 @Composable
 fun Avatar(
     name: String,
     modifier: Modifier = Modifier,
-    offline: Boolean = false,
     size: Dp = 30.dp,
 ) {
     val colors = SporzTheme.colors
-    val (background, content) = when {
-        colors.kind == SurfaceKind.Secret -> colors.subtleFill to colors.text
-        offline -> colors.neutral.background to colors.neutral.content
-        else -> colors.healthy.background to colors.healthy.content
+    val (background, content) = when (colors.kind) {
+        SurfaceKind.Secret -> colors.subtleFill to colors.text
+        else -> colors.neutral.background to colors.neutral.content
     }
     Box(
         modifier
@@ -84,7 +80,7 @@ fun CampBar(color: Color, modifier: Modifier = Modifier) {
 }
 
 /**
- * A player in a list (lobby, board, waiting room, night targets on dark).
+ * A player in a list (lobby, board, night targets on dark).
  * [leading] is usually an [Avatar] or a [CampBar]; [trailing] a badge or a button.
  */
 @Composable
@@ -93,7 +89,6 @@ fun PlayerRow(
     modifier: Modifier = Modifier,
     subtitle: String? = null,
     eliminated: Boolean = false,
-    offline: Boolean = false,
     onClick: (() -> Unit)? = null,
     leading: (@Composable () -> Unit)? = null,
     trailing: (@Composable RowScope.() -> Unit)? = null,
@@ -119,7 +114,6 @@ fun PlayerRow(
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-                if (offline) Tag(stringResource(R.string.tag_offline))
             }
             if (subtitle != null) {
                 Text(subtitle, style = SporzTypography.small, color = SporzTheme.colors.textMuted)

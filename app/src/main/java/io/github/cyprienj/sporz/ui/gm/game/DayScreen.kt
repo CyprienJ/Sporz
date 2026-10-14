@@ -161,7 +161,7 @@ fun DayScreen(
                 if (result is VoteResult.CaptainMustChoose) {
                     TieChoice(game, result, captainPick, name, actions)
                 } else if (voteOpen) {
-                    OfflineVotes(game, name, actions)
+                    Ballots(game, name, actions)
                 } else if (result != null) {
                     ResultCard(game, result, name)
                 }
@@ -371,7 +371,7 @@ private fun Tally(game: GameState, name: (PlayerId) -> String) {
 }
 
 @Composable
-private fun OfflineVotes(game: GameState, name: (PlayerId) -> String, actions: DayActions) {
+private fun Ballots(game: GameState, name: (PlayerId) -> String, actions: DayActions) {
     val day = game.day ?: return
     val alive = game.players.filter { it.alive }
     val options = buildList {

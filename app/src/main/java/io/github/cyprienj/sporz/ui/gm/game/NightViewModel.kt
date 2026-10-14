@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import io.github.cyprienj.sporz.data.GameSession
 import io.github.cyprienj.sporz.engine.game.GameState
-import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.engine.model.NightStep
 import io.github.cyprienj.sporz.engine.model.PlayerId
 import io.github.cyprienj.sporz.engine.night.DoctorsDecision
@@ -24,7 +23,6 @@ import javax.inject.Inject
 class NightViewModel @Inject constructor(private val session: GameSession) : ViewModel() {
 
     val game: StateFlow<GameState?> = session.game
-    val mode: GameMode = session.draft.value?.mode ?: GameMode.Offline
 
     /** Mutants or doctors chose to kill rather than mutate / heal. */
     var kill by mutableStateOf(false)

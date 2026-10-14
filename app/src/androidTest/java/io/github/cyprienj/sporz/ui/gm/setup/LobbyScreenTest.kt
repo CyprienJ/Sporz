@@ -12,7 +12,6 @@ import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.platform.app.InstrumentationRegistry
 import io.github.cyprienj.sporz.R
 import io.github.cyprienj.sporz.data.GameSession
-import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.ui.theme.SporzTheme
 import org.junit.Assert.assertEquals
 import org.junit.Rule
@@ -28,7 +27,7 @@ class LobbyScreenTest {
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
     private fun text(id: Int, vararg args: Any) = context.getString(id, *args)
 
-    private val session = GameSession().apply { chooseMode(GameMode.Offline) }
+    private val session = GameSession().apply { startSetup() }
 
     private fun add(name: String) {
         rule.onNode(hasSetTextAction()).performTextInput(name)

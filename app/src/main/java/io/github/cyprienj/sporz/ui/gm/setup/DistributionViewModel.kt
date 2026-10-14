@@ -11,7 +11,7 @@ import io.github.cyprienj.sporz.engine.model.PlayerId
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
-/** Distribution (ticket C5): the MJ announces each offline player's role in private. */
+/** Distribution (ticket C5): the MJ announces each player's role in private. */
 @HiltViewModel
 class DistributionViewModel @Inject constructor(private val session: GameSession) : ViewModel() {
 

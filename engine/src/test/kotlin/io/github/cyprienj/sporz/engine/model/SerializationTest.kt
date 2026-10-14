@@ -5,7 +5,7 @@ import kotlinx.serialization.encodeToString
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Test
 
-/** JSON names must be the codes of docs/rules.md and docs/openapi.yaml. */
+/** JSON names must be the codes of docs/rules.md. */
 class SerializationTest {
 
     @Test
@@ -35,7 +35,7 @@ class SerializationTest {
     fun `composition and settings round-trip`() {
         val composition = Composition(roles = mapOf(Role.BaseMutant to 1, Role.Doctor to 3), extraHosts = 2, resistants = 1)
         assertEquals(composition, EngineJson.decodeFromString<Composition>(EngineJson.encodeToString(composition)))
-        val settings = GameSettings.forPreset(AutomationPreset.Automatic)
+        val settings = GameSettings(guidedCall = false, debateTimerMinutes = 8, nightOrder = NightStep.DefaultOrder.reversed())
         assertEquals(settings, EngineJson.decodeFromString<GameSettings>(EngineJson.encodeToString(settings)))
     }
 }

@@ -1,6 +1,5 @@
 package io.github.cyprienj.sporz.data
 
-import io.github.cyprienj.sporz.engine.model.GameMode
 import io.github.cyprienj.sporz.engine.setup.SeatProblem
 import io.github.cyprienj.sporz.engine.setup.SuggestedCompositions
 import org.junit.Assert.assertEquals
@@ -16,24 +15,19 @@ class GameSessionTest {
     }
 
     @Test
-    fun `choosing a mode starts a setup`() {
+    fun `starting a setup keeps the current one`() {
         val session = GameSession()
-        session.chooseMode(GameMode.Offline)
-        assertEquals(SetupDraft(mode = GameMode.Offline), session.draft.value)
-    }
-
-    @Test
-    fun `changing the mode updates the current setup`() {
-        val session = GameSession()
-        session.chooseMode(GameMode.Offline)
-        session.chooseMode(GameMode.SemiOnline)
-        assertEquals(GameMode.SemiOnline, session.draft.value!!.mode)
+        session.startSetup()
+        assertEquals(SetupDraft(), session.draft.value)
+        session.addSeat("Alice")
+        session.startSetup()
+        assertEquals(1, session.draft.value!!.seats.size)
     }
 
     @Test
     fun `discarding forgets the setup`() {
         val session = GameSession()
-        session.chooseMode(GameMode.Offline)
+        session.startSetup()
         session.discardSetup()
         assertNull(session.draft.value)
     }
@@ -63,19 +57,9 @@ class GameSessionTest {
     }
 
     @Test
-    fun `adding a player keeps the chosen mode`() {
-        val session = GameSession()
-        session.chooseMode(GameMode.Offline)
-        session.addSeat("Alice")
-        assertEquals(GameMode.Offline, session.draft.value!!.mode)
-        session.chooseMode(GameMode.SemiOnline)
-        assertEquals(1, session.draft.value!!.seats.size)
-    }
-
-    @Test
     fun `a new game forgets the previous setup and deal`() {
         val session = GameSession()
-        session.chooseMode(GameMode.Offline)
+        session.startSetup()
         repeat(7) { session.addSeat("P$it") }
         session.setComposition(SuggestedCompositions.forPlayers(7))
         val game = session.deal(Random(1))
