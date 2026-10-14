@@ -116,7 +116,7 @@ The complete, numbered rules used by the app are in **[`docs/rules.md`](docs/rul
 
 **Day:** the MJ announces deaths, players debate (no group larger than 4), then a **secret vote** ejects the player with the most votes, with no minimum (blank votes allowed; if blank comes first or there is a tie, nobody is ejected). Optionally the ejected player's role and state are revealed.
 
-**Variants** (composition screen): hacker can hack the spy · reveal role and state on elimination · blank vote allowed · elect a captain (double vote).
+**Variants** (composition screen): hacker can hack the spy · reveal role and state on elimination · blank vote allowed · elect a captain (vote counts 1.5).
 
 ---
 

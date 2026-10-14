@@ -59,15 +59,18 @@ public data class Vote(val round: Int, val ballots: Map<PlayerId, VoteOption> = 
 
     /**
      * Weighted count per option, most votes first. The captain's ballot counts
-     * double with the captain variant (R-DAY-5).
+     * [CAPTAIN_VOTE_WEIGHT] with the captain variant (R-DAY-5).
      */
-    public fun tally(captain: PlayerId?, variants: Variants): List<Pair<VoteOption, Int>> =
+    public fun tally(captain: PlayerId?, variants: Variants): List<Pair<VoteOption, Double>> =
         ballots.entries
-            .groupBy({ it.value }, { if (variants.captain && it.key == captain) 2 else 1 })
+            .groupBy({ it.value }, { if (variants.captain && it.key == captain) CAPTAIN_VOTE_WEIGHT else 1.0 })
             .mapValues { it.value.sum() }
             .toList()
             .sortedByDescending { it.second }
 }
+
+/** R-DAY-5: weight of the captain's ballot (a multiple of 0.5, so sums stay exact). */
+public const val CAPTAIN_VOTE_WEIGHT: Double = 1.5
 
 /** What happens when the vote is closed (R-DAY-9 to R-DAY-11). */
 @Serializable
@@ -76,7 +79,7 @@ public sealed interface VoteResult {
     @Serializable @SerialName("ejected")
     public data class Ejected(
         val player: PlayerId,
-        val votes: Int,
+        val votes: Double,
         val revealedRole: Role? = null,
         val revealedState: PlayerState? = null,
     ) : VoteResult

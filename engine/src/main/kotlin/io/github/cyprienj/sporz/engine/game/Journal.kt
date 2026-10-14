@@ -23,7 +23,7 @@ public enum class Phase {
 public data class JournalEntry(val round: Int, val phase: Phase, val event: JournalEvent)
 
 @Serializable
-public data class TallyLine(val option: VoteOption, val votes: Int)
+public data class TallyLine(val option: VoteOption, val votes: Double)
 
 /** What the journal records. The UI writes the sentence for each case. */
 @Serializable

@@ -779,7 +779,7 @@ components:
         hackerCanHackSpy: { type: boolean, default: false }
         revealOnElimination: { type: boolean, default: true }
         blankVoteAllowed: { type: boolean, default: true }
-        captain: { type: boolean, default: false, description: Elect a captain with a double vote. }
+        captain: { type: boolean, default: false, description: Elect a captain whose vote counts 1.5. }
     Composition:
       type: object
       required: [roles, variants]
@@ -1115,7 +1115,7 @@ components:
           enum: [ejected, blankWins, tie, noVotes, captainMustChoose]
           description: Relative majority, no threshold (rules R-DAY-9, R-DAY-10).
         ejected: { $ref: '#/components/schemas/PublicPlayer' }
-        votes: { type: integer, description: "ejected: weighted votes of the ejected player (captain counts double)." }
+        votes: { type: number, description: "ejected: weighted votes of the ejected player (captain counts 1.5)." }
         revealedRole: { $ref: '#/components/schemas/Role' }
         revealedState: { $ref: '#/components/schemas/PlayerState' }
         tiedOptions:

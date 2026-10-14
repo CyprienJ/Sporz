@@ -67,6 +67,7 @@ import io.github.cyprienj.sporz.ui.theme.SporzShapes
 import io.github.cyprienj.sporz.ui.theme.SporzTheme
 import io.github.cyprienj.sporz.ui.theme.SporzTypography
 import kotlinx.coroutines.delay
+import java.text.NumberFormat
 
 /** design.html, board "MJ · Jour et vote". */
 @Composable
@@ -335,7 +336,7 @@ private fun Successor(game: GameState, deadCaptain: PlayerId, pick: VoteOption?,
     }
 }
 
-/** Weighted tally with bars (captain counts double), most votes first. */
+/** Weighted tally with bars (captain counts 1.5), most votes first. */
 @Composable
 private fun Tally(game: GameState, name: (PlayerId) -> String) {
     val day = game.day ?: return
@@ -346,7 +347,7 @@ private fun Tally(game: GameState, name: (PlayerId) -> String) {
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 Row {
                     Text(option.label(name, stringResource(R.string.day_blank)), style = SporzTypography.body.copy(fontWeight = FontWeight.SemiBold), modifier = Modifier.weight(1f))
-                    Text("$votes", style = SporzTypography.heading.copy(fontSize = 18.sp))
+                    Text(formatVotes(votes), style = SporzTypography.heading.copy(fontSize = 18.sp))
                 }
                 val colors = SporzTheme.colors
                 Box(Modifier.fillMaxWidth().height(8.dp).background(colors.divider, SporzShapes.pill)) {
@@ -420,7 +421,7 @@ private fun ResultCard(game: GameState, result: VoteResult, name: (PlayerId) -> 
     SporzCard(highlighted = true) {
         when (result) {
             is VoteResult.Ejected -> {
-                Text(pluralStringResource(R.plurals.day_result_ejected, result.votes, name(result.player), result.votes), style = SporzTypography.heading)
+                Text(pluralStringResource(R.plurals.day_result_ejected, result.votes.toInt(), name(result.player), formatVotes(result.votes)), style = SporzTypography.heading)
                 val role = result.revealedRole
                 val state = result.revealedState
                 if (role != null && state != null) {
@@ -475,3 +476,7 @@ private fun VoteOption.label(name: (PlayerId) -> String, blank: String): String 
 
 private val PlayerState.nameRes: Int
     get() = if (this == PlayerState.Mutated) R.string.state_mutated else R.string.state_healthy
+
+/** Weighted vote count for display: "4", or "2,5" with the captain's half vote (R-DAY-5). */
+internal fun formatVotes(votes: Double): String =
+    NumberFormat.getNumberInstance().apply { maximumFractionDigits = 1 }.format(votes)

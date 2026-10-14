@@ -98,7 +98,7 @@
     <string name="variant_hacker_can_hack_spy">Le hacker peut pirater l\'espion</string>
     <string name="variant_reveal_on_elimination">Révéler rôle et état à l\'élimination</string>
     <string name="variant_blank_vote">Vote blanc autorisé</string>
-    <string name="variant_captain">Élire un capitaine (voix double)</string>
+    <string name="variant_captain">Élire un capitaine (voix ×1,5)</string>
     <string name="composition_less">Retirer : %1$s</string>
     <string name="composition_more">Ajouter : %1$s</string>
     <string name="composition_error_player_count">Nombre de joueurs : entre %1$d et %2$d.</string>
@@ -290,7 +290,7 @@
     <string name="day_timer_pause">Pause</string>
     <string name="day_timer_over">Temps écoulé : passez au vote.</string>
     <string name="day_captain_election">Élection du capitaine</string>
-    <string name="day_captain_hint">Chaque joueur vivant vote pour un capitaine (voix double au vote).</string>
+    <string name="day_captain_hint">Chaque joueur vivant vote pour un capitaine (sa voix compte 1,5 au vote).</string>
     <string name="day_elect">Élire le capitaine</string>
     <string name="day_captain">Capitaine : %1$s</string>
     <string name="day_captain_dead">Le capitaine %1$s est mort : il désigne son successeur.</string>
@@ -298,8 +298,8 @@
     <string name="day_tie_captain">Égalité : le capitaine %1$s choisit.</string>
     <string name="day_confirm_choice">Valider le choix</string>
     <plurals name="day_result_ejected">
-        <item quantity="one">Éjection de %1$s (%2$d voix)</item>
-        <item quantity="other">Éjection de %1$s (%2$d voix)</item>
+        <item quantity="one">Éjection de %1$s (%2$s voix)</item>
+        <item quantity="other">Éjection de %1$s (%2$s voix)</item>
     </plurals>
     <string name="day_result_revealed">%1$s, %2$s</string>
     <string name="day_result_blank">Le vote blanc l’emporte : personne n’est éjecté.</string>

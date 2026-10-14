@@ -165,7 +165,7 @@ class GameStateTest {
         listOf("Alice", "Bastien", "Chloé", "Dorian", "Emma").forEach { game = game.castVote(id(it), VoteOption.For(id("Hugo"))) }
         game = game.castVote(id("Inès"), VoteOption.Blank).closeVote()
 
-        assertEquals(VoteResult.Ejected(id("Hugo"), 5, Role.Astronaut, PlayerState.Healthy), game.day!!.result)
+        assertEquals(VoteResult.Ejected(id("Hugo"), 5.0, Role.Astronaut, PlayerState.Healthy), game.day!!.result)
         assertFalse(game.player("Hugo").alive)
         assertTrue(game.journal.last().event is VoteClosed)
         assertThrows<IllegalStateException> { game.castVote(id("Alice"), VoteOption.Blank) }

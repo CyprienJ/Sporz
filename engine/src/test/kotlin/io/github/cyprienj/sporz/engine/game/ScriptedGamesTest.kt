@@ -74,7 +74,7 @@ class ScriptedGamesTest {
             "Alice" to "Hugo", "Bastien" to "Hugo", "Chloé" to "Hugo", "Dorian" to "Hugo", "Emma" to "Hugo",
             "Farid" to "Gaëlle", "Gaëlle" to "Farid", "Hugo" to "Gaëlle", "Inès" to null, "Jules" to "Farid",
         ).closeVote()
-        assertEquals(VoteResult.Ejected(id("Hugo"), 5, Role.Astronaut, PlayerState.Mutated), game.day!!.result)
+        assertEquals(VoteResult.Ejected(id("Hugo"), 5.0, Role.Astronaut, PlayerState.Mutated), game.day!!.result)
         assertEquals(Phase.Day, game.phase)
 
         // Night 2 (MJ night screen): mutants mutate Chloé, doctors heal Chloé.
@@ -96,7 +96,7 @@ class ScriptedGamesTest {
             "Alice" to "Gaëlle", "Bastien" to "Gaëlle", "Dorian" to "Gaëlle", "Jules" to "Gaëlle",
             "Emma" to "Chloé", "Inès" to null,
         ).closeVote()
-        assertEquals(VoteResult.Ejected(id("Gaëlle"), 4, Role.BaseMutant, PlayerState.Mutated), game.day!!.result)
+        assertEquals(VoteResult.Ejected(id("Gaëlle"), 4.0, Role.BaseMutant, PlayerState.Mutated), game.day!!.result)
         assertEquals(Phase.Ended, game.phase)
         assertEquals(GameEnd.HealthyWin, game.end)
 

@@ -157,7 +157,7 @@ Each one designates a living player (except the computer scientist) and receives
 ### 4.2 Captain (variant, DEC-5)
 
 - **R-DAY-4** On Day 1, before the first vote, living players elect a captain by secret vote. Most votes wins; on a tie the MJ draws at random among the tied players.
-- **R-DAY-5** The captain's vote counts **double**, and the captain breaks ties (R-DAY-10).
+- **R-DAY-5** The captain's vote counts **1.5**, and the captain breaks ties (R-DAY-10).
 - **R-DAY-6** When the captain dies (night or vote), they immediately name a living successor.
 
 ### 4.3 Vote
@@ -191,7 +191,7 @@ Checked after the end of each night (R-NIGHT-20) and after each vote (R-DAY-12).
 | Hacker can hack the spy | off | R-NIGHT-18, R-NIGHT-19 |
 | Reveal role and state on death | on | R-NIGHT-21, R-DAY-11 |
 | Blank vote allowed | on | R-DAY-7, R-DAY-9 |
-| Captain (double vote) | off | R-DAY-4 to R-DAY-6, R-DAY-10 |
+| Captain (vote counts 1.5) | off | R-DAY-4 to R-DAY-6, R-DAY-10 |
 
 ---
 

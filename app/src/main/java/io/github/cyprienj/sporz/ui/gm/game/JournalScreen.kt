@@ -258,7 +258,7 @@ private fun journalRows(event: JournalEvent, game: GameState, name: (PlayerId) -
         val vote = stringResource(R.string.journal_who_vote)
         when (val result = event.result) {
             is VoteResult.Ejected -> buildList {
-                add(vote to pluralStringResource(R.plurals.day_result_ejected, result.votes, name(result.player), result.votes))
+                add(vote to pluralStringResource(R.plurals.day_result_ejected, result.votes.toInt(), name(result.player), formatVotes(result.votes)))
                 val role = result.revealedRole
                 val state = result.revealedState
                 if (role != null && state != null) {

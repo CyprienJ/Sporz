@@ -51,7 +51,7 @@ class VoteTest {
         // 9 living: Gaëlle 4, Chloé 1, blank 1, 3 abstentions.
         val v = vote(players, "Alice" to "Gaëlle", "Bastien" to "Gaëlle", "Dorian" to "Gaëlle", "Jules" to "Gaëlle", "Emma" to "Chloé", "Farid" to "")
         val closing = closeVote(players, v, variants)
-        assertEquals(VoteResult.Ejected(id("Gaëlle"), 4, Role.BaseMutant, PlayerState.Mutated), closing.result)
+        assertEquals(VoteResult.Ejected(id("Gaëlle"), 4.0, Role.BaseMutant, PlayerState.Mutated), closing.result)
         assertFalse(closing.players.single { it.name == "Gaëlle" }.alive)
     }
 
@@ -62,7 +62,7 @@ class VoteTest {
             "Alice" to "Hugo", "Bastien" to "Hugo", "Chloé" to "Hugo", "Dorian" to "Hugo", "Emma" to "Hugo",
             "Farid" to "Gaëlle", "Gaëlle" to "Farid", "Hugo" to "Gaëlle", "Inès" to "", "Jules" to "Farid",
         )
-        assertEquals(VoteResult.Ejected(id("Hugo"), 5, Role.Astronaut, PlayerState.Healthy), closeVote(crew, v, variants).result)
+        assertEquals(VoteResult.Ejected(id("Hugo"), 5.0, Role.Astronaut, PlayerState.Healthy), closeVote(crew, v, variants).result)
     }
 
     @Test
@@ -114,7 +114,7 @@ class VoteTest {
     fun `without the reveal variant the role and state stay hidden (R-DAY-11)`() {
         val noReveal = Variants(revealOnElimination = false)
         val v = vote(crew, "Alice" to "Gaëlle", v = noReveal)
-        assertEquals(VoteResult.Ejected(id("Gaëlle"), 1), closeVote(crew, v, noReveal).result)
+        assertEquals(VoteResult.Ejected(id("Gaëlle"), 1.0), closeVote(crew, v, noReveal).result)
     }
 
     // --- Captain ---------------------------------------------------------------
@@ -122,12 +122,19 @@ class VoteTest {
     private val withCaptain = Variants(captain = true)
 
     @Test
-    fun `the captain's vote counts double (R-DAY-5)`() {
-        // Gaëlle 2 votes vs Chloé 1 + captain Emma (2) = 3.
+    fun `the captain's vote counts one and a half (R-DAY-5)`() {
+        // Gaëlle 2 votes vs Chloé 1 + captain Emma (1.5) = 2.5.
         val v = vote(crew, "Alice" to "Gaëlle", "Bastien" to "Gaëlle", "Dorian" to "Chloé", "Emma" to "Chloé", v = withCaptain)
-        assertEquals(VoteResult.Ejected(id("Chloé"), 3, Role.Astronaut, PlayerState.Healthy), closeVote(crew, v, withCaptain, captain = id("Emma")).result)
+        assertEquals(VoteResult.Ejected(id("Chloé"), 2.5, Role.Astronaut, PlayerState.Healthy), closeVote(crew, v, withCaptain, captain = id("Emma")).result)
         // Without the variant, the same ballots tie.
         assertTrue(closeVote(crew, v, variants, captain = id("Emma")).result is VoteResult.Tie)
+    }
+
+    @Test
+    fun `the captain alone does not outweigh two votes (R-DAY-5)`() {
+        // Gaëlle 2 votes vs captain Emma (1.5) for Chloé.
+        val v = vote(crew, "Alice" to "Gaëlle", "Bastien" to "Gaëlle", "Emma" to "Chloé", v = withCaptain)
+        assertEquals(id("Gaëlle"), (closeVote(crew, v, withCaptain, captain = id("Emma")).result as VoteResult.Ejected).player)
     }
 
     @Test
@@ -180,7 +187,7 @@ class VoteTest {
         val v = vote(crew, "Alice" to "Gaëlle", "Bastien" to "")
         assertEquals(v, EngineJson.decodeFromString<Vote>(EngineJson.encodeToString(v)))
         val results: List<VoteResult> = listOf(
-            VoteResult.Ejected(id("Hugo"), 5, Role.Astronaut, PlayerState.Healthy),
+            VoteResult.Ejected(id("Hugo"), 5.0, Role.Astronaut, PlayerState.Healthy),
             VoteResult.BlankWins, VoteResult.NoVotes, VoteResult.Tie(listOf(Blank, forP("Chloé"))),
             VoteResult.CaptainMustChoose(listOf(forP("Alice"))),
         )
