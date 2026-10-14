@@ -20,6 +20,7 @@ import io.github.cyprienj.sporz.engine.model.PlayerId
 import io.github.cyprienj.sporz.engine.model.PlayerState
 import io.github.cyprienj.sporz.ui.theme.SporzTheme
 import org.junit.Assert.assertEquals
+import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
@@ -73,6 +74,10 @@ class NightScreenTest {
         assertEquals(Phase.Day, game.phase)
         assertEquals(PlayerState.Healthy, game.players.single { it.name == "Chloé" }.state)
         assertEquals(PlayerId("Hugo"), game.night!!.progress.paralysed)
+        // The night stays on screen with the last step's result until the MJ ends it.
+        assertFalse(dayReached)
+        rule.onNodeWithText(text(R.string.role_spy)).assertExists()
+        confirm(text(R.string.night_go_to_day))
         assertTrue(dayReached)
     }
 }

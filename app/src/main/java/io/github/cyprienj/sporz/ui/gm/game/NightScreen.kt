@@ -16,7 +16,6 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -74,11 +73,8 @@ fun NightRoute(
 ) {
     val game by viewModel.game.collectAsStateWithLifecycle()
     val current = game ?: return
-    // Leave for the day when the last step is validated here (not when arriving after the night).
-    val arrivedDuringNight = remember { current.phase == Phase.Night }
-    LaunchedEffect(current.phase) {
-        if (arrivedDuringNight && current.phase != Phase.Night) onEndNight()
-    }
+    // Once the last step is validated the screen stays here, so the MJ can read its result,
+    // and moves to the day only when they end the night.
     NightScreen(
         game = current,
         mode = viewModel.mode,

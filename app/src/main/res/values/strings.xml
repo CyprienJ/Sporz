@@ -220,7 +220,7 @@
     <string name="night_confirm_hack">Valider : pirater %1$s</string>
     <string name="night_confirm_info">Valider</string>
     <string name="night_over">La nuit est terminée.</string>
-    <string name="night_go_to_day">Passer au jour</string>
+    <string name="night_go_to_day">Terminer la nuit</string>
     <string name="night_error">Action impossible : %1$s</string>
     <string name="call_mutants">« Mutants, réveillez-vous. Choisissez un joueur à muter ou à tuer, puis un joueur à paralyser. »</string>
     <string name="call_doctors">« Médecins, réveillez-vous. Choisissez qui soigner, ou un joueur à tuer. »</string>
