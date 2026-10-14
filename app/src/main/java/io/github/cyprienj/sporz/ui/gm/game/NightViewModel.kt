@@ -99,6 +99,8 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
                     NightStep.Geneticist -> game.playGeneticist(targets.single())
                     NightStep.Hacker -> game.playHacker(checkNotNull(hackSource))
                     NightStep.Spy -> game.playSpy(targets.single())
+                    NightStep.Informant -> game.playInformant(targets.single())
+                    NightStep.Investigator -> game.playInvestigator(targets.single())
                     null -> game
                 }
             }
@@ -122,7 +124,8 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
             return when (game.currentStep) {
                 NightStep.Mutants -> alive.filter { !it.isMutated }                   // R-NIGHT-7
                 NightStep.Doctors -> alive.filter { it.id !in actors } // R-NIGHT-5, R-NIGHT-11: awake doctors are not healed
-                NightStep.Psychologist, NightStep.Geneticist, NightStep.Spy -> alive.filter { it.id !in actors }
+                NightStep.Psychologist, NightStep.Geneticist, NightStep.Spy, NightStep.Informant, NightStep.Investigator ->
+                    alive.filter { it.id !in actors }
                 NightStep.ComputerScientist, NightStep.Hacker, null -> emptyList()
             }.map { it.id }
         }

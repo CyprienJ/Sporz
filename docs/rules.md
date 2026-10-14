@@ -39,6 +39,8 @@ Every rule has an id (`R-…`) so tickets, code comments and tests can point to 
 | Informaticien | `computerScientist` | 0 or 1 | healthy |
 | Hacker | `hacker` | 0 or 1 | healthy |
 | Espion | `spy` | 0 or 1 | healthy |
+| Indic | `informant` | 0 or 1 | healthy |
+| Enquêteur | `investigator` | 0 or 1 | healthy |
 | Traître | `traitor` | 0 or 1 | healthy, wins with the mutant camp |
 | Astronaute | `astronaut` | the rest (computed) | healthy |
 
@@ -94,8 +96,10 @@ The base mutant (1) is always included. Default variants: see §6.
   3. Informaticien
   4. Psychologue
   5. Généticien
-  6. Hacker
-  7. Espion
+  6. Indic
+  7. Enquêteur
+  8. Hacker
+  9. Espion
 - **R-NIGHT-2** **Effects apply immediately**, in step order. A player killed at step 1 does not act at later steps; a player mutated at step 1 loses their power for the rest of the night unless healed at step 2 (R-NIGHT-4).
 - **R-NIGHT-3** When nobody can play a step:
   - if a holder of the role is **paralysed**, **mutated**, or **dead with their role still secret** (*reveal* variant off), the MJ **pretends to call the step** as usual and lets a moment pass, so players cannot deduce anything from silence. Nothing happens; the app shows the step with who is missing and why, then moves on;
@@ -141,7 +145,9 @@ Each one designates a living player (except the computer scientist) and receives
 - **R-NIGHT-16** **Psychologue**: learns whether the target is `mutated` or `healthy`. The traitor shows as `healthy` unless mutated.
 - **R-NIGHT-17** **Généticien**: learns the target's genome.
 - **R-NIGHT-18** **Hacker**: chooses one role among psychologist, geneticist, computer scientist (and spy with the variant). They receive a **copy** of that role's report of the night. If that role produced no report (absent, dead, mutated), the hacker receives "nothing". The hacked player still receives their own report and is not told they were hacked (DEC-24).
-- **R-NIGHT-19** **Espion**: designates a player and learns every action that targeted them this night, with its outcome — mutated / mutation failed / killed by mutants / paralysed / healed / heal failed / killed by doctors / analysed by the psychologist / analysed by the geneticist. With the *hacker can hack the spy* variant, the spy report is computed after the spy's step and the hacker's copy is delivered at the end of the night.
+- **R-NIGHT-19** **Espion**: designates a player and learns every action that targeted them this night, with its outcome — mutated / mutation failed / killed by mutants / paralysed / healed / heal failed / killed by doctors / analysed by the psychologist / analysed by the geneticist / inspected by the informant / inspected by the investigator. With the *hacker can hack the spy* variant, the spy report is computed after the spy's step and the hacker's copy is delivered at the end of the night.
+- **R-NIGHT-23** **Indic**: designates a player and learns whether they are the **traitor** or **loyal**. Only the traitor role counts: a mutated player who is not the traitor shows as loyal.
+- **R-NIGHT-24** **Enquêteur**: designates a player and learns what was done to them during the **previous night**, in order and **without the outcome**: targeted by a mutation (successful or not) / paralysed / targeted by a heal (useful or not) / inspected by the psychologist / the geneticist / the informant / the spy. Kills are not listed (a killed player is dead and cannot be designated). On night 1 there is no previous night: the report is "nothing".
 
 ### 3.5 End of night
 

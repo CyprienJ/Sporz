@@ -116,7 +116,7 @@ fun SettingsScreen(
     }
     if (editingOrder) {
         NightOrderDialog(
-            initial = settings.nightOrder,
+            initial = settings.callOrder,
             onSave = {
                 onNightOrder(it)
                 editingOrder = false
@@ -179,7 +179,7 @@ private fun Flow(settings: GameSettings, onDebateTimer: (Int) -> Unit, onEditOrd
                 Column(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     Text(stringResource(R.string.setting_night_order), style = SporzTypography.body.copy(fontWeight = FontWeight.SemiBold))
                     Text(
-                        settings.nightOrder.map { stringResource(it.nameRes) }.joinToString(", "),
+                        settings.callOrder.map { stringResource(it.nameRes) }.joinToString(", "),
                         style = SporzTypography.small,
                         color = SporzTheme.colors.textMuted,
                         maxLines = 1,

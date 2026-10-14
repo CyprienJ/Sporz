@@ -19,6 +19,8 @@ val Role.nameRes: Int
         Role.ComputerScientist -> R.string.role_computer_scientist
         Role.Hacker -> R.string.role_hacker
         Role.Spy -> R.string.role_spy
+        Role.Informant -> R.string.role_informant
+        Role.Investigator -> R.string.role_investigator
         Role.Traitor -> R.string.role_traitor
         Role.Astronaut -> R.string.role_astronaut
     }
@@ -34,6 +36,8 @@ val Role.hintRes: Int
         Role.ComputerScientist -> R.string.role_computer_scientist_hint
         Role.Hacker -> R.string.role_hacker_hint
         Role.Spy -> R.string.role_spy_hint
+        Role.Informant -> R.string.role_informant_hint
+        Role.Investigator -> R.string.role_investigator_hint
         Role.Traitor -> R.string.role_traitor_hint
         Role.Astronaut -> R.string.role_astronaut_hint
     }

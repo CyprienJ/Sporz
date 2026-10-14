@@ -12,6 +12,7 @@ import io.github.cyprienj.sporz.engine.model.PlayerId
 import io.github.cyprienj.sporz.engine.model.PlayerState
 import io.github.cyprienj.sporz.engine.model.Role
 import io.github.cyprienj.sporz.engine.night.DoctorsDecision
+import io.github.cyprienj.sporz.engine.night.InvestigationFinding
 import io.github.cyprienj.sporz.engine.night.MutantsDecision
 import io.github.cyprienj.sporz.engine.night.Report
 import io.github.cyprienj.sporz.engine.night.SpyFinding
@@ -158,5 +159,57 @@ class ScriptedGamesTest {
         game = game.votes("Ana" to "Mia", "Ben" to "Mia", "Cyd" to "Mia").closeVote()
         assertEquals(GameEnd.HealthyWin, game.end)
         assertTrue(game.player("Tom").alive)
+    }
+
+    @Test
+    fun `informant and investigator over two nights (R-NIGHT-23, R-NIGHT-24)`() {
+        val crew = listOf(
+            p("Mia", Role.BaseMutant, Genome.Host, PlayerState.Mutated),
+            p("Doc", Role.Doctor),
+            p("Psy", Role.Psychologist),
+            p("Ind", Role.Informant),
+            p("Inv", Role.Investigator),
+            p("Spy", Role.Spy),
+            p("Tom", Role.Traitor),
+            p("Ana", Role.Astronaut, Genome.Resistant),
+            p("Ben", Role.Astronaut),
+        )
+        val composition = Composition(mapOf(Role.BaseMutant to 1, Role.Doctor to 1, Role.Psychologist to 1, Role.Informant to 1,
+            Role.Investigator to 1, Role.Spy to 1, Role.Traitor to 1), resistants = 1)
+        var game = GameState.fromDeal(crew, composition, GameSettings())
+
+        // Night 1: a failed mutation and a useless heal on Ana, analysed by the psychologist.
+        game = game.playMutants(MutantsDecision.Mutate(id("Ana"), paralysed = id("Ben")))
+            .playDoctors(DoctorsDecision.Heal(listOf(id("Ana"))))
+            .playPsychologist(id("Ana"))
+            .playInformant(id("Tom"))
+        assertEquals(Report.Allegiance(id("Tom"), traitor = true), game.notebook(id("Ind")).last().report)
+        game = game.playInvestigator(id("Ana"))
+        assertEquals(Report.Investigation(id("Ana"), emptyList()), game.notebook(id("Inv")).last().report, "no night before night 1")
+        game = game.playSpy(id("Ana"))
+        assertEquals(
+            Report.Spy(id("Ana"), listOf(SpyFinding.MutationFailed, SpyFinding.HealFailed, SpyFinding.AnalysedByPsychologist, SpyFinding.InvestigatedByInvestigator)),
+            game.notebook(id("Spy")).last().report,
+        )
+        game = game.votes("Ana" to "Ben", "Ben" to "Ana").closeVote().startNight()
+
+        // Night 2: the investigator learns what was done to Ana last night, without outcomes nor tonight's paralysis.
+        game = game.playMutants(MutantsDecision.Mutate(id("Ben"), paralysed = id("Ana")))
+            .playDoctors(DoctorsDecision.Heal(listOf(id("Ben"))))
+            .playPsychologist(id("Mia"))
+            .playInformant(id("Mia"))
+            .playInvestigator(id("Ana"))
+            .playSpy(id("Mia"))
+        assertEquals(Report.Allegiance(id("Mia"), traitor = false), game.notebook(id("Ind")).last().report, "a mutant is not the traitor")
+        assertEquals(
+            Report.Investigation(id("Ana"), listOf(InvestigationFinding.MutationAttempt, InvestigationFinding.HealAttempt,
+                InvestigationFinding.AnalysedByPsychologist, InvestigationFinding.AnalysedBySpy)),
+            game.notebook(id("Inv")).last().report,
+        )
+        assertEquals(
+            Report.Spy(id("Mia"), listOf(SpyFinding.AnalysedByPsychologist, SpyFinding.AnalysedByInformant)),
+            game.notebook(id("Spy")).last().report,
+        )
+        assertEquals(game, GameState.fromJson(game.toJson()))
     }
 }

@@ -349,6 +349,7 @@ private fun confirmLabel(
         step == NightStep.Mutants -> stringResource(R.string.night_confirm_mutate, chosen)
         step == NightStep.Doctors -> stringResource(R.string.night_confirm_heal, chosen)
         step == NightStep.Spy -> stringResource(R.string.night_confirm_spy, chosen)
+        step == NightStep.Informant || step == NightStep.Investigator -> stringResource(R.string.night_confirm_inspect, chosen)
         else -> stringResource(R.string.night_confirm_analyse, chosen)
     }
 }

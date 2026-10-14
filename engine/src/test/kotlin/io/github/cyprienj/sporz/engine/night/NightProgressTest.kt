@@ -7,6 +7,8 @@ import io.github.cyprienj.sporz.engine.model.NightStep.ComputerScientist
 import io.github.cyprienj.sporz.engine.model.NightStep.Doctors
 import io.github.cyprienj.sporz.engine.model.NightStep.Geneticist
 import io.github.cyprienj.sporz.engine.model.NightStep.Hacker
+import io.github.cyprienj.sporz.engine.model.NightStep.Informant
+import io.github.cyprienj.sporz.engine.model.NightStep.Investigator
 import io.github.cyprienj.sporz.engine.model.NightStep.Mutants
 import io.github.cyprienj.sporz.engine.model.NightStep.Psychologist
 import io.github.cyprienj.sporz.engine.model.NightStep.Spy
@@ -54,9 +56,14 @@ class NightProgressTest {
         return called
     }
 
+    /** The design crew has no informant nor investigator. */
+    private val designSteps = NightStep.DefaultOrder - Informant - Investigator
+
     @Test
     fun `full crew plays every step in the default order (R-NIGHT-1)`() {
-        assertEquals(NightStep.DefaultOrder, callOrder(crew))
+        assertEquals(designSteps, callOrder(crew))
+        val withNewRoles = crew.update("Chloé") { it.copy(role = Role.Informant) }.update("Hugo") { it.copy(role = Role.Investigator) }
+        assertEquals(NightStep.DefaultOrder, callOrder(withNewRoles))
     }
 
     @Test
@@ -81,7 +88,7 @@ class NightProgressTest {
         val noSpyNoHacker = crew.filter { it.role != Role.Spy && it.role != Role.Hacker }
         var night = NightProgress.start(1, NightStep.DefaultOrder, noSpyNoHacker)
         while (!night.isOver) night = night.advance(noSpyNoHacker)
-        assertEquals(listOf(Hacker, Spy), night.skipped)
+        assertEquals(listOf(Informant, Investigator, Hacker, Spy), night.skipped)
     }
 
     @Test
@@ -90,12 +97,12 @@ class NightProgressTest {
             .update("Dorian") { it.copy(state = PlayerState.Mutated) }
             .update("Jules") { it.copy(alive = false) }
         // Reveal variant on: Jules's death and role are known, his step is skipped.
-        assertEquals(listOf(Mutants, Doctors, ComputerScientist, Psychologist, Hacker, Spy), callOrder(players))
+        assertEquals(designSteps - Geneticist, callOrder(players))
         val psychologist = NightProgress.start(1, listOf(Psychologist) + (NightStep.DefaultOrder - Psychologist), players).current!!
         assertEquals(StepCall(Psychologist, emptyList(), listOf(Absence(PlayerId("Dorian"), AbsenceReason.Mutated))), psychologist)
         assertTrue(psychologist.pretend)
         // Reveal variant off: nobody knows Jules was the geneticist, his step is pretended too.
-        assertEquals(NightStep.DefaultOrder, callOrder(players, deadRevealed = false))
+        assertEquals(designSteps, callOrder(players, deadRevealed = false))
     }
 
     @Test
@@ -127,8 +134,8 @@ class NightProgressTest {
 
     @Test
     fun `a custom call order is followed`() {
-        val order = listOf(Spy, Hacker, Geneticist, Psychologist, ComputerScientist, Doctors, Mutants)
-        assertEquals(order, callOrder(crew, order))
+        val order = NightStep.DefaultOrder.reversed()
+        assertEquals(order - Informant - Investigator, callOrder(crew, order))
     }
 
     @Test

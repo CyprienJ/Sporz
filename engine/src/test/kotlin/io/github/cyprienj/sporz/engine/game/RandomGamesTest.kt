@@ -43,7 +43,11 @@ class RandomGamesTest {
             val playerCount = random.nextInt(7, 21)
             val variants = variantSets[seed % variantSets.size]
             val seats = (0 until playerCount).map { Seat(PlayerId("p$it"), "Player $it") }
-            val composition = SuggestedCompositions.forPlayers(playerCount, variants)
+            val suggested = SuggestedCompositions.forPlayers(playerCount, variants)
+            // Half the games also have the informant and the investigator, when seats are left.
+            val composition = if (seed % 2 == 1 && playerCount - suggested.chosenRoleCount >= 2) {
+                suggested.copy(roles = suggested.roles + (Role.Informant to 1) + (Role.Investigator to 1))
+            } else suggested
             var game = GameState.start(seats, composition, GameSettings(), random)
             val dealt = game.players
 
@@ -89,6 +93,8 @@ class RandomGamesTest {
                 NightStep.Geneticist -> game.playGeneticist(someone(actors.single()))
                 NightStep.Hacker -> game.playHacker(hackableSteps(game.variants).random(random))
                 NightStep.Spy -> game.playSpy(someone(actors.single()))
+                NightStep.Informant -> game.playInformant(someone(actors.single()))
+                NightStep.Investigator -> game.playInvestigator(someone(actors.single()))
             }
         }
 

@@ -11,6 +11,7 @@ import io.github.cyprienj.sporz.engine.model.PlayerState
 import io.github.cyprienj.sporz.engine.night.Absence
 import io.github.cyprienj.sporz.engine.night.AbsenceReason
 import io.github.cyprienj.sporz.engine.night.HealOutcome
+import io.github.cyprienj.sporz.engine.night.InvestigationFinding
 import io.github.cyprienj.sporz.engine.night.Killer
 import io.github.cyprienj.sporz.engine.night.NightEvent
 import io.github.cyprienj.sporz.engine.night.Report
@@ -53,6 +54,13 @@ fun reportText(report: Report, name: (PlayerId) -> String): String = when (repor
         } else {
             stringResource(R.string.report_spy, name(report.target), report.findings.map { stringResource(it.textRes) }.joinToString(", "))
         }
+    is Report.Allegiance -> stringResource(if (report.traitor) R.string.report_traitor else R.string.report_loyal, name(report.target))
+    is Report.Investigation ->
+        if (report.findings.isEmpty()) {
+            stringResource(R.string.report_spy_nothing, name(report.target))
+        } else {
+            stringResource(R.string.report_spy, name(report.target), report.findings.map { stringResource(it.textRes) }.joinToString(", "))
+        }
     is Report.Hacked -> {
         val source = stringResource(report.source.nameRes)
         val copy = report.copy
@@ -74,6 +82,19 @@ private val SpyFinding.textRes: Int
         SpyFinding.KilledByDoctors -> R.string.spy_killed_by_doctors
         SpyFinding.AnalysedByPsychologist -> R.string.spy_analysed_by_psychologist
         SpyFinding.AnalysedByGeneticist -> R.string.spy_analysed_by_geneticist
+        SpyFinding.AnalysedByInformant -> R.string.spy_analysed_by_informant
+        SpyFinding.InvestigatedByInvestigator -> R.string.spy_investigated
+    }
+
+private val InvestigationFinding.textRes: Int
+    get() = when (this) {
+        InvestigationFinding.MutationAttempt -> R.string.investigation_mutation
+        InvestigationFinding.Paralysed -> R.string.spy_paralysed
+        InvestigationFinding.HealAttempt -> R.string.investigation_heal
+        InvestigationFinding.AnalysedByPsychologist -> R.string.spy_analysed_by_psychologist
+        InvestigationFinding.AnalysedByGeneticist -> R.string.spy_analysed_by_geneticist
+        InvestigationFinding.AnalysedByInformant -> R.string.spy_analysed_by_informant
+        InvestigationFinding.AnalysedBySpy -> R.string.investigation_analysed_by_spy
     }
 
 /** Guided call text of a step (setting "Appel guidé"). */
@@ -86,6 +107,8 @@ val NightStep.callRes: Int
         NightStep.Geneticist -> R.string.call_geneticist
         NightStep.Hacker -> R.string.call_hacker
         NightStep.Spy -> R.string.call_spy
+        NightStep.Informant -> R.string.call_informant
+        NightStep.Investigator -> R.string.call_investigator
     }
 
 /** "Dorian : paralysé · Jules : mort": holders of a step who are not woken (R-NIGHT-3). */

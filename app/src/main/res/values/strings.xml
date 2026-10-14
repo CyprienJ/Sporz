@@ -55,6 +55,10 @@
     <string name="role_hacker_hint">Pirate un rapport</string>
     <string name="role_spy">Espion</string>
     <string name="role_spy_hint">Voit ce qu\'a subi un joueur</string>
+    <string name="role_informant">Indic</string>
+    <string name="role_informant_hint">Voit si un joueur est le traître</string>
+    <string name="role_investigator">Enquêteur</string>
+    <string name="role_investigator_hint">Voit ce qu\'on a fait à un joueur la nuit d\'avant</string>
     <string name="role_traitor">Traître</string>
     <string name="role_traitor_hint">Sain, joue pour les mutants</string>
     <string name="role_astronaut">Astronaute</string>
@@ -170,6 +174,7 @@
     <string name="night_confirm_heal">Valider : soigner %1$s</string>
     <string name="night_confirm_analyse">Valider : analyser %1$s</string>
     <string name="night_confirm_spy">Valider : espionner %1$s</string>
+    <string name="night_confirm_inspect">Valider : inspecter %1$s</string>
     <string name="night_confirm_hack">Valider : pirater %1$s</string>
     <string name="night_confirm_info">Valider</string>
     <string name="night_over">La nuit est terminée.</string>
@@ -182,6 +187,8 @@
     <string name="call_geneticist">« Généticien, réveille-toi. Désigne un joueur : je te dirai son génome. »</string>
     <string name="call_hacker">« Hacker, réveille-toi. Quel rapport veux-tu pirater ? »</string>
     <string name="call_spy">« Espion, réveille-toi. Désigne un joueur : je te dirai ce qu’il a subi cette nuit. »</string>
+    <string name="call_informant">« Indic, réveille-toi. Désigne un joueur : je te dirai s’il est traître ou loyal. »</string>
+    <string name="call_investigator">« Enquêteur, réveille-toi. Désigne un joueur : je te dirai ce qu’on lui a fait la nuit dernière. »</string>
 
     <!-- What happened at night (night screen, journal, notebooks) -->
     <string name="event_mutated">ont muté %1$s</string>
@@ -201,6 +208,8 @@
     <string name="report_genome">%1$s : %2$s</string>
     <string name="report_spy">%1$s : %2$s</string>
     <string name="report_spy_nothing">%1$s : rien</string>
+    <string name="report_traitor">%1$s : traître</string>
+    <string name="report_loyal">%1$s : loyal</string>
     <string name="report_hacked">pirate %1$s → %2$s</string>
     <string name="report_hacked_nothing">pirate %1$s → rien</string>
     <string name="report_hacked_pending">pirate %1$s → en fin de nuit</string>
@@ -213,6 +222,11 @@
     <string name="spy_killed_by_doctors">tué par les médecins</string>
     <string name="spy_analysed_by_psychologist">analysé par le psychologue</string>
     <string name="spy_analysed_by_geneticist">analysé par le généticien</string>
+    <string name="spy_analysed_by_informant">inspecté par l’indic</string>
+    <string name="spy_investigated">inspecté par l’enquêteur</string>
+    <string name="investigation_mutation">ciblé par une mutation</string>
+    <string name="investigation_heal">ciblé par un soin</string>
+    <string name="investigation_analysed_by_spy">inspecté par l’espion</string>
 
     <!-- Day (MJ) -->
     <string name="day_title">Jour %1$d</string>
@@ -339,6 +353,8 @@
     <string name="guide_computer_scientist">Apprend le nombre de mutants présents à bord.</string>
     <string name="guide_hacker">Pirate le rapport du généticien, du psychologue ou de l’informaticien (et de l’espion en variante). Le joueur piraté reçoit quand même son rapport.</string>
     <string name="guide_spy">Désigne un joueur et apprend ce qui lui est arrivé pendant la nuit : muté, paralysé, soigné, analysé…</string>
+    <string name="guide_informant">Désigne un joueur et apprend s’il est le traître ou s’il est loyal. Un mutant n’est pas un traître.</string>
+    <string name="guide_investigator">Désigne un joueur et apprend ce qu’on lui a fait pendant la nuit précédente, sans le résultat : muté, paralysé, soigné, inspecté par le psychologue, le généticien, l’indic ou l’espion. La première nuit, il n’y a rien à apprendre.</string>
     <string name="guide_traitor">Un astronaute sain qui veut la victoire des mutants : il gagne avec eux et les aide en journée. Il ne se réveille pas la nuit et ne sait pas qui ils sont. Les mutants peuvent le muter ; une fois muté, il ne peut plus être guéri.</string>
     <string name="guide_astronaut">Débat, observe et vote. Peut être muté et rejoindre l’autre camp.</string>
     <string name="guide_host">Hôte</string>

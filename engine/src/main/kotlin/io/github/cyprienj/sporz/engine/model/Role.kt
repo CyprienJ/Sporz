@@ -17,6 +17,8 @@ public enum class Role(public val minCount: Int, public val maxCount: Int) {
     @SerialName("computerScientist") ComputerScientist(0, 1),
     @SerialName("hacker") Hacker(0, 1),
     @SerialName("spy") Spy(0, 1),
+    @SerialName("informant") Informant(0, 1),
+    @SerialName("investigator") Investigator(0, 1),
     @SerialName("traitor") Traitor(0, 1),
     @SerialName("astronaut") Astronaut(0, Int.MAX_VALUE),
     ;

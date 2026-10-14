@@ -90,10 +90,12 @@ A spaceship crew. Among them, one **base mutant** wants to turn everyone into mu
 | Informaticien | Healthy | Learns the number of mutants on board. |
 | Hacker | Healthy | Steals the report of the psychologist, geneticist or IT (and the spy in a variant). |
 | Espion | Healthy | Learns what happened to a player during the night (mutated, paralysed, healed, analysed…). |
+| Indic | Healthy | Learns whether a player is the traitor or loyal. |
+| Enquêteur | Healthy | Learns what was done to a player during the previous night, without the outcome (mutation, paralysis, heal, inspections). |
 | Traître | Healthy, wins with the mutants | No power, never wakes up. Can be mutated; once mutated, cannot be healed. Optional. |
 | Astronaute | Healthy | No power. Fills the remaining seats. |
 
-**Night order** (default, configurable): Mutants → Médecins → Informaticien → Psychologue → Généticien → Hacker → Espion.
+**Night order** (default, configurable): Mutants → Médecins → Informaticien → Psychologue → Généticien → Indic → Enquêteur → Hacker → Espion.
 
 The complete, numbered rules used by the app are in **[`docs/rules.md`](docs/rules.md)**.
 

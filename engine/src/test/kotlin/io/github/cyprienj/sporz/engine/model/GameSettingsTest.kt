@@ -18,10 +18,22 @@ class GameSettingsTest {
     }
 
     @Test
+    fun `steps added since the order was saved are put back after their default predecessor`() {
+        val saved = GameSettings(nightOrder = listOf(NightStep.Spy, NightStep.Mutants, NightStep.Doctors, NightStep.ComputerScientist,
+            NightStep.Psychologist, NightStep.Geneticist, NightStep.Hacker))
+        assertEquals(
+            listOf(NightStep.Spy, NightStep.Mutants, NightStep.Doctors, NightStep.ComputerScientist, NightStep.Psychologist,
+                NightStep.Geneticist, NightStep.Informant, NightStep.Investigator, NightStep.Hacker),
+            saved.callOrder,
+        )
+        assertEquals(NightStep.DefaultOrder, GameSettings().callOrder)
+    }
+
+    @Test
     fun `default night order follows R-NIGHT-1`() {
         assertEquals(
             listOf(NightStep.Mutants, NightStep.Doctors, NightStep.ComputerScientist, NightStep.Psychologist,
-                NightStep.Geneticist, NightStep.Hacker, NightStep.Spy),
+                NightStep.Geneticist, NightStep.Informant, NightStep.Investigator, NightStep.Hacker, NightStep.Spy),
             GameSettings().nightOrder,
         )
     }
@@ -29,7 +41,6 @@ class GameSettingsTest {
     @Test
     fun `invalid timer or night order is refused`() {
         assertThrows<IllegalArgumentException> { GameSettings(debateTimerMinutes = 21) }
-        assertThrows<IllegalArgumentException> { GameSettings(nightOrder = listOf(NightStep.Mutants)) }
         assertThrows<IllegalArgumentException> { GameSettings(nightOrder = NightStep.DefaultOrder + NightStep.Spy) }
     }
 }

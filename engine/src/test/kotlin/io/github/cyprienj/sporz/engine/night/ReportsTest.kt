@@ -82,17 +82,17 @@ class ReportsTest {
 
         assertEquals(
             Report.Spy(id("Chloé"), listOf(SpyFinding.Mutated, SpyFinding.Healed, SpyFinding.AnalysedByPsychologist)),
-            spyReport(doctors.players, id("Farid"), id("Chloé"), events),
+            spyReport(doctors.players, id("Farid"), id("Chloé"), events).report,
         )
-        assertEquals(Report.Spy(id("Alice"), listOf(SpyFinding.HealFailed)), spyReport(doctors.players, id("Farid"), id("Alice"), events))
-        assertEquals(Report.Spy(id("Hugo"), emptyList()), spyReport(doctors.players, id("Farid"), id("Hugo"), events))
+        assertEquals(Report.Spy(id("Alice"), listOf(SpyFinding.HealFailed)), spyReport(doctors.players, id("Farid"), id("Alice"), events).report)
+        assertEquals(Report.Spy(id("Hugo"), emptyList()), spyReport(doctors.players, id("Farid"), id("Hugo"), events).report)
     }
 
     @Test
     fun `E-3 the spy sees a failed mutation on a resistant player (R-NIGHT-19)`() {
         val withResistantHugo = crew.update("Hugo") { it.copy(genome = Genome.Resistant) }
         val events = resolveMutants(withResistantHugo, MutantsDecision.Mutate(id("Hugo"))).events
-        assertEquals(listOf(SpyFinding.MutationFailed), spyReport(withResistantHugo, id("Farid"), id("Hugo"), events).findings)
+        assertEquals(Report.Spy(id("Hugo"), listOf(SpyFinding.MutationFailed)), spyReport(withResistantHugo, id("Farid"), id("Hugo"), events).report)
     }
 
     @Test
@@ -123,7 +123,7 @@ class ReportsTest {
         while (night.current?.step != NightStep.Hacker) night = night.advance(crew)
         assertNull(hackerReport(NightStep.Spy, emptyMap(), night), "spy step not played yet")
 
-        val spy = spyReport(crew, id("Farid"), id("Hugo"), emptyList())
+        val spy = spyReport(crew, id("Farid"), id("Hugo"), emptyList()).report
         night = night.advance(crew) // spy
         night = night.advance(crew) // end of night
         assertEquals(Report.Hacked(NightStep.Spy, spy), hackerReport(NightStep.Spy, mapOf(NightStep.Spy to spy), night))

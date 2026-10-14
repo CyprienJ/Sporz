@@ -28,7 +28,7 @@ public sealed interface NightEvent {
     @Serializable @SerialName("paralysis")
     public data class Paralysis(override val target: PlayerId) : NightEvent
 
-    /** R-NIGHT-16, R-NIGHT-17: seen by the spy (R-NIGHT-19). */
+    /** R-NIGHT-16, R-NIGHT-17, R-NIGHT-19, R-NIGHT-23, R-NIGHT-24: seen by the spy and, the next night, by the investigator. */
     @Serializable @SerialName("analysis")
     public data class Analysis(override val target: PlayerId, val by: Analyst) : NightEvent
 }
@@ -37,6 +37,9 @@ public sealed interface NightEvent {
 public enum class Analyst {
     @SerialName("psychologist") Psychologist,
     @SerialName("geneticist") Geneticist,
+    @SerialName("informant") Informant,
+    @SerialName("investigator") Investigator,
+    @SerialName("spy") Spy,
 }
 
 @Serializable

@@ -11,7 +11,7 @@ class SerializationTest {
     @Test
     fun `roles use the API codes`() {
         assertEquals(
-            listOf("baseMutant", "doctor", "psychologist", "geneticist", "computerScientist", "hacker", "spy", "traitor", "astronaut"),
+            listOf("baseMutant", "doctor", "psychologist", "geneticist", "computerScientist", "hacker", "spy", "informant", "investigator", "traitor", "astronaut"),
             Role.entries.map { EngineJson.encodeToString(it).trim('"') },
         )
     }

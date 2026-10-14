@@ -70,6 +70,8 @@ public val NightStep.role: Role?
         NightStep.ComputerScientist -> Role.ComputerScientist
         NightStep.Psychologist -> Role.Psychologist
         NightStep.Geneticist -> Role.Geneticist
+        NightStep.Informant -> Role.Informant
+        NightStep.Investigator -> Role.Investigator
         NightStep.Hacker -> Role.Hacker
         NightStep.Spy -> Role.Spy
     }

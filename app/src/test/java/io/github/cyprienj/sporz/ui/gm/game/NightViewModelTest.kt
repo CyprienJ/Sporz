@@ -3,9 +3,12 @@ package io.github.cyprienj.sporz.ui.gm.game
 import io.github.cyprienj.sporz.data.GameSession
 import io.github.cyprienj.sporz.engine.game.GameState
 import io.github.cyprienj.sporz.engine.game.Phase
+import io.github.cyprienj.sporz.engine.model.GameSettings
 import io.github.cyprienj.sporz.engine.model.NightStep
 import io.github.cyprienj.sporz.engine.model.PlayerState
+import io.github.cyprienj.sporz.engine.model.Role
 import io.github.cyprienj.sporz.engine.night.Report
+import io.github.cyprienj.sporz.engine.setup.SuggestedCompositions
 import io.github.cyprienj.sporz.ui.gm.game.DesignCrew.id
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertFalse
@@ -127,6 +130,36 @@ class NightViewModelTest {
         assertTrue(viewModel.canConfirm())
         viewModel.confirm()
         assertEquals(NightStep.Geneticist, game.currentStep)
+    }
+
+    @Test
+    fun `informant and investigator pick a player and get their report (R-NIGHT-23, R-NIGHT-24)`() {
+        // Chloé is the informant and Hugo the investigator in this crew.
+        val players = DesignCrew.players.map {
+            when (it.name) {
+                "Chloé" -> it.copy(role = Role.Informant)
+                "Hugo" -> it.copy(role = Role.Investigator)
+                else -> it
+            }
+        }
+        val composition = SuggestedCompositions.forPlayers(10).let { it.copy(roles = it.roles + (Role.Informant to 1) + (Role.Investigator to 1)) }
+        val session = GameSession().apply { resumeGame(GameState.fromDeal(players, composition, GameSettings())) }
+        val viewModel = NightViewModel(session)
+        fun game() = session.game.value!!
+        fun play(vararg names: String) { names.forEach { viewModel.toggleTarget(id(it)) }; viewModel.confirm() }
+
+        play("Jules"); viewModel.toggleParalysed(id("Alice")); viewModel.confirm() // mutants: target, then paralysis
+        play("Jules", "Alice") // doctors
+        viewModel.confirm() // computer scientist
+        play("Gaëlle") // psychologist
+        play("Gaëlle") // geneticist
+        assertEquals(NightStep.Informant, game().currentStep)
+        assertFalse(id("Chloé") in NightViewModel.eligibleTargets(game(), kill = false))
+        play("Gaëlle")
+        assertEquals(Report.Allegiance(id("Gaëlle"), traitor = false), game().notebook(id("Chloé")).single().report)
+        assertEquals(NightStep.Investigator, game().currentStep)
+        play("Jules")
+        assertEquals(Report.Investigation(id("Jules"), emptyList()), game().notebook(id("Hugo")).single().report)
     }
 
     @Test

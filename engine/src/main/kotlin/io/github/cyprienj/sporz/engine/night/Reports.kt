@@ -5,6 +5,7 @@ import io.github.cyprienj.sporz.engine.model.NightStep
 import io.github.cyprienj.sporz.engine.model.Player
 import io.github.cyprienj.sporz.engine.model.PlayerId
 import io.github.cyprienj.sporz.engine.model.PlayerState
+import io.github.cyprienj.sporz.engine.model.Role
 import io.github.cyprienj.sporz.engine.model.Variants
 import kotlinx.serialization.SerialName
 import kotlinx.serialization.Serializable
@@ -29,6 +30,14 @@ public sealed interface Report {
     @Serializable @SerialName("spy")
     public data class Spy(val target: PlayerId, val findings: List<SpyFinding>) : Report
 
+    /** R-NIGHT-23: whether [target] is the traitor. */
+    @Serializable @SerialName("allegiance")
+    public data class Allegiance(val target: PlayerId, val traitor: Boolean) : Report
+
+    /** R-NIGHT-24: what was done to [target] the previous night, in order, without outcomes; empty when nothing. */
+    @Serializable @SerialName("investigation")
+    public data class Investigation(val target: PlayerId, val findings: List<InvestigationFinding>) : Report
+
     /** R-NIGHT-18: [copy] is null when the hacked role produced no report ("nothing"). */
     @Serializable @SerialName("hacked")
     public data class Hacked(val source: NightStep, val copy: Report?) : Report
@@ -48,6 +57,23 @@ public enum class SpyFinding {
     @SerialName("killedByDoctors") KilledByDoctors,
     @SerialName("analysedByPsychologist") AnalysedByPsychologist,
     @SerialName("analysedByGeneticist") AnalysedByGeneticist,
+    @SerialName("analysedByInformant") AnalysedByInformant,
+    @SerialName("investigatedByInvestigator") InvestigatedByInvestigator,
+}
+
+/** What the investigator learns about the previous night (R-NIGHT-24): actions only, never their outcome. */
+@Serializable
+public enum class InvestigationFinding {
+    /** Targeted by a mutation, whether it worked or not. */
+    @SerialName("mutationAttempt") MutationAttempt,
+    @SerialName("paralysed") Paralysed,
+
+    /** Healed by the doctors, whether it changed anything or not. */
+    @SerialName("healAttempt") HealAttempt,
+    @SerialName("analysedByPsychologist") AnalysedByPsychologist,
+    @SerialName("analysedByGeneticist") AnalysedByGeneticist,
+    @SerialName("analysedByInformant") AnalysedByInformant,
+    @SerialName("analysedBySpy") AnalysedBySpy,
 }
 
 /** A report and the event it leaves for the spy, if any. */
@@ -70,10 +96,38 @@ public fun geneticistReport(players: List<Player>, actor: PlayerId, target: Play
     return ReportOutcome(Report.GenomeOf(player.id, player.genome), NightEvent.Analysis(player.id, Analyst.Geneticist))
 }
 
-/** R-NIGHT-19: [events] are the night's events so far. */
-public fun spyReport(players: List<Player>, actor: PlayerId, target: PlayerId, events: List<NightEvent>): Report.Spy {
+/** R-NIGHT-23 */
+public fun informantReport(players: List<Player>, actor: PlayerId, target: PlayerId): ReportOutcome {
     val player = players.designate(actor, target)
-    val findings = events.filter { it.target == player.id }.map { event ->
+    return ReportOutcome(Report.Allegiance(player.id, player.role == Role.Traitor), NightEvent.Analysis(player.id, Analyst.Informant))
+}
+
+/** R-NIGHT-24: [previousNight] are the events of the night before (none on night 1). */
+public fun investigatorReport(players: List<Player>, actor: PlayerId, target: PlayerId, previousNight: List<NightEvent>): ReportOutcome {
+    val player = players.designate(actor, target)
+    val findings = previousNight.filter { it.target == player.id }.mapNotNull { event ->
+        when (event) {
+            is NightEvent.Mutation -> InvestigationFinding.MutationAttempt
+            is NightEvent.Paralysis -> InvestigationFinding.Paralysed
+            is NightEvent.Heal -> InvestigationFinding.HealAttempt
+            is NightEvent.Analysis -> when (event.by) {
+                Analyst.Psychologist -> InvestigationFinding.AnalysedByPsychologist
+                Analyst.Geneticist -> InvestigationFinding.AnalysedByGeneticist
+                Analyst.Informant -> InvestigationFinding.AnalysedByInformant
+                Analyst.Spy -> InvestigationFinding.AnalysedBySpy
+                Analyst.Investigator -> null
+            }
+            // A killed player is dead and cannot be designated today.
+            is NightEvent.Kill -> null
+        }
+    }
+    return ReportOutcome(Report.Investigation(player.id, findings), NightEvent.Analysis(player.id, Analyst.Investigator))
+}
+
+/** R-NIGHT-19: [events] are the night's events so far. Leaves an event for the investigator (R-NIGHT-24). */
+public fun spyReport(players: List<Player>, actor: PlayerId, target: PlayerId, events: List<NightEvent>): ReportOutcome {
+    val player = players.designate(actor, target)
+    val findings = events.filter { it.target == player.id }.mapNotNull { event ->
         when (event) {
             is NightEvent.Mutation -> if (event.succeeded) SpyFinding.Mutated else SpyFinding.MutationFailed
             is NightEvent.Kill -> when (event.by) {
@@ -85,10 +139,13 @@ public fun spyReport(players: List<Player>, actor: PlayerId, target: PlayerId, e
             is NightEvent.Analysis -> when (event.by) {
                 Analyst.Psychologist -> SpyFinding.AnalysedByPsychologist
                 Analyst.Geneticist -> SpyFinding.AnalysedByGeneticist
+                Analyst.Informant -> SpyFinding.AnalysedByInformant
+                Analyst.Investigator -> SpyFinding.InvestigatedByInvestigator
+                Analyst.Spy -> null // only one spy, and their own event comes after
             }
         }
     }
-    return Report.Spy(player.id, findings)
+    return ReportOutcome(Report.Spy(player.id, findings), NightEvent.Analysis(player.id, Analyst.Spy))
 }
 
 /** Steps whose report the hacker can copy (R-NIGHT-18). */

@@ -25,6 +25,8 @@ import io.github.cyprienj.sporz.engine.night.computerScientistReport
 import io.github.cyprienj.sporz.engine.night.deaths
 import io.github.cyprienj.sporz.engine.night.geneticistReport
 import io.github.cyprienj.sporz.engine.night.hackerReport
+import io.github.cyprienj.sporz.engine.night.informantReport
+import io.github.cyprienj.sporz.engine.night.investigatorReport
 import io.github.cyprienj.sporz.engine.night.psychologistReport
 import io.github.cyprienj.sporz.engine.night.resolveDoctors
 import io.github.cyprienj.sporz.engine.night.resolveMutants
@@ -166,9 +168,28 @@ public data class GameState(
     /** R-NIGHT-19 */
     public fun playSpy(target: PlayerId): GameState {
         val actors = requireStep(NightStep.Spy)
-        val report = spyReport(players, actors.single(), target, night!!.events)
-        return afterStep(players, NightStep.Spy, actors, report = report)
+        val outcome = spyReport(players, actors.single(), target, night!!.events)
+        return afterStep(players, NightStep.Spy, actors, listOfNotNull(outcome.event), outcome.report)
     }
+
+    /** R-NIGHT-23 */
+    public fun playInformant(target: PlayerId): GameState {
+        val actors = requireStep(NightStep.Informant)
+        val outcome = informantReport(players, actors.single(), target)
+        return afterStep(players, NightStep.Informant, actors, listOfNotNull(outcome.event), outcome.report)
+    }
+
+    /** R-NIGHT-24: about the previous night, read from the journal. */
+    public fun playInvestigator(target: PlayerId): GameState {
+        val actors = requireStep(NightStep.Investigator)
+        val outcome = investigatorReport(players, actors.single(), target, nightEvents(round - 1))
+        return afterStep(players, NightStep.Investigator, actors, listOfNotNull(outcome.event), outcome.report)
+    }
+
+    /** Everything that happened during night [round], in order (empty for a night that did not happen). */
+    private fun nightEvents(round: Int): List<NightEvent> = journal
+        .filter { it.round == round && it.phase == Phase.Night }
+        .flatMap { (it.event as? JournalEvent.StepPlayed)?.events.orEmpty() }
 
     // --- Day -------------------------------------------------------------------
 
@@ -282,7 +303,7 @@ public data class GameState(
     }
 
     private fun beginNight(round: Int): GameState {
-        val progress = NightProgress.start(round, settings.nightOrder, players, deadRevealed = variants.revealOnElimination)
+        val progress = NightProgress.start(round, settings.callOrder, players, deadRevealed = variants.revealOnElimination)
         return copy(round = round, phase = Phase.Night, night = NightState(progress), day = null)
             .logSkipped(0)
             .finishNightIfOver()
