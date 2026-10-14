@@ -13,6 +13,7 @@ import io.github.cyprienj.sporz.engine.night.DoctorsDecision
 import io.github.cyprienj.sporz.engine.night.MutantsDecision
 import io.github.cyprienj.sporz.engine.night.hackableSteps
 import io.github.cyprienj.sporz.engine.night.healCount
+import io.github.cyprienj.sporz.engine.night.paralysable
 import io.github.cyprienj.sporz.engine.setup.Seat
 import io.github.cyprienj.sporz.engine.setup.SuggestedCompositions
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -70,7 +71,7 @@ class RandomGamesTest {
                 NightStep.Mutants -> {
                     val healthy = alive.filter { !it.isMutated }
                     val target = healthy.random(random).id
-                    val paralysed = healthy.random(random).id
+                    val paralysed = paralysable(game.players, target).randomOrNull(random)
                     game.playMutants(if (random.nextBoolean()) MutantsDecision.Mutate(target, paralysed) else MutantsDecision.Kill(target, paralysed))
                 }
                 NightStep.Doctors -> {

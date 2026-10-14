@@ -15,6 +15,7 @@ import io.github.cyprienj.sporz.engine.night.IllegalActionException
 import io.github.cyprienj.sporz.engine.night.MutantsDecision
 import io.github.cyprienj.sporz.engine.night.hackableSteps
 import io.github.cyprienj.sporz.engine.night.healCount
+import io.github.cyprienj.sporz.engine.night.paralysable
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
@@ -55,13 +56,14 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
         val max = maxTargets(game, kill)
         targets = when {
             id in targets -> targets - id
-            max == 1 -> listOf(id)
+            max == 1 -> listOf(id).also { if (paralysed == id) paralysed = null } // R-NIGHT-22: never the target
             targets.size < max -> targets + id
             else -> targets
         }
     }
 
     fun toggleParalysed(id: PlayerId) {
+        if (id in targets && game.value?.currentStep == NightStep.Mutants) return // R-NIGHT-22: never the target
         paralysed = if (paralysed == id) null else id
     }
 
@@ -75,7 +77,8 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
             null -> false
             NightStep.ComputerScientist -> true
             NightStep.Hacker -> hackSource != null
-            NightStep.Mutants -> targets.size == 1 && paralysed != null
+            // R-NIGHT-22: a paralysis is required unless the target is the only one left to paralyse.
+            NightStep.Mutants -> targets.size == 1 && (paralysed != null || eligibleParalysis(game, targets.single()).isEmpty())
             else -> targets.size == maxTargets(game, kill)
         }
     }
@@ -124,9 +127,9 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
             }.map { it.id }
         }
 
-        /** Players the mutants can paralyse: living and not mutated (R-NIGHT-22). */
-        fun eligibleParalysis(game: GameState): List<PlayerId> =
-            if (game.currentStep == NightStep.Mutants) game.players.filter { it.alive && !it.isMutated }.map { it.id } else emptyList()
+        /** Players the mutants can paralyse: living, not mutated, not their [target] (R-NIGHT-22). */
+        fun eligibleParalysis(game: GameState, target: PlayerId?): List<PlayerId> =
+            if (game.currentStep == NightStep.Mutants) paralysable(game.players, target) else emptyList()
 
         /** Number of targets to pick: one per acting doctor when healing ([healCount]), one otherwise. */
         fun maxTargets(game: GameState, kill: Boolean): Int = when (game.currentStep) {

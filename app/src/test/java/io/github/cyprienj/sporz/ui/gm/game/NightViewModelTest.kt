@@ -92,10 +92,21 @@ class NightViewModelTest {
     }
 
     @Test
+    fun `mutants cannot paralyse their target (R-NIGHT-22)`() {
+        viewModel.toggleParalysed(id("Chloé"))
+        pick("Chloé") // targeting the paralysed player clears the paralysis
+        assertEquals(null, viewModel.paralysed)
+        viewModel.toggleParalysed(id("Chloé")) // and the target cannot be paralysed
+        assertEquals(null, viewModel.paralysed)
+        assertFalse(viewModel.canConfirm())
+    }
+
+    @Test
     fun `mutants paralyse a living healthy player, who then sits out the night (R-NIGHT-22)`() {
-        val eligible = NightViewModel.eligibleParalysis(game)
+        val eligible = NightViewModel.eligibleParalysis(game, target = null)
         assertFalse(id("Gaëlle") in eligible)
         assertEquals(9, eligible.size)
+        assertEquals(8, NightViewModel.eligibleParalysis(game, target = id("Chloé")).size)
 
         viewModel.toggleParalysed(id("Bastien"))
         viewModel.toggleParalysed(id("Bastien")) // tapping again clears it

@@ -46,6 +46,13 @@ public sealed interface DoctorsDecision {
 public fun healCount(players: List<Player>, actors: List<PlayerId>): Int =
     minOf(actors.size, players.count { it.alive && it.id !in actors })
 
+/**
+ * R-NIGHT-22: players the mutants can paralyse alongside [target]: living, not mutated,
+ * and not the target. Empty when the target is the last such player (no paralysis then).
+ */
+public fun paralysable(players: List<Player>, target: PlayerId?): List<PlayerId> =
+    players.filter { it.alive && !it.isMutated && it.id != target }.map { it.id }
+
 /** Why a decision cannot be applied. */
 @Serializable
 public enum class ActionProblem {
@@ -57,6 +64,9 @@ public enum class ActionProblem {
 
     /** R-NIGHT-5 */
     @SerialName("selfTarget") SelfTarget,
+
+    /** R-NIGHT-22: the mutants paralyse someone other than their target. */
+    @SerialName("paralysedIsTarget") ParalysedIsTarget,
 
     /** R-NIGHT-11: as many heals as acting doctors. */
     @SerialName("wrongTargetCount") WrongTargetCount,
@@ -89,6 +99,7 @@ public fun resolveMutants(players: List<Player>, decision: MutantsDecision): Ste
         val paralysed = players.find(id)
         if (!paralysed.alive) throw IllegalActionException(ActionProblem.TargetDead, id)
         if (paralysed.isMutated) throw IllegalActionException(ActionProblem.TargetAlreadyMutated, id)
+        if (id == target.id) throw IllegalActionException(ActionProblem.ParalysedIsTarget, id)
         NightEvent.Paralysis(id)
     }
 

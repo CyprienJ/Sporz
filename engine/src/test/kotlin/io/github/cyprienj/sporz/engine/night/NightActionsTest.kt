@@ -103,6 +103,18 @@ class NightActionsTest {
     }
 
     @Test
+    fun `mutants cannot paralyse their own target (R-NIGHT-22)`() {
+        listOf(MutantsDecision.Mutate(id("Hugo"), paralysed = id("Hugo")), MutantsDecision.Kill(id("Hugo"), paralysed = id("Hugo"))).forEach {
+            val error = assertThrows<IllegalActionException> { resolveMutants(crew, it) }
+            assertEquals(ActionProblem.ParalysedIsTarget, error.problem)
+            assertEquals(id("Hugo"), error.player)
+        }
+        // The last healthy player cannot be both: nobody is paralysed.
+        val lastHealthy = crew.map { if (it.name in setOf("Gaëlle", "Hugo")) it else it.copy(alive = false) }
+        assertEquals(emptyList<PlayerId>(), paralysable(lastHealthy, id("Hugo")))
+    }
+
+    @Test
     fun `the paralysed player is not woken (R-NIGHT-22)`() {
         assertEquals(ids("Emma"), NightStep.Doctors.actors(crew, paralysed = id("Bastien")))
         assertEquals(emptyList<PlayerId>(), NightStep.Psychologist.actors(crew, paralysed = id("Dorian")))

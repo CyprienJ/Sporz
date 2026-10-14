@@ -113,7 +113,7 @@ The base mutant (1) is always included. Default variants: see §6.
   - `normal` or `host` → the target becomes `mutated`;
   - `resistant` → nothing happens, but the mutants' action is used up.
 - **R-NIGHT-9** If the mutants disagree, the MJ decides.
-- **R-NIGHT-22** **Paralysis** (DEC-1): with their action, the mutants choose one living, non-mutated player to paralyse (it may be the player they target). The paralysed player is not woken for the rest of the night: their step is played by the other holders of the role (one doctor left heals one player) or skipped if nobody else can play it (R-NIGHT-3); a hacker copying a skipped role gets "nothing". The paralysis is never announced and ends with the night.
+- **R-NIGHT-22** **Paralysis** (DEC-1): with their action, the mutants choose one living, non-mutated player to paralyse, other than the player they target (if that player is the only one left, nobody is paralysed). The paralysed player is not woken for the rest of the night: their step is played by the other holders of the role (one doctor left heals one player) or skipped if nobody else can play it (R-NIGHT-3); a hacker copying a skipped role gets "nothing". The paralysis is never announced and ends with the night.
 - **R-NIGHT-10** The mutated player is told secretly that they are now a mutant: by the MJ (touch on the shoulder) or on their phone if *notify mutated player* is on. They wake up with the mutants from the **next** night.
 
 ### 3.3 Doctors
