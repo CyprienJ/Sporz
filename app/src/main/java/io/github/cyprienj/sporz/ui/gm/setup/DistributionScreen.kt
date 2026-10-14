@@ -194,7 +194,13 @@ private fun PlayerCard(
                         color = colors.healthy.strong,
                     )
                 }
-                !isRevealed -> SporzButton(stringResource(R.string.action_reveal), onReveal, style = SporzButtonStyle.Inverse, height = 44.dp)
+                !isRevealed -> SporzButton(
+                    stringResource(R.string.action_reveal),
+                    onReveal,
+                    style = SporzButtonStyle.Inverse,
+                    height = 44.dp,
+                    contentDescription = stringResource(R.string.distribution_reveal_description, player.name),
+                )
             }
         }
         if (isRevealed) {

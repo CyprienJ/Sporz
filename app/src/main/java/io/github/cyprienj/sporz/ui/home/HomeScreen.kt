@@ -1,11 +1,13 @@
 package io.github.cyprienj.sporz.ui.home
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -107,13 +109,20 @@ fun HomeScreen(
 ) {
     LightStatusBarIcons()
     SecretSurface(modifier.fillMaxSize()) {
-        Column(Modifier.fillMaxSize()) {
-            Brand(
-                Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-            )
-            Actions(resumable, onResume, onCreateGame, onJoinGame, onOpenRoleGuide, onOpenRecentGames, onOpenDesignCatalog)
+        BoxWithConstraints(Modifier.fillMaxSize()) {
+            // With large fonts the actions may not fit: they scroll, leaving room for the brand.
+            val actionsMaxHeight = maxHeight - 140.dp
+            Column(Modifier.fillMaxSize()) {
+                Brand(
+                    Modifier
+                        .weight(1f)
+                        .fillMaxWidth(),
+                )
+                Actions(
+                    resumable, onResume, onCreateGame, onJoinGame, onOpenRoleGuide, onOpenRecentGames, onOpenDesignCatalog,
+                    Modifier.heightIn(max = actionsMaxHeight),
+                )
+            }
         }
     }
 }
@@ -152,10 +161,12 @@ private fun Actions(
     onOpenRoleGuide: () -> Unit,
     onOpenRecentGames: () -> Unit,
     onOpenDesignCatalog: (() -> Unit)?,
+    modifier: Modifier = Modifier,
 ) {
-    StandardSurface(Modifier.fillMaxWidth(), shape = SporzShapes.sheet) {
+    StandardSurface(modifier.fillMaxWidth(), shape = SporzShapes.sheet) {
         Column(
             Modifier
+                .verticalScroll(rememberScrollState())
                 .windowInsetsPadding(WindowInsets.navigationBars)
                 .padding(start = 20.dp, end = 20.dp, top = 24.dp, bottom = 20.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),

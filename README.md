@@ -350,7 +350,7 @@ Tickets are grouped in epics, in a suggested order. **Size**: S ≈ ½ day, M �
 | C11 | ✅ Screen **Fin de partie** + *Rejouer avec le même équipage*. Note: the sample data of `design.html` ends on day 4 with Dorian killed night 3, which the rules cannot produce (the last mutant is ejected day 2, R-WIN-1); use data from a real `GameState`. | S | B8 |
 | C12 | ✅ **Guide des rôles** (3 tabs, expandable cards). | S | A4 |
 | C13 | ✅ Persist the running game (process death / phone call must not lose the game) + **Parties récentes** history (Room database). Home offers "Reprendre la partie" (not in design.html); creating or replaying a game while one is in progress asks first, and a played game is kept as interrupted. | M | B9 |
-| C14 | Keep screen awake during a game, back-button confirmation, accessibility pass (TalkBack, font scaling, contrast). | S | C7 |
+| C14 | ✅ Keep screen awake during a game, back-button confirmation, accessibility pass (TalkBack, font scaling, contrast). | S | C7 |
 
 **Milestone 1 done when:** a full game can be played from start to end with one phone, with the rules of `docs/rules.md`.
 

@@ -105,33 +105,39 @@ fun SporzNavHost(
         }
         composable<Distribution> {
             // Once the night starts, Back must not return to the setup screens.
-            DistributionRoute(onStartFirstNight = { navController.startFresh(Night) })
+            RunningGameScreen { DistributionRoute(onStartFirstNight = { navController.startFresh(Night) }) }
         }
         composable<Settings> { SettingsRoute(onBack = { navController.popBackStack() }) }
 
         // Game Master: running game
         composable<Night> {
-            NightRoute(
-                onEndNight = { navController.replaceCurrent(Day) },
-                onOpenPlayerBoard = { navController.navigate(PlayerBoard) },
-                onOpenJournal = { navController.navigate(Journal) },
-            )
+            RunningGameScreen(onLeave = { navController.backToHome() }) {
+                NightRoute(
+                    onEndNight = { navController.replaceCurrent(Day) },
+                    onOpenPlayerBoard = { navController.navigate(PlayerBoard) },
+                    onOpenJournal = { navController.navigate(Journal) },
+                )
+            }
         }
         composable<Day> {
-            DayRoute(
-                onStartNight = { navController.replaceCurrent(Night) },
-                onGameOver = { navController.startFresh(GameEnd) },
-                onOpenPlayerBoard = { navController.navigate(PlayerBoard) },
-                onOpenJournal = { navController.navigate(Journal) },
-            )
+            RunningGameScreen(onLeave = { navController.backToHome() }) {
+                DayRoute(
+                    onStartNight = { navController.replaceCurrent(Night) },
+                    onGameOver = { navController.startFresh(GameEnd) },
+                    onOpenPlayerBoard = { navController.navigate(PlayerBoard) },
+                    onOpenJournal = { navController.navigate(Journal) },
+                )
+            }
         }
         composable<PlayerBoard> {
+            KeepScreenOn()
             PlayerBoardRoute(
                 onBackToPhase = { navController.popBackStack() },
                 onOpenJournal = { navController.navigate(Journal) { popUpTo<PlayerBoard> { inclusive = true } } },
             )
         }
         composable<Journal> {
+            KeepScreenOn()
             JournalRoute(
                 onBackToPhase = { navController.popBackStack() },
                 onOpenPlayerBoard = { navController.navigate(PlayerBoard) { popUpTo<Journal> { inclusive = true } } },

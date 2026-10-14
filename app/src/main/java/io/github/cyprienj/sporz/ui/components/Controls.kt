@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.selection.toggleable
@@ -22,6 +23,7 @@ import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
+import androidx.compose.material3.minimumInteractiveComponentSize
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -73,7 +75,10 @@ fun Stepper(
             text = value,
             style = SporzTypography.number,
             textAlign = TextAlign.Center,
-            modifier = Modifier.width(valueWidth),
+            // One line, wider with large fonts: a wrapped "5 min" would squeeze the buttons.
+            maxLines = 1,
+            softWrap = false,
+            modifier = Modifier.widthIn(min = valueWidth).padding(horizontal = 4.dp),
         )
         StepperButton("+", incrementLabel, onIncrement, canIncrement, colors.inverse, colors.onInverse)
     }
@@ -154,7 +159,8 @@ fun ToggleRow(
 
 /**
  * Single choice card with a radio ring (game mode). A disabled card is dimmed
- * and cannot be chosen; [tag] explains why (e.g. "Bientôt").
+ * and cannot be chosen; [tag] explains why (e.g. "Bientôt"). Its texts stay
+ * readable (muted colors, not transparency): the description is still useful.
  */
 @Composable
 fun RadioCard(
@@ -170,7 +176,6 @@ fun RadioCard(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .alpha(if (enabled) 1f else 0.55f)
             .clip(SporzShapes.large)
             .background(if (selected) colors.selected else colors.card)
             .border(
@@ -185,6 +190,7 @@ fun RadioCard(
             Modifier
                 .padding(top = 2.dp)
                 .size(22.dp)
+                .alpha(if (enabled) 1f else 0.55f)
                 .border(2.dp, if (selected) colors.selectedBorder else colors.iconMuted, SporzShapes.pill),
             contentAlignment = Alignment.Center,
         ) {
@@ -192,13 +198,13 @@ fun RadioCard(
         }
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment = Alignment.CenterVertically) {
-                Text(title.uppercase(), style = SporzTypography.heading)
+                Text(title.uppercase(), style = SporzTypography.heading, color = if (enabled) colors.text else colors.textMuted)
                 if (tag != null) Tag(tag)
             }
             Text(
                 description,
                 style = SporzTypography.body,
-                color = colors.textBody,
+                color = if (enabled) colors.textBody else colors.textMuted,
             )
         }
     }
@@ -241,6 +247,7 @@ fun SegmentedControl(
             Box(
                 modifier = Modifier
                     .weight(1f)
+                    .minimumInteractiveComponentSize() // 48 dp touch target (C14)
                     .height(44.dp)
                     .clip(SporzShapes.small)
                     .background(background)
@@ -273,6 +280,7 @@ fun FilterChip(
     val colors = SporzTheme.colors
     Surface(
         modifier = modifier
+            .minimumInteractiveComponentSize() // 48 dp touch target (C14)
             .height(36.dp)
             .selectable(selected = selected, role = Role.Tab, onClick = onClick),
         shape = SporzShapes.pill,
@@ -304,6 +312,7 @@ fun TargetChip(
     val unavailable = stringResource(R.string.state_unavailable)
     Surface(
         modifier = modifier
+            .minimumInteractiveComponentSize() // 48 dp touch target (C14)
             .height(40.dp)
             .semantics { if (!enabled) stateDescription = unavailable }
             .selectable(selected = selected, enabled = enabled, role = Role.RadioButton, onClick = onClick),

@@ -451,4 +451,10 @@
     <string name="confirm_new_game_body_unplayed">La partie en cours (%1$s) sera abandonnée. Rien n\'a encore été joué, elle ne sera pas gardée.</string>
     <string name="action_stop_and_create">Arrêter et créer</string>
     <string name="action_stop_and_replay">Arrêter et rejouer</string>
+
+    <!-- Running game (ticket C14) -->
+    <string name="confirm_leave_title">Quitter la partie ?</string>
+    <string name="confirm_leave_body">La partie reste enregistrée : vous pourrez la reprendre depuis l\'accueil.</string>
+    <string name="action_leave">Quitter</string>
+    <string name="distribution_reveal_description">Révéler le rôle de %1$s</string>
 </resources>

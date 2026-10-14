@@ -15,6 +15,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.semantics.clearAndSetSemantics
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -54,6 +58,8 @@ fun SporzButton(
     enabled: Boolean = true,
     icon: ImageVector? = null,
     height: Dp = 52.dp,
+    /** Replaces [text] for screen readers when several buttons share it ("Révéler le rôle d'Alice"). */
+    contentDescription: String? = null,
 ) {
     val colors = SporzTheme.colors
     val (container, content) = when {
@@ -70,14 +76,17 @@ fun SporzButton(
     Surface(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier.height(height),
+        // At least [height]; taller when large fonts need two lines.
+        modifier = modifier
+            .heightIn(min = height)
+            .then(if (contentDescription != null) Modifier.semantics { this.contentDescription = contentDescription } else Modifier),
         shape = SporzShapes.medium,
         color = container,
         contentColor = content,
         border = border,
     ) {
         Row(
-            modifier = Modifier.padding(horizontal = 16.dp),
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 6.dp),
             horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically,
         ) {
@@ -89,8 +98,10 @@ fun SporzButton(
                 } else {
                     SporzTypography.button
                 },
-                maxLines = 1,
+                textAlign = TextAlign.Center,
+                maxLines = 2,
                 overflow = TextOverflow.Ellipsis,
+                modifier = if (contentDescription != null) Modifier.clearAndSetSemantics {} else Modifier,
             )
         }
     }
@@ -148,7 +159,7 @@ fun ActionCard(
                 Text(
                     subtitle,
                     style = SporzTypography.label.copy(fontWeight = FontWeight.Normal),
-                    color = if (primary) colors.onAccent.copy(alpha = 0.85f) else colors.textMuted,
+                    color = if (primary) colors.onAccent else colors.textMuted,
                 )
             }
             Icon(SporzIcons.ChevronRight, contentDescription = null, modifier = Modifier.size(20.dp))

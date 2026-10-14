@@ -35,6 +35,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.heading
 import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
@@ -98,7 +100,7 @@ fun ScreenHeader(
                 }
             }
             Row(verticalAlignment = Alignment.Bottom, horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                Text(title.uppercase(), style = titleStyle, modifier = Modifier.weight(1f))
+                Text(title.uppercase(), style = titleStyle, modifier = Modifier.weight(1f).semantics { heading() })
                 trailing()
             }
         }
@@ -329,7 +331,7 @@ fun SporzTextField(
                     contentAlignment = Alignment.CenterStart,
                 ) {
                     if (value.isEmpty() && placeholder != null) {
-                        Text(placeholder, style = SporzTypography.bodyLarge, color = colors.iconMuted)
+                        Text(placeholder, style = SporzTypography.bodyLarge, color = colors.textMuted)
                     }
                     inner()
                 }

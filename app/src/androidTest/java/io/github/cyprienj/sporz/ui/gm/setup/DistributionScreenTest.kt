@@ -3,6 +3,7 @@ package io.github.cyprienj.sporz.ui.gm.setup
 import androidx.compose.ui.test.assertIsEnabled
 import androidx.compose.ui.test.assertIsNotEnabled
 import androidx.compose.ui.test.junit4.createComposeRule
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onAllNodesWithText
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -28,7 +29,7 @@ class DistributionScreenTest {
     val rule = createComposeRule()
 
     private val context = InstrumentationRegistry.getInstrumentation().targetContext
-    private fun text(id: Int) = context.getString(id)
+    private fun text(id: Int, vararg args: Any) = context.getString(id, *args)
 
     @Test
     fun revealOneAtATimeThenStartTheNight() {
@@ -46,14 +47,14 @@ class DistributionScreenTest {
         start.assertIsNotEnabled()
 
         // Revealing the first player shows their role; revealing the second hides it again.
-        rule.onAllNodesWithText(text(R.string.action_reveal))[0].performClick()
+        rule.onAllNodesWithContentDescription(text(R.string.distribution_reveal_description, ""), substring = true)[0].performClick()
         rule.onNodeWithText(context.getString(first.role.nameRes)).assertExists()
         rule.onAllNodesWithText(text(R.string.action_hide)).assertCountEquals(1)
-        rule.onAllNodesWithText(text(R.string.action_reveal))[0].performClick()
+        rule.onAllNodesWithContentDescription(text(R.string.distribution_reveal_description, ""), substring = true)[0].performClick()
         rule.onAllNodesWithText(text(R.string.action_hide)).assertCountEquals(1)
 
         repeat(7) {
-            rule.onAllNodesWithText(text(R.string.action_reveal)).let { reveals ->
+            rule.onAllNodesWithContentDescription(text(R.string.distribution_reveal_description, ""), substring = true).let { reveals ->
                 runCatching { reveals[0].performScrollTo().performClick() }
             }
             rule.onNodeWithText(text(R.string.action_confirm_announced)).performScrollTo().performClick()

@@ -171,6 +171,8 @@ private fun colors(
     textMuted: Color,
     textBody: Color,
     iconMuted: Color,
+    /** Text on [disabled] fills: readable (4.5:1), the grey fill tells it is disabled. */
+    onDisabled: Color = textMuted,
     accent: Color,
     onAccent: Color,
     accentSoft: Color,
@@ -203,7 +205,7 @@ private fun colors(
     selected = selected,
     selectedBorder = accent,
     disabled = disabled,
-    onDisabled = iconMuted,
+    onDisabled = onDisabled,
     switchThumbOff = switchThumbOff,
     healthy = tones[0],
     mutant = tones[1],
@@ -218,7 +220,7 @@ val LightColorScheme = SporzColorScheme(
     standard = colors(
         kind = SurfaceKind.Standard, tones = LightTones,
         background = SporzPalette.Paper, text = SporzPalette.Navy,
-        textMuted = SporzPalette.Muted, textBody = SporzPalette.Slate, iconMuted = SporzPalette.Grey,
+        textMuted = SporzPalette.Muted, textBody = SporzPalette.Slate, iconMuted = SporzPalette.Grey, onDisabled = SporzPalette.Slate,
         accent = SporzPalette.Orange, onAccent = SporzPalette.White, accentSoft = SporzPalette.OrangeSoft,
         card = SporzPalette.White, cardBorder = SporzPalette.Line, divider = SporzPalette.LineSoft,
         outline = SporzPalette.LineStrong, subtleFill = SporzPalette.Paper, onInverse = SporzPalette.White,
@@ -238,7 +240,7 @@ val LightColorScheme = SporzColorScheme(
     inset = colors(
         kind = SurfaceKind.Inset, tones = LightTones,
         background = SporzPalette.OffWhite, text = SporzPalette.Navy,
-        textMuted = SporzPalette.Muted, textBody = SporzPalette.Slate, iconMuted = SporzPalette.Grey,
+        textMuted = SporzPalette.Muted, textBody = SporzPalette.Slate, iconMuted = SporzPalette.Grey, onDisabled = SporzPalette.Slate,
         accent = SporzPalette.Orange, onAccent = SporzPalette.White, accentSoft = SporzPalette.OrangeSoft,
         card = SporzPalette.White, cardBorder = SporzPalette.Line, divider = SporzPalette.LineSoft,
         outline = SporzPalette.LineStrong, subtleFill = SporzPalette.Paper, onInverse = SporzPalette.White,

@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.heading
@@ -182,16 +183,25 @@ private fun Section(section: JournalSection) {
                 .padding(start = 14.dp),
             verticalArrangement = Arrangement.spacedBy(6.dp),
         ) {
+            // With large fonts "who" goes above "what": a 92 dp column would cut "Informaticien" mid-word.
+            val stacked = LocalDensity.current.fontScale >= 1.5f
             section.rows.forEach { (who, what) ->
-                Row(
-                    Modifier
-                        .fillMaxWidth()
-                        .background(colors.card, SporzShapes.small)
-                        .padding(horizontal = 10.dp, vertical = 8.dp),
-                    horizontalArrangement = Arrangement.spacedBy(10.dp),
-                ) {
-                    Text(who, style = SporzTypography.label.copy(fontWeight = FontWeight.SemiBold), color = colors.textBody, modifier = Modifier.width(92.dp))
-                    Text(what, style = SporzTypography.label.copy(fontWeight = FontWeight.Normal), modifier = Modifier.weight(1f))
+                val whoStyle = SporzTypography.label.copy(fontWeight = FontWeight.SemiBold)
+                val whatStyle = SporzTypography.label.copy(fontWeight = FontWeight.Normal)
+                val rowModifier = Modifier
+                    .fillMaxWidth()
+                    .background(colors.card, SporzShapes.small)
+                    .padding(horizontal = 10.dp, vertical = 8.dp)
+                if (stacked) {
+                    Column(rowModifier, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                        Text(who, style = whoStyle, color = colors.textBody)
+                        Text(what, style = whatStyle)
+                    }
+                } else {
+                    Row(rowModifier, horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                        Text(who, style = whoStyle, color = colors.textBody, modifier = Modifier.width(92.dp))
+                        Text(what, style = whatStyle, modifier = Modifier.weight(1f))
+                    }
                 }
             }
         }

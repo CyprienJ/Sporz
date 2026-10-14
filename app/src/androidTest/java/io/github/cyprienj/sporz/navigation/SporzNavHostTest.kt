@@ -1,10 +1,12 @@
 package io.github.cyprienj.sporz.navigation
 
+import android.view.View
+import android.view.ViewGroup
 import androidx.annotation.StringRes
 import androidx.compose.ui.test.assertIsDisplayed
 import androidx.compose.ui.test.hasSetTextAction
 import androidx.compose.ui.test.junit4.createAndroidComposeRule
-import androidx.compose.ui.test.onAllNodesWithText
+import androidx.compose.ui.test.onAllNodesWithContentDescription
 import androidx.compose.ui.test.onNodeWithContentDescription
 import androidx.compose.ui.test.onNodeWithText
 import androidx.compose.ui.test.performClick
@@ -13,6 +15,8 @@ import androidx.compose.ui.test.performTextInput
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import io.github.cyprienj.sporz.MainActivity
 import io.github.cyprienj.sporz.R
+import org.junit.Assert.assertFalse
+import org.junit.Assert.assertTrue
 import org.junit.Rule
 import org.junit.Test
 import org.junit.runner.RunWith
@@ -52,10 +56,14 @@ class SporzNavHostTest {
     /** Reveals and confirms every role on the distribution screen. */
     private fun announceAllRoles() {
         repeat(7) {
-            rule.onAllNodesWithText(text(R.string.action_reveal))[0].performScrollTo().performClick()
+            rule.onAllNodesWithContentDescription(rule.activity.getString(R.string.distribution_reveal_description, ""), substring = true)[0].performScrollTo().performClick()
             rule.onNodeWithText(text(R.string.action_confirm_announced)).performScrollTo().performClick()
         }
     }
+
+    /** True if a view of the window asks to keep the screen on (Compose sets it on its inner view). */
+    private fun keepsScreenOn(view: View = rule.activity.window.decorView): Boolean =
+        view.keepScreenOn || (view is ViewGroup && (0 until view.childCount).any { keepsScreenOn(view.getChildAt(it)) })
 
     private fun pressBack() {
         rule.runOnUiThread { rule.activity.onBackPressedDispatcher.onBackPressed() }
@@ -78,9 +86,20 @@ class SporzNavHostTest {
         click(R.string.action_start_first_night)
         rule.onNodeWithText(rule.activity.getString(R.string.night_title, 1), ignoreCase = true).assertIsDisplayed()
 
+        // The screen stays on during the game (ticket C14).
+        assertTrue(keepsScreenOn())
+
+        // Back asks before leaving the game; cancelling stays on the night.
+        pressBack()
+        assertOn(R.string.confirm_leave_title)
+        click(R.string.action_cancel)
+        rule.onNodeWithText(rule.activity.getString(R.string.night_title, 1), ignoreCase = true).assertIsDisplayed()
+
         // Setup screens are no longer in the back stack.
         pressBack()
+        click(R.string.action_leave)
         assertOnHome()
+        assertFalse(keepsScreenOn())
 
         // The game is still there (ticket C13).
         click(R.string.action_resume_game)
@@ -88,6 +107,7 @@ class SporzNavHostTest {
 
         // Creating a game asks before stopping this one; cancelling keeps it.
         pressBack()
+        click(R.string.action_leave)
         click(R.string.action_create_game)
         assertOn(R.string.confirm_new_game_title)
         click(R.string.action_cancel)

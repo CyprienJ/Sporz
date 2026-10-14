@@ -2,6 +2,7 @@ package io.github.cyprienj.sporz.ui.gm.setup
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -144,8 +145,14 @@ fun LobbyScreen(
                 }
             }
             item {
-                Row(Modifier.fillMaxWidth().padding(top = 4.dp), verticalAlignment = Alignment.Bottom) {
-                    SectionTitle(stringResource(R.string.lobby_crew, seats.size), Modifier.weight(1f))
+                // Wraps the hint under the title with large fonts.
+                FlowRow(
+                    Modifier.fillMaxWidth().padding(top = 4.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalArrangement = Arrangement.spacedBy(2.dp),
+                    itemVerticalAlignment = Alignment.Bottom,
+                ) {
+                    SectionTitle(stringResource(R.string.lobby_crew, seats.size), Modifier.padding(end = 12.dp))
                     if (seats.isNotEmpty()) {
                         Text(stringResource(R.string.lobby_rename_hint), style = SporzTypography.small, color = SporzTheme.colors.textMuted)
                     }

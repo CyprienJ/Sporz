@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +13,7 @@ import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -116,9 +117,10 @@ fun GameEndScreen(
                 verticalArrangement = Arrangement.spacedBy(4.dp),
             ) {
                 SporzButton(stringResource(R.string.action_replay_same_crew), onReplaySameCrew, modifier = Modifier.fillMaxWidth())
-                Row {
+                // Wraps the links on two lines with large fonts.
+                FlowRow(horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)) {
                     TextLink(stringResource(R.string.action_open_full_journal), onOpenJournal)
-                    TextLink(backLabel, onBackHome, Modifier.padding(start = 16.dp))
+                    TextLink(backLabel, onBackHome)
                 }
                 if (onDelete != null) TextLink(stringResource(R.string.action_delete_game), onDelete)
             }
@@ -150,14 +152,14 @@ private fun Banner(game: GameState) {
             .padding(horizontal = 20.dp, vertical = 28.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
-        Overline(stringResource(R.string.end_overline, phase), color = content.copy(alpha = 0.8f))
+        Overline(stringResource(R.string.end_overline, phase), color = content)
         Text(
             stringResource(end.titleRes).uppercase(),
             style = SporzTypography.titleLarge.copy(fontSize = 48.sp, lineHeight = 46.sp),
             color = content,
             modifier = Modifier.semantics { heading() },
         )
-        Text(stringResource(end.reasonRes), style = SporzTypography.body, color = content.copy(alpha = 0.9f))
+        Text(stringResource(end.reasonRes), style = SporzTypography.body, color = content)
     }
 }
 
@@ -171,7 +173,7 @@ private fun Revelation(player: Player, fate: Fate) {
         horizontalArrangement = Arrangement.spacedBy(10.dp),
     ) {
         Box(Modifier.size(8.dp).background(if (inMutantCamp) colors.mutant.strong else colors.healthy.strong, SporzShapes.pill))
-        Text(player.name, style = SporzTypography.body.copy(fontWeight = FontWeight.SemiBold), modifier = Modifier.width(90.dp), maxLines = 1)
+        Text(player.name, style = SporzTypography.body.copy(fontWeight = FontWeight.SemiBold), modifier = Modifier.widthIn(min = 90.dp))
         val role = stringResource(player.role.nameRes)
         Text(
             if (player.genome == Genome.Normal) role else stringResource(R.string.end_role_genome, role, stringResource(player.genome.nameRes)),
