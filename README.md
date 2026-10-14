@@ -47,7 +47,7 @@ The project starts **from a clean sheet**: no code exists yet, only this README,
 | DEC-4 | **Mutated players with a power** | A mutated player **wakes up with the mutants** and **loses their role power** (they are no longer called at their role's step). If the doctors heal them, they leave the mutants and **get their power back**. |
 | DEC-5 | **Vote ties & captain** | A tie ejects nobody. With the captain variant, the captain breaks ties. The captain is elected on Day 1 and passes the role on when they die. |
 | DEC-6 | **Number of players** | Min 7, max 20. The *Suggérer* button uses a suggestion table per player count (written in ticket A1). |
-| DEC-7 | **Traitor & win conditions** | The traitor counts in the mutant camp for win detection. |
+| DEC-7 | **Traitor & win conditions** | The traitor wins with the mutants, but does not block the healthy camp: the healthy win as soon as no mutated player is alive, even if the traitor is. The mutants win when every living player is mutated or the traitor. |
 | DEC-22 | **Vote** | Relative majority with no threshold: the option (a player or blank) with the most votes wins. A tie ejects nobody (DEC-5). |
 | DEC-23 | **Traitor** | The traitor is a healthy astronaut (no power, never wakes up at night) who wants the mutants to win; neither side knows who the other is. The mutants can mutate them; a mutated traitor cannot be healed. |
 | DEC-24 | **Hacker** | The hacked player still receives their own report; the hacker gets a copy. |

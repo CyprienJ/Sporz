@@ -177,7 +177,7 @@ Each one designates a living player (except the computer scientist) and receives
 
 Checked after the end of each night (R-NIGHT-20) and after each vote (R-DAY-12).
 
-- **R-WIN-1** **Healthy camp wins** when no living player is in the mutant camp: every mutated player is dead or healed, **and** the traitor (if any) is dead (DEC-7). Healing never takes the traitor out of the mutant camp.
+- **R-WIN-1** **Healthy camp wins** when no living player is mutated: every mutated player is dead or healed. A living, non-mutated traitor does not prevent it (DEC-7); a mutated traitor counts as a mutant.
 - **R-WIN-2** **Mutant camp wins** when every living player is in the mutant camp (mutated players and the traitor).
 - **R-WIN-3** If nobody is alive, the game ends with no winner.
 - **R-WIN-4** The MJ may end the game at any time (abort, no winner).
@@ -207,7 +207,7 @@ Checked after the end of each night (R-NIGHT-20) and after each vote (R-DAY-12).
 
 **E-5 — vote.** 9 living players, votes Gaëlle 4, Chloé 1, blank 1, 3 abstentions → Gaëlle is ejected (relative majority, R-DAY-9).
 
-**E-6 — traitor.** Living: 3 healthy players, 1 mutant, 1 traitor. The 3 healthy ones eject the mutant → the traitor is still alive, the game goes on. The mutant camp wins if the traitor survives until every other living player is mutated or dead.
+**E-6 — traitor.** Living: 3 healthy players, 1 mutant, 1 traitor. The 3 healthy ones eject the mutant → the healthy camp wins, although the traitor is still alive (DEC-7).
 
 **E-7 — paralysis.** Night 1: the mutants kill Hugo and paralyse Bastien (doctor). Emma is the only doctor woken and heals one player. Paralysing the psychologist instead skips step 4; the hacker who chose the psychologist gets "nothing". The spy targeting the paralysed player learns "paralysed".
 

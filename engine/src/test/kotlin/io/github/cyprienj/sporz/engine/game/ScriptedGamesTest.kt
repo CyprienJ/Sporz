@@ -17,7 +17,6 @@ import io.github.cyprienj.sporz.engine.night.Report
 import io.github.cyprienj.sporz.engine.night.SpyFinding
 import io.github.cyprienj.sporz.engine.setup.SuggestedCompositions
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.Assertions.assertFalse
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
 
@@ -138,7 +137,7 @@ class ScriptedGamesTest {
     }
 
     @Test
-    fun `E-6 the traitor keeps the game going until ejected`() {
+    fun `E-6 ejecting the last mutant wins, even with the traitor alive`() {
         val crew = listOf(
             p("Mia", Role.BaseMutant, Genome.Host, PlayerState.Mutated),
             p("Doc", Role.Doctor),
@@ -153,17 +152,9 @@ class ScriptedGamesTest {
             .playMutants(MutantsDecision.Kill(id("Dan")))
             .playDoctors(DoctorsDecision.Heal(ids("Ana")))
 
-        // Day 1: the base mutant is ejected, the traitor is still alive.
+        // Day 1: the base mutant is ejected → healthy win, the traitor is still alive.
         game = game.votes("Ana" to "Mia", "Ben" to "Mia", "Cyd" to "Mia").closeVote()
-        assertEquals(Phase.Day, game.phase, "the traitor keeps the game going")
-
-        // Night 2: no mutant left, the mutants' step is skipped; the doctor kills Ben by mistake.
-        game = game.startNight().playDoctors(DoctorsDecision.Kill(id("Ben")))
-        assertTrue(game.journal.any { it.round == 2 && it.event == JournalEvent.StepSkipped(NightStep.Mutants) })
-
-        // Day 2: the traitor is ejected → healthy win.
-        game = game.votes("Ana" to "Tom", "Doc" to "Tom").closeVote()
         assertEquals(GameEnd.HealthyWin, game.end)
-        assertFalse(game.player("Tom").alive)
+        assertTrue(game.player("Tom").alive)
     }
 }

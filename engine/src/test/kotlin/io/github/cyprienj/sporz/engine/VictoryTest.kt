@@ -50,16 +50,20 @@ class VictoryTest {
     }
 
     @Test
-    fun `E-6 a living traitor keeps the game going (DEC-7)`() {
+    fun `E-6 a living traitor does not prevent the healthy win (DEC-7)`() {
         // 3 healthy + traitor after ejecting the last mutant.
         val players = listOf(
             p("Alice"), p("Bastien", Role.Doctor), p("Chloé"),
             p("Hugo", Role.Traitor),
             p("Gaëlle", Role.BaseMutant, mutated = true, alive = false),
         )
+        assertEquals(GameEnd.HealthyWin, checkVictory(players))
+    }
+
+    @Test
+    fun `a mutated traitor must be eliminated like any mutant`() {
+        val players = listOf(p("Alice"), p("Bastien", Role.Doctor), p("Hugo", Role.Traitor, mutated = true))
         assertNull(checkVictory(players))
-        // Once the traitor is ejected, the healthy camp wins.
-        assertEquals(GameEnd.HealthyWin, checkVictory(players.map { if (it.name == "Hugo") it.copy(alive = false) else it }))
     }
 
     @Test

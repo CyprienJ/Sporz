@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 /** How a game ended (docs/rules.md §5). */
 @Serializable
 public enum class GameEnd(public val winner: Camp?) {
-    /** R-WIN-1: every mutated player is dead or healed, and the traitor is dead. */
+    /** R-WIN-1: every mutated player is dead or healed; a living traitor does not prevent it. */
     @SerialName("allMutantsGone") HealthyWin(Camp.Healthy),
 
     /** R-WIN-2: every living player is in the mutant camp. */
@@ -31,8 +31,10 @@ public fun checkVictory(players: List<Player>): GameEnd? {
     val alive = players.filter { it.alive }
     return when {
         alive.isEmpty() -> GameEnd.NoSurvivors
-        alive.none { it.camp == Camp.Mutant } -> GameEnd.HealthyWin
+        // Mutated players and the traitor (R-WIN-2); the traitor alone left also wins for them.
         alive.all { it.camp == Camp.Mutant } -> GameEnd.MutantsWin
+        // The traitor does not count here (DEC-7).
+        alive.none { it.isMutated } -> GameEnd.HealthyWin
         else -> null
     }
 }

@@ -409,7 +409,7 @@
     <string name="guide_vote_body">Le joueur qui reçoit le plus de voix est éliminé ; son rôle et son état sont révélés. Si le vote blanc arrive en tête, ou en cas d’égalité, personne n’est éliminé.</string>
     <string name="guide_victory">Victoire</string>
     <string name="guide_victory_tag">Un seul camp à bord</string>
-    <string name="guide_victory_body">Les sains gagnent quand tous les mutés sont tués ou guéris et que le traître est éliminé. Les mutants gagnent quand tous les joueurs encore en vie sont dans leur camp.</string>
+    <string name="guide_victory_body">Les sains gagnent quand tous les mutés sont tués ou guéris, même si le traître est encore en vie. Les mutants gagnent quand tous les joueurs encore en vie sont dans leur camp.</string>
 
     <!-- Actions (labels from design.html) -->
     <string name="action_create_game">Créer une partie</string>
