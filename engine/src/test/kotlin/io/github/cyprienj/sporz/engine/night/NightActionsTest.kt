@@ -144,9 +144,20 @@ class NightActionsTest {
     }
 
     @Test
-    fun `a doctor may heal themself (R-NIGHT-11)`() {
-        val self = resolveDoctors(crew, doctors, heal("Bastien", "Chloé"))
-        assertEquals(NightEvent.Heal(id("Bastien"), HealOutcome.NotMutated), self.events.first())
+    fun `awake doctors heal neither themselves nor each other (R-NIGHT-11)`() {
+        val self = assertThrows<IllegalActionException> { resolveDoctors(crew, ids("Bastien"), heal("Bastien")) }
+        assertEquals(ActionProblem.SelfTarget, self.problem)
+        assertEquals(id("Bastien"), self.player)
+        val other = assertThrows<IllegalActionException> { resolveDoctors(crew, doctors, heal("Chloé", "Emma")) }
+        assertEquals(ActionProblem.SelfTarget, other.problem)
+        assertEquals(id("Emma"), other.player)
+    }
+
+    @Test
+    fun `a doctor who does not wake up can be healed by the other (R-NIGHT-11)`() {
+        // A mutated doctor does not wake up, and the other one may heal them.
+        val emmaMutated = crew.update("Emma") { it.copy(state = PlayerState.Mutated) }
+        assertEquals(NightEvent.Heal(id("Emma"), HealOutcome.Healed), resolveDoctors(emmaMutated, ids("Bastien"), heal("Emma")).events.single())
     }
 
     @Test
@@ -155,6 +166,10 @@ class NightActionsTest {
         assertEquals(ActionProblem.WrongTargetCount, assertThrows<IllegalActionException> { resolveDoctors(crew, doctors, heal("Chloé", "Alice", "Hugo")) }.problem)
         // Only one doctor left: one heal.
         assertEquals(1, resolveDoctors(crew, ids("Bastien"), heal("Chloé")).events.size)
+        // Two doctors and a single other living player: one heal only.
+        val lastThree = crew.map { if (it.name in setOf("Bastien", "Emma", "Gaëlle")) it else it.copy(alive = false) }
+        assertEquals(1, healCount(lastThree, doctors))
+        assertEquals(1, resolveDoctors(lastThree, doctors, heal("Gaëlle")).events.size)
     }
 
     @Test

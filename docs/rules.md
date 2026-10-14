@@ -119,7 +119,7 @@ The base mutant (1) is always included. Default variants: see §6.
 ### 3.3 Doctors
 
 - **R-NIGHT-11** All living, non-mutated doctors wake up together (DEC-2). They choose **either**:
-  - **heal**: they decide together whom to heal: one living player per doctor, all different (a player cannot be healed twice in the same night; a doctor may heal themself), **or**
+  - **heal**: they decide together whom to heal: one living player per doctor, all different (a player cannot be healed twice in the same night; awake doctors are healthy and see each other, so they cannot heal themselves or one another; a doctor who does not wake up — mutated or paralysed — can be healed by the others. If fewer players can be healed than there are doctors, they heal as many as they can), **or**
   - **kill**: all doctors agree on one living player to kill.
 - **R-NIGHT-12** If the doctors disagree, the MJ decides.
 - **R-NIGHT-13** Heal outcome:

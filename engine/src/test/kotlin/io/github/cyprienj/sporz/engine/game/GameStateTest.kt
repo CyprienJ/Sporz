@@ -284,7 +284,7 @@ class GameStateTest {
     @Test
     fun `a paralysed information role is skipped and the spy sees the paralysis (R-NIGHT-22, R-NIGHT-19)`() {
         val night = game().playMutants(MutantsDecision.Kill(id("Hugo"), paralysed = id("Dorian")))
-            .playDoctors(DoctorsDecision.Heal(listOf(id("Bastien"), id("Emma"))))
+            .playDoctors(DoctorsDecision.Heal(listOf(id("Alice"), id("Jules"))))
             .playComputerScientist()
         // The psychologist is skipped; the hacker copying them gets nothing.
         assertEquals(NightStep.Geneticist, night.currentStep)

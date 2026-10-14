@@ -381,7 +381,7 @@
     <string name="guide_tag_traitor">Sain, joue pour les mutants</string>
     <string name="guide_tag_astronaut">Camp sain · aucun pouvoir</string>
     <string name="guide_base_mutant">Le premier mutant. Chaque nuit, les mutants se réveillent ensemble et choisissent de muter un joueur ou de le tuer, puis paralysent un joueur, qui n’agira pas cette nuit. Un joueur muté perd son pouvoir et se réveille désormais avec les mutants ; s’il est guéri, il le retrouve.</string>
-    <string name="guide_doctor">Les médecins se réveillent ensemble et décident ensemble : chacun soigne un joueur différent (un hôte muté ne guérit pas), ou bien ils tuent un joueur.</string>
+    <string name="guide_doctor">Les médecins se réveillent ensemble et décident ensemble : chacun soigne un joueur différent, jamais un médecin réveillé avec eux (un hôte muté ne guérit pas), ou bien ils tuent un joueur.</string>
     <string name="guide_psychologist">Désigne un joueur et apprend s’il est muté ou sain.</string>
     <string name="guide_geneticist">Désigne un joueur et apprend son génome : hôte, normal ou résistant.</string>
     <string name="guide_computer_scientist">Apprend le nombre de mutants présents à bord.</string>

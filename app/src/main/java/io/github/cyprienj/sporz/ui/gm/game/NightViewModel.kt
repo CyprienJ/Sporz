@@ -14,6 +14,7 @@ import io.github.cyprienj.sporz.engine.night.DoctorsDecision
 import io.github.cyprienj.sporz.engine.night.IllegalActionException
 import io.github.cyprienj.sporz.engine.night.MutantsDecision
 import io.github.cyprienj.sporz.engine.night.hackableSteps
+import io.github.cyprienj.sporz.engine.night.healCount
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
@@ -117,7 +118,7 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
             val alive = game.players.filter { it.alive }
             return when (game.currentStep) {
                 NightStep.Mutants -> alive.filter { !it.isMutated }                   // R-NIGHT-7
-                NightStep.Doctors -> if (kill) alive.filter { it.id !in actors } else alive // R-NIGHT-5, R-NIGHT-11
+                NightStep.Doctors -> alive.filter { it.id !in actors } // R-NIGHT-5, R-NIGHT-11: awake doctors are not healed
                 NightStep.Psychologist, NightStep.Geneticist, NightStep.Spy -> alive.filter { it.id !in actors }
                 NightStep.ComputerScientist, NightStep.Hacker, null -> emptyList()
             }.map { it.id }
@@ -127,9 +128,9 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
         fun eligibleParalysis(game: GameState): List<PlayerId> =
             if (game.currentStep == NightStep.Mutants) game.players.filter { it.alive && !it.isMutated }.map { it.id } else emptyList()
 
-        /** Number of targets to pick: one per acting doctor when healing, one otherwise. */
+        /** Number of targets to pick: one per acting doctor when healing ([healCount]), one otherwise. */
         fun maxTargets(game: GameState, kill: Boolean): Int = when (game.currentStep) {
-            NightStep.Doctors -> if (kill) 1 else game.night?.progress?.current?.actors?.size ?: 1
+            NightStep.Doctors -> if (kill) 1 else healCount(game.players, game.night?.progress?.current?.actors.orEmpty())
             NightStep.ComputerScientist, NightStep.Hacker, null -> 0
             else -> 1
         }

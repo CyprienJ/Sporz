@@ -31,13 +31,20 @@ public sealed interface MutantsDecision {
  */
 @Serializable
 public sealed interface DoctorsDecision {
-    /** One heal per acting doctor, on different living players. */
+    /** One heal per acting doctor ([healCount]), on different living players who are not awake doctors. */
     @Serializable @SerialName("heal")
     public data class Heal(val targets: List<PlayerId>) : DoctorsDecision
 
     @Serializable @SerialName("kill")
     public data class Kill(val target: PlayerId) : DoctorsDecision
 }
+
+/**
+ * R-NIGHT-11: one heal per acting doctor, but never more than the players they can heal:
+ * awake doctors are healthy and see each other, so they never heal one another.
+ */
+public fun healCount(players: List<Player>, actors: List<PlayerId>): Int =
+    minOf(actors.size, players.count { it.alive && it.id !in actors })
 
 /** Why a decision cannot be applied. */
 @Serializable
@@ -108,10 +115,12 @@ public fun resolveMutants(players: List<Player>, decision: MutantsDecision): Ste
 public fun resolveDoctors(players: List<Player>, actors: List<PlayerId>, decision: DoctorsDecision): StepOutcome =
     when (decision) {
         is DoctorsDecision.Heal -> {
-            if (decision.targets.size != actors.size) throw IllegalActionException(ActionProblem.WrongTargetCount, null)
+            if (decision.targets.size != healCount(players, actors)) throw IllegalActionException(ActionProblem.WrongTargetCount, null)
             decision.targets.groupingBy { it }.eachCount().entries.firstOrNull { it.value > 1 }?.let {
                 throw IllegalActionException(ActionProblem.DuplicateTarget, it.key)
             }
+            // R-NIGHT-11: an awake doctor is healthy, so neither they nor the other doctors heal them.
+            decision.targets.firstOrNull { it in actors }?.let { throw IllegalActionException(ActionProblem.SelfTarget, it) }
 
             val events = decision.targets.map { id ->
                 val target = players.find(id)

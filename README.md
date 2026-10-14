@@ -42,7 +42,7 @@ The project starts **from a clean sheet**: no code exists yet, only this README,
 | # | Topic | Decision |
 |---|-------|----------|
 | DEC-1 | **Paralysis** | Every night, besides mutating or killing, the mutants paralyse one living, non-mutated player, who does not play for the rest of the night (R-NIGHT-22). Not announced at dawn; the spy can see it. |
-| DEC-2 | **Doctors** | The doctors are awake together and decide together. They heal one player per living, non-mutated doctor, all different (nobody is healed twice in a night), **or** they agree on one kill. If they disagree, the MJ decides. |
+| DEC-2 | **Doctors** | The doctors are awake together and decide together. They heal one player per living, non-mutated doctor, all different (nobody is healed twice in a night, no doctor who is awake can be healed), **or** they agree on one kill. If they disagree, the MJ decides. |
 | DEC-3 | **Genomes of special roles** | The base mutant is always *host*, doctors are always *normal*. The other genomes are drawn at random among the remaining players, whatever their role. |
 | DEC-4 | **Mutated players with a power** | A mutated player **wakes up with the mutants** and **loses their role power** (they are no longer called at their role's step). If the doctors heal them, they leave the mutants and **get their power back**. |
 | DEC-5 | **Vote ties & captain** | A tie ejects nobody. With the captain variant, the captain breaks ties. The captain is elected on Day 1 and passes the role on when they die. |

@@ -12,6 +12,7 @@ import io.github.cyprienj.sporz.engine.model.Variants
 import io.github.cyprienj.sporz.engine.night.DoctorsDecision
 import io.github.cyprienj.sporz.engine.night.MutantsDecision
 import io.github.cyprienj.sporz.engine.night.hackableSteps
+import io.github.cyprienj.sporz.engine.night.healCount
 import io.github.cyprienj.sporz.engine.setup.Seat
 import io.github.cyprienj.sporz.engine.setup.SuggestedCompositions
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -77,7 +78,7 @@ class RandomGamesTest {
                     if (others.isNotEmpty() && random.nextInt(4) == 0) {
                         game.playDoctors(DoctorsDecision.Kill(others.random(random).id))
                     } else {
-                        game.playDoctors(DoctorsDecision.Heal(alive.shuffled(random).take(actors.size).map { it.id }))
+                        game.playDoctors(DoctorsDecision.Heal(others.shuffled(random).take(healCount(game.players, actors)).map { it.id }))
                     }
                 }
                 NightStep.ComputerScientist -> game.playComputerScientist()
