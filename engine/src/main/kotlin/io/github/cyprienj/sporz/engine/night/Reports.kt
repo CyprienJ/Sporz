@@ -41,6 +41,10 @@ public sealed interface Report {
     /** R-NIGHT-18: [copy] is null when the hacked role produced no report ("nothing"). */
     @Serializable @SerialName("hacked")
     public data class Hacked(val source: NightStep, val copy: Report?) : Report
+
+    /** R-NIGHT-18: no hackable role had a living holder when the hacker woke up. */
+    @Serializable @SerialName("nothingToHack")
+    public data object NothingToHack : Report
 }
 
 /** What the spy learns about each action that targeted their player (R-NIGHT-19). */
@@ -148,17 +152,21 @@ public fun spyReport(players: List<Player>, actor: PlayerId, target: PlayerId, e
     return ReportOutcome(Report.Spy(player.id, findings), NightEvent.Analysis(player.id, Analyst.Spy))
 }
 
-/** Steps whose report the hacker can copy (R-NIGHT-18). */
-public fun hackableSteps(variants: Variants): List<NightStep> = buildList {
+/**
+ * Steps whose report the hacker can copy (R-NIGHT-18): the psychologist,
+ * geneticist, computer scientist (and spy with the variant) whose role is in
+ * the game with a living holder.
+ */
+public fun hackableSteps(variants: Variants, players: List<Player>): List<NightStep> = buildList {
     add(NightStep.Psychologist)
     add(NightStep.Geneticist)
     add(NightStep.ComputerScientist)
     if (variants.hackerCanHackSpy) add(NightStep.Spy)
-}
+}.filter { step -> players.any { it.role == step.role && it.alive } }
 
 /** Refuses a hacker choice the rules do not allow (R-NIGHT-18). */
-public fun checkHackerChoice(source: NightStep, variants: Variants) {
-    if (source !in hackableSteps(variants)) throw IllegalActionException(ActionProblem.NotHackable, null)
+public fun checkHackerChoice(source: NightStep, variants: Variants, players: List<Player>) {
+    if (source !in hackableSteps(variants, players)) throw IllegalActionException(ActionProblem.NotHackable, null)
 }
 
 /**

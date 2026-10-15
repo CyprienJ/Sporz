@@ -74,7 +74,7 @@ public enum class ActionProblem {
     /** R-NIGHT-11: a player cannot be healed twice in the same night. */
     @SerialName("duplicateTarget") DuplicateTarget,
 
-    /** R-NIGHT-18: the hacker can only copy the psychologist, geneticist, computer scientist (and spy with the variant). */
+    /** R-NIGHT-18: the hacker can only copy the psychologist, geneticist, computer scientist (and spy with the variant), in the game and alive. */
     @SerialName("notHackable") NotHackable,
 }
 

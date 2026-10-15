@@ -158,6 +158,7 @@
         <item quantity="other">Choisissez %1$d joueurs différents à soigner</item>
     </plurals>
     <string name="night_hack_choice">Rapport à pirater</string>
+    <string name="night_nothing_to_hack">Aucun rôle à pirater n’est en vie : le hacker n’apprend rien.</string>
     <string name="night_nobody">personne à réveiller</string>
     <string name="night_pretend_hint">Personne ne joue cette étape. Appelez-la quand même et laissez passer un moment, pour que la table ne remarque rien.</string>
     <string name="night_pretend_continue">Appel fait, continuer</string>
@@ -212,6 +213,7 @@
     <string name="report_loyal">%1$s : loyal</string>
     <string name="report_hacked">pirate %1$s → %2$s</string>
     <string name="report_hacked_nothing">pirate %1$s → rien</string>
+    <string name="report_nothing_to_hack">rien à pirater</string>
     <string name="report_hacked_pending">pirate %1$s → en fin de nuit</string>
     <string name="spy_mutated">muté</string>
     <string name="spy_mutation_failed">mutation ratée</string>
@@ -351,7 +353,7 @@
     <string name="guide_psychologist">Désigne un joueur et apprend s’il est muté ou sain.</string>
     <string name="guide_geneticist">Désigne un joueur et apprend son génome : hôte, normal ou résistant.</string>
     <string name="guide_computer_scientist">Apprend le nombre de mutants présents à bord.</string>
-    <string name="guide_hacker">Pirate le rapport du généticien, du psychologue ou de l’informaticien (et de l’espion en variante). Le joueur piraté reçoit quand même son rapport.</string>
+    <string name="guide_hacker">Pirate le rapport du généticien, du psychologue ou de l’informaticien (et de l’espion en variante), parmi ceux encore en vie. Le joueur piraté reçoit quand même son rapport.</string>
     <string name="guide_spy">Désigne un joueur et apprend ce qui lui est arrivé pendant la nuit : muté, paralysé, soigné, analysé…</string>
     <string name="guide_informant">Désigne un joueur et apprend s’il est le traître ou s’il est loyal. Un mutant n’est pas un traître.</string>
     <string name="guide_investigator">Désigne un joueur et apprend ce qu’on lui a fait pendant la nuit précédente, sans le résultat : muté, paralysé, soigné, inspecté par le psychologue, le généticien, l’indic ou l’espion. La première nuit, il n’y a rien à apprendre.</string>

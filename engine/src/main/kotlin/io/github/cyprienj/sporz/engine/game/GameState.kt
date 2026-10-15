@@ -24,6 +24,7 @@ import io.github.cyprienj.sporz.engine.night.checkHackerChoice
 import io.github.cyprienj.sporz.engine.night.computerScientistReport
 import io.github.cyprienj.sporz.engine.night.deaths
 import io.github.cyprienj.sporz.engine.night.geneticistReport
+import io.github.cyprienj.sporz.engine.night.hackableSteps
 import io.github.cyprienj.sporz.engine.night.hackerReport
 import io.github.cyprienj.sporz.engine.night.informantReport
 import io.github.cyprienj.sporz.engine.night.investigatorReport
@@ -142,11 +143,18 @@ public data class GameState(
     /** R-NIGHT-18: the copy is delivered now if [source] is finished, else at the end of the night. */
     public fun playHacker(source: NightStep): GameState {
         val actors = requireStep(NightStep.Hacker)
-        checkHackerChoice(source, variants)
+        checkHackerChoice(source, variants, players)
         val night = night!!
         val copy = hackerReport(source, night.reports, night.progress)
         val withChoice = if (copy == null) copy(night = night.copy(pendingHack = PendingHack(actors.single(), source))) else this
         return withChoice.afterStep(players, NightStep.Hacker, actors, report = copy, keepReport = false)
+    }
+
+    /** R-NIGHT-18: the hacker woke up but no hackable role is in the game and alive. */
+    public fun playHackerNothingToHack(): GameState {
+        val actors = requireStep(NightStep.Hacker)
+        check(hackableSteps(variants, players).isEmpty()) { "There is a role to hack" }
+        return afterStep(players, NightStep.Hacker, actors, report = Report.NothingToHack, keepReport = false)
     }
 
     /**

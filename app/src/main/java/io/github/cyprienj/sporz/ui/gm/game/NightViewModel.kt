@@ -75,7 +75,7 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
         return when (game.currentStep) {
             null -> false
             NightStep.ComputerScientist -> true
-            NightStep.Hacker -> hackSource != null
+            NightStep.Hacker -> hackSource != null || hackChoices(game).isEmpty()
             // R-NIGHT-22: a paralysis is required unless the target is the only one left to paralyse.
             NightStep.Mutants -> targets.size == 1 && (paralysed != null || eligibleParalysis(game, targets.single()).isEmpty())
             else -> targets.size == maxTargets(game, kill)
@@ -97,7 +97,7 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
                     NightStep.ComputerScientist -> game.playComputerScientist()
                     NightStep.Psychologist -> game.playPsychologist(targets.single())
                     NightStep.Geneticist -> game.playGeneticist(targets.single())
-                    NightStep.Hacker -> game.playHacker(checkNotNull(hackSource))
+                    NightStep.Hacker -> hackSource?.let { game.playHacker(it) } ?: game.playHackerNothingToHack()
                     NightStep.Spy -> game.playSpy(targets.single())
                     NightStep.Informant -> game.playInformant(targets.single())
                     NightStep.Investigator -> game.playInvestigator(targets.single())
@@ -141,6 +141,7 @@ class NightViewModel @Inject constructor(private val session: GameSession) : Vie
             else -> 1
         }
 
-        fun hackChoices(game: GameState): List<NightStep> = hackableSteps(game.variants)
+        /** Roles the hacker can copy: in the game, with a living holder (R-NIGHT-18). */
+        fun hackChoices(game: GameState): List<NightStep> = hackableSteps(game.variants, game.players)
     }
 }

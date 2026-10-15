@@ -61,6 +61,7 @@ fun reportText(report: Report, name: (PlayerId) -> String): String = when (repor
         } else {
             stringResource(R.string.report_spy, name(report.target), report.findings.map { stringResource(it.textRes) }.joinToString(", "))
         }
+    Report.NothingToHack -> stringResource(R.string.report_nothing_to_hack)
     is Report.Hacked -> {
         val source = stringResource(report.source.nameRes)
         val copy = report.copy

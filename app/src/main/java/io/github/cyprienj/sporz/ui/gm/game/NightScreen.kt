@@ -286,9 +286,14 @@ private fun CurrentStep(
             NightStep.ComputerScientist ->
                 Text(reportText(computerScientistReport(game.players), name).uppercase(), style = SporzTypography.heading, color = colors.accent)
             NightStep.Hacker -> {
-                Text(stringResource(R.string.night_hack_choice), style = SporzTypography.small, color = colors.textMuted)
+                val choices = NightViewModel.hackChoices(game)
+                Text(
+                    stringResource(if (choices.isEmpty()) R.string.night_nothing_to_hack else R.string.night_hack_choice),
+                    style = SporzTypography.small,
+                    color = colors.textMuted,
+                )
                 FlowRow(horizontalArrangement = Arrangement.spacedBy(8.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    NightViewModel.hackChoices(game).forEach { source ->
+                    choices.forEach { source ->
                         TargetChip(stringResource(source.nameRes), selected = source == hackSource, onClick = { onHack(source) })
                     }
                 }
@@ -339,7 +344,7 @@ private fun confirmLabel(
     return when {
         step == NightStep.ComputerScientist -> stringResource(R.string.night_confirm_info)
         step == NightStep.Hacker -> hackSource?.let { stringResource(R.string.night_confirm_hack, stringResource(it.nameRes)) }
-            ?: stringResource(R.string.night_hack_choice)
+            ?: stringResource(if (canConfirm) R.string.night_confirm_info else R.string.night_hack_choice) // nothing to hack: just confirm
         targets.isEmpty() -> stringResource(R.string.night_choose_target)
         // Without a paralysis, confirming means nobody else could be paralysed (R-NIGHT-22).
         step == NightStep.Mutants && paralysed == null && !canConfirm -> stringResource(R.string.night_choose_paralysed)

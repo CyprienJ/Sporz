@@ -116,8 +116,8 @@ class ReportsTest {
 
     @Test
     fun `hacking the spy needs the variant and is delivered at the end of the night (R-NIGHT-18, R-NIGHT-19)`() {
-        assertEquals(ActionProblem.NotHackable, assertThrows<IllegalActionException> { checkHackerChoice(NightStep.Spy, Variants()) }.problem)
-        checkHackerChoice(NightStep.Spy, Variants(hackerCanHackSpy = true))
+        assertEquals(ActionProblem.NotHackable, assertThrows<IllegalActionException> { checkHackerChoice(NightStep.Spy, Variants(), crew) }.problem)
+        checkHackerChoice(NightStep.Spy, Variants(hackerCanHackSpy = true), crew)
 
         var night = NightProgress.start(1, NightStep.DefaultOrder, crew)
         while (night.current?.step != NightStep.Hacker) night = night.advance(crew)
@@ -130,9 +130,20 @@ class ReportsTest {
     }
 
     @Test
+    fun `only roles in the game with a living holder can be hacked (R-NIGHT-18)`() {
+        val all = listOf(NightStep.Psychologist, NightStep.Geneticist, NightStep.ComputerScientist, NightStep.Spy)
+        assertEquals(all, hackableSteps(Variants(hackerCanHackSpy = true), crew))
+        // Jules (geneticist) is dead, there is no computer scientist.
+        val players = crew.map { if (it.name == "Jules") it.copy(alive = false) else it }.filter { it.role != Role.ComputerScientist }
+        assertEquals(listOf(NightStep.Psychologist, NightStep.Spy), hackableSteps(Variants(hackerCanHackSpy = true), players))
+        assertEquals(ActionProblem.NotHackable, assertThrows<IllegalActionException> { checkHackerChoice(NightStep.Geneticist, Variants(), players) }.problem)
+        assertEquals(ActionProblem.NotHackable, assertThrows<IllegalActionException> { checkHackerChoice(NightStep.ComputerScientist, Variants(), players) }.problem)
+    }
+
+    @Test
     fun `the doctors, mutants and hacker steps cannot be hacked`() {
         listOf(NightStep.Mutants, NightStep.Doctors, NightStep.Hacker).forEach {
-            assertThrows<IllegalActionException> { checkHackerChoice(it, Variants(hackerCanHackSpy = true)) }
+            assertThrows<IllegalActionException> { checkHackerChoice(it, Variants(hackerCanHackSpy = true), crew) }
         }
     }
 

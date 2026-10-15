@@ -165,5 +165,8 @@ class NightViewModelTest {
     @Test
     fun `hacker choices follow the variant (R-NIGHT-18)`() {
         assertEquals(listOf(NightStep.Psychologist, NightStep.Geneticist, NightStep.ComputerScientist), NightViewModel.hackChoices(game))
+        // Only roles with a living holder (R-NIGHT-18): Jules, the geneticist, is dead.
+        val julesDead = game.copy(players = game.players.map { if (it.name == "Jules") it.copy(alive = false) else it })
+        assertEquals(listOf(NightStep.Psychologist, NightStep.ComputerScientist), NightViewModel.hackChoices(julesDead))
     }
 }

@@ -12,6 +12,7 @@ import io.github.cyprienj.sporz.engine.model.PlayerId
 import io.github.cyprienj.sporz.engine.model.PlayerState
 import io.github.cyprienj.sporz.engine.model.Role
 import io.github.cyprienj.sporz.engine.night.DoctorsDecision
+import io.github.cyprienj.sporz.engine.night.IllegalActionException
 import io.github.cyprienj.sporz.engine.night.InvestigationFinding
 import io.github.cyprienj.sporz.engine.night.MutantsDecision
 import io.github.cyprienj.sporz.engine.night.Report
@@ -20,6 +21,7 @@ import io.github.cyprienj.sporz.engine.setup.SuggestedCompositions
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 
 /** Whole games played through [GameState], checked against docs/rules.md (ticket B10). */
 class ScriptedGamesTest {
@@ -211,5 +213,28 @@ class ScriptedGamesTest {
             game.notebook(id("Spy")).last().report,
         )
         assertEquals(game, GameState.fromJson(game.toJson()))
+    }
+
+    @Test
+    fun `a hacker with nothing alive to hack is told so (R-NIGHT-18)`() {
+        val crew = listOf(
+            p("Mia", Role.BaseMutant, Genome.Host, PlayerState.Mutated),
+            p("Doc", Role.Doctor),
+            p("Hak", Role.Hacker),
+            p("Psy", Role.Psychologist),
+            p("Ana", Role.Astronaut),
+            p("Ben", Role.Astronaut),
+            p("Cyd", Role.Astronaut),
+        )
+        val composition = Composition(mapOf(Role.BaseMutant to 1, Role.Doctor to 1, Role.Hacker to 1, Role.Psychologist to 1))
+        // The mutants kill the only psychologist: nothing is left to hack.
+        val game = GameState.fromDeal(crew, composition, GameSettings())
+            .playMutants(MutantsDecision.Kill(id("Psy"), paralysed = id("Ana")))
+            .playDoctors(DoctorsDecision.Heal(listOf(id("Ben"))))
+        assertEquals(NightStep.Hacker, game.currentStep)
+        assertThrows<IllegalActionException> { game.playHacker(NightStep.Psychologist) }
+        val after = game.playHackerNothingToHack()
+        assertEquals(Report.NothingToHack, after.notebook(id("Hak")).single().report)
+        assertEquals(Phase.Day, after.phase)
     }
 }
